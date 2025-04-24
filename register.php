@@ -154,7 +154,6 @@
         <section class="login-section">
             <img src="assets/logo.png" alt="Logo" class="login-logo">
             <form action="cek-login.php" method="POST">
-                <h4>Selamat datang!</h4>
                 <div class="inputbox">
                     <ion-icon name="mail-outline"></ion-icon>
                     <input type="email" name="email" id="email" required>
@@ -168,7 +167,7 @@
                 <div class="kata">Lupa kata sandi?</div>
                 <button type="submit">Masuk</button>
                 <div class="register">
-                    <p>Tidak punya akun? <a href="register.php">Daftar</a></p>
+                    <p>Sudah punya akun? <a href="login.php">Masuk</a></p>
                 </div>
             </form>
         </section>
