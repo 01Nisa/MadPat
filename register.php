@@ -40,15 +40,6 @@
             margin-top: 10px;
         }
 
-        .login-section h4 {
-            text-align: center;
-            margin-top: 1rem;
-            margin-bottom: 2rem;
-            font-size: 30px;
-            font-weight: bold;
-            color: #147472;
-        }
-
         .inputbox {
             position: relative;
             margin-bottom: 2rem;

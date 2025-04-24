@@ -78,8 +78,8 @@
 
         .kata{
             margin: -35px;
-            margin-top:-35px;
-            margin-bottom: 20px;
+            margin-top:-30px;
+            margin-bottom: 30px;
             margin-left: 232px;
             font-size: 14px;
             color:#147472;
