@@ -12,8 +12,8 @@
             justify-content: center;
             min-height: 100vh;
             background-image: url('assets/bg-login.png');
-            background-color: rgba(103, 195, 192, 0.6); /* transparan */
-            background-blend-mode: overlay; /* opsional, biar nyatu */
+            background-color: rgba(103, 195, 192, 0.6); 
+            background-blend-mode: overlay; 
             background-repeat: no-repeat;
             background-position: center;
             background-size: cover;
@@ -134,22 +134,91 @@
         .register p a:hover {
             text-decoration: underline;
         }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999; 
+        }
+
+        .message-box {
+            position: fixed;
+            background-color: #ffffff;
+            padding: 2rem 2rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 1000; 
+            text-align: center;
+            height: 200px;
+            width: 400px;
+            max-width: 400px;
+            left: 50%;
+            top: 30%;
+            transform: translate(-50%, -50%);
+        }
+
+        .message-box img {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 2rem;
+        }
+
+        .message-box p {
+            margin-bottom: 1rem;
+            font-size: 18px;
+            color: #147472;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #147472;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            color: #000000;
+        }
+
     </style>
 </head>
 <body class="login-page">
-    <?php
-        if (isset($_GET['pesan'])) {
-            echo "<div class='message'>";
-            if ($_GET['pesan'] == 'gagal') {
-                echo '<script>alert("Incorrect email or password!");</script>';
-            } else if ($_GET['pesan'] == 'logout') {
-                echo '<script>alert("You have successfully logged out!");</script>';
-            } else if ($_GET['pesan'] == 'belum_login') {
-                echo '<script>alert("You must login!");</script>';
-            }
-            echo "</div>";
-        }
-    ?>
+<?php if (isset($_GET['pesan'])): ?>
+        <div class="overlay" id="messageOverlay">
+            <div class="message-box">
+                <img src="assets/peringatan.png" alt="peringatan">
+                <span class="close-btn" onclick="document.getElementById('messageOverlay').style.display='none'">&times;</span>
+                <p>
+                    <?php
+                        switch ($_GET['pesan']) {
+                            case 'gagal':
+                                echo "Maaf email atau password Anda salah!";
+                                break;
+                            case 'logout':
+                                echo "Berhasil logout.";
+                                break;
+                            case 'belum_login':
+                                echo "Silakan login terlebih dahulu.";
+                                break;
+                            default:
+                                echo "Terjadi kesalahan.";
+                        }
+                    ?>
+                </p>
+            </div>
+        </div>
+        <?php endif; ?>
+
     <div class="login-container">
         <section class="login-section">
             <img src="assets/logo.png" alt="Logo" class="login-logo">
@@ -174,6 +243,15 @@
         </section>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/ionicons@5.5.2/dist/ionicons.js"></script>
-    <script src="Javascript.js"></script>
+    <script>
+    const togglePasswordIcon = document.getElementById("togglePasswordIcon");
+    const passwordInput = document.getElementById("password");
+
+    togglePasswordIcon.addEventListener("click", function () {
+      const isPasswordVisible = passwordInput.type === "text";
+      passwordInput.type = isPasswordVisible ? "password" : "text";
+      togglePasswordIcon.setAttribute("name", isPasswordVisible ? "eye-off-outline" : "eye-outline");
+    });
+  </script>
 </body>
 </html>
