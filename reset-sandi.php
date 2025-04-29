@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Perbarui Kata Sandi</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        .login-page {
+        .kata-sandi-page {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -19,7 +19,7 @@
             background-size: cover;
         }
 
-        .login-section {
+        .kata-sandi-section {
 
             background-color: #FFFFFF;
             border-radius: 35px;
@@ -32,21 +32,13 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
 
-        .login-logo {
+        .kata-sandi-logo {
             display: block;
             margin-left: 118px;
             width: 180px;
             height: auto;
             margin-top: 7px;
-        }
-
-        .login-section h4 {
-            text-align: center;
-            margin-top: 1rem;
-            margin-bottom: 2rem;
-            font-size: 30px;
-            font-weight: bold;
-            color: #147472;
+            margin-bottom: 30px;
         }
 
         .inputbox {
@@ -113,7 +105,7 @@
         }
 
 
-        .login-section button {
+        .kata-sandi-section button {
             width: 100%;
             padding: 0.75rem;
             border-radius: 10px;
@@ -126,21 +118,21 @@
             transition: background-color 0.3s;
         }
 
-        .login-section button:hover {
+        .kata-sandi-section button:hover {
             background-color: #67C3C0;
         }
 
-        .register {
+        .login {
             text-align: center;
             margin-top: 1rem;
         }
 
-        .register p a {
+        .login p a {
             color: #147472;
             text-decoration: none;
         }
 
-        .register p a:hover {
+        .login p a:hover {
             text-decoration: underline;
         }
 
@@ -201,7 +193,7 @@
 
     </style>
 </head>
-<body class="login-page">
+<body class="kata-sandi-page">
 <?php if (isset($_GET['pesan'])): ?>
         <div class="overlay" id="messageOverlay">
             <div class="message-box">
@@ -228,11 +220,10 @@
         </div>
         <?php endif; ?>
 
-    <div class="login-container">
-        <section class="login-section">
-            <img src="assets/logo.png" alt="Logo" class="login-logo">
-            <form action="cek-login.php" method="POST">
-                <h4>Selamat datang!</h4>
+    <div class="kata-sandi-container">
+        <section class="kata-sandi-section">
+            <img src="assets/logo.png" alt="Logo" class="kata-sandi-logo">
+            <form action="konfirmasi-sandi.php" method="POST">
                 <div class="inputbox">
                     <ion-icon name="mail-outline"></ion-icon>
                     <input type="email" name="email" id="email" required>
@@ -243,12 +234,14 @@
                     <input type="password" name="password" id="password" required>
                     <label for="password">Kata Sandi</label>
                 </div>
-                <div class="kata-sandi">
-                    <a href = "reset-sandi.php">Lupa kata sandi? </a> 
+                <div class="inputbox">
+                    <ion-icon class="password-show" name="eye-off-outline" id="togglePasswordIcon"></ion-icon>
+                    <input type="aturulangpassword" name="aturulangpassword" id="aturulangpassword" required>
+                    <label for="aturulangpassword">Konfirmasi Kata Sandi</label>
                 </div>
-                <button type="submit">Masuk</button>
-                <div class="register">
-                    <p>Tidak punya akun? <a href="register.php">Daftar</a></p>
+                <button type="submit">Kirim</button>
+                <div class="login">
+                    <p>Sudah ganti kata sandi? <a href="login.php">Masuk</a></p>
                 </div>
             </form>
         </section>
