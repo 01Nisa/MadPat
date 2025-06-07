@@ -104,6 +104,7 @@
   </style>
 </head>
 <body class="regis-page">
+  
   <div class="regis-container">
     <section class="regis-section">
       <img src="assets/logo.png" alt="Logo" class="regis-logo" />
@@ -126,7 +127,7 @@
           <label for="nohp">Nomor Telepon</label>
           <div class="input-wrapper">
             <ion-icon name="call-outline"></ion-icon>
-            <input type="tel" name="nohp" id="nohp" required />
+            <input type="tel" name="nomortlp" id="nomortlp" required />
           </div>
         </div>
         <div class="inputbox">
@@ -147,7 +148,7 @@
           <label for="confirm_password">Konfirmasi Password</label>
           <div class="input-wrapper">
             <ion-icon name="lock-closed-outline"></ion-icon>
-            <input type="password" name="confirm_password" id="confirm_password" required />
+            <input type="password" name="konfirpassword" id="konfirpassword" required />
           </div>
         </div>
         <button type="submit">Daftar</button>

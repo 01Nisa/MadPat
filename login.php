@@ -226,7 +226,7 @@
                 </p>
             </div>
         </div>
-        <?php endif; ?>
+    <?php endif; ?>
 
     <div class="login-container">
         <section class="login-section">
