@@ -609,7 +609,7 @@ body {
                 </div>
 
                 <div class="user">
-                    <img src="../assets/bg-login.png" alt="">
+                    <img src="assets/imgs/customer01.jpg" alt="">
                 </div>
             </div>
 
