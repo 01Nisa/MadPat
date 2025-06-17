@@ -1,3 +1,10 @@
+<?php
+$jumlah = isset($_GET['jumlah']) ? intval($_GET['jumlah']) : 1;
+$halaman = isset($_GET['halaman']) ? intval($_GET['halaman']) : 1;
+$max = max(1, $jumlah);
+$halaman = max(1, min($halaman, $max));
+$currentStep = $halaman - 1; // Adjust for 0-based indexing in JavaScript
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -225,7 +232,7 @@
 
     .button-group {
       display: flex;
-      justify-content: flex-end; /* Move buttons to the right */
+      justify-content: flex-end;
       margin-top: 40px;
       margin-bottom: 50px;
     }
@@ -241,7 +248,7 @@
       font-weight: bold;
       transition: background-color 0.3s;
       min-width: 120px;
-      margin-left: 10px; /* Space between buttons */
+      margin-left: 10px;
     }
 
     .btn:hover {
@@ -284,11 +291,11 @@
       }
 
       .button-group {
-        justify-content: center; /* Center buttons on mobile */
+        justify-content: center;
       }
 
       .btn {
-        margin-left: 0; /* Remove margin on mobile for stacked buttons */
+        margin-left: 0;
         width: 100%;
       }
     }
@@ -296,22 +303,18 @@
 </head>
 <body>
 <div class="container">
-  <div class="close-button" onclick="alert('Form ditutup')">×</div>
+  <div class="close-button" onclick="window.location='index.php'">×</div>
   <div class="progress-section">
     <h3>Lembar Pengajuan</h3>
     <div id="stepsContainer"></div>
   </div>
 
   <div class="form-container">
-    <h2>Formulir Pengajuan Sampel</h2>
-    <form id="formPengajuan" action="#" method="POST">
-      <div class="form-group">
-        <label for="jumlahPengajuan">Jumlah Pengajuan</label>
-        <input type="number" id="jumlahPengajuan" name="jumlahPengajuan" min="1" max="10" required />
-      </div>
-
+    <h2>Formulir Pengajuan Sampel <span id="currentStepDisplay"></span></h2>
+    <form id="formPengajuan" action="formPengajuan.php" method="get">
+      <input type="hidden" name="jumlah" value="<?= $jumlah ?>">
+      <input type="hidden" name="halaman" id="halaman" value="<?= $halaman ?>">
       <div id="formPagesContainer"></div>
-
       <div class="button-group" id="navigationButtons"></div>
     </form>
   </div>
@@ -319,14 +322,14 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    const inputJumlah = document.getElementById('jumlahPengajuan');
     const stepsContainer = document.getElementById('stepsContainer');
     const formPagesContainer = document.getElementById('formPagesContainer');
     const navigationButtons = document.getElementById('navigationButtons');
     const form = document.getElementById('formPengajuan');
-
-    let currentStep = 0;
-    let totalSteps = 1;
+    const currentStepDisplay = document.getElementById('currentStepDisplay');
+    const halamanInput = document.getElementById('halaman');
+    const totalSteps = <?= $jumlah ?>;
+    let currentStep = <?= $currentStep ?>;
 
     const validateForm = () => {
       const currentPage = document.querySelector(`.form-page[data-index="${currentStep}"]`);
@@ -336,13 +339,12 @@
       requiredFields.forEach(field => {
         if (!field.value.trim()) {
           isValid = false;
-          field.style.borderColor = 'red'; // Highlight empty required fields
+          field.style.borderColor = 'red';
         } else {
-          field.style.borderColor = 'var(--green1)'; // Reset border color
+          field.style.borderColor = 'var(--green1)';
         }
       });
 
-      // Check radio buttons
       const radioGroups = currentPage.querySelectorAll('input[type="radio"][required]');
       radioGroups.forEach(radio => {
         const name = radio.name;
@@ -367,7 +369,7 @@
       const page = document.createElement('div');
       page.classList.add('form-page');
       page.dataset.index = index;
-      page.style.display = index === 0 ? 'block' : 'none';
+      page.style.display = index === currentStep ? 'block' : 'none';
 
       page.innerHTML = `
       <div class="form-section-title">Data Dokter</div>
@@ -454,20 +456,20 @@
       <div class="inline-group">
         <div class="form-group">
           <label for="poliklinik_${index}">Poliklinik</label>
-          <input type="text" id="poliklinik_${index}" name="poliklinik_${index}"/>
+          <input type="text" id="poliklinik_${index}" name="poliklinik_${index}" required />
         </div>
         <div class="form-group">
           <label for="klas_${index}">Klas</label>
-          <input type="text" id="klas_${index}" name="klas_${index}"/>
+          <input type="text" id="klas_${index}" name="klas_${index}" required />
         </div>
       </div>
       `;
       return page;
     };
 
-    const renderSteps = (jumlah) => {
+    const renderSteps = () => {
       stepsContainer.innerHTML = '';
-      for (let i = 0; i < jumlah; i++) {
+      for (let i = 0; i < totalSteps; i++) {
         const step = document.createElement('div');
         step.classList.add('step');
 
@@ -490,10 +492,10 @@
 
         step.appendChild(header);
 
-        if (i < jumlah - 1) {
+        if (i < totalSteps - 1) {
           const line = document.createElement('div');
           line.classList.add('step-line');
-          if (i < currentStep - 1) {
+          if (i < currentStep) {
             line.classList.add('active');
           }
           step.appendChild(line);
@@ -545,13 +547,11 @@
     const changeStep = (direction) => {
       const pages = document.querySelectorAll('.form-page');
       pages[currentStep].style.display = 'none';
-      document.querySelectorAll('.step-circle')[currentStep].classList.remove('active');
-
       currentStep += direction;
       pages[currentStep].style.display = 'block';
-      document.querySelectorAll('.step-circle')[currentStep].classList.add('active');
+      halamanInput.value = currentStep + 1;
+      currentStepDisplay.textContent = currentStep + 1;
 
-      // Update completed and active states for all steps
       document.querySelectorAll('.step-circle').forEach((circle, index) => {
         circle.classList.remove('completed', 'active');
         if (index < currentStep) {
@@ -563,7 +563,7 @@
 
       document.querySelectorAll('.step-line').forEach((line, index) => {
         line.classList.remove('active');
-        if (index < currentStep - 1) {
+        if (index < currentStep) {
           line.classList.add('active');
         }
       });
@@ -571,23 +571,12 @@
       updateNavigationButtons();
     };
 
-    inputJumlah.addEventListener('input', function () {
-      const jumlah = parseInt(this.value);
-      if (jumlah > 0 && jumlah <= 10) {
-        totalSteps = jumlah;
-        currentStep = 0;
-        formPagesContainer.innerHTML = '';
-        for (let i = 0; i < jumlah; i++) {
-          formPagesContainer.appendChild(createFormPage(i));
-        }
-        renderSteps(jumlah);
-        updateNavigationButtons();
-      }
-    });
-
-    // Initialize with one step
-    formPagesContainer.appendChild(createFormPage(0));
-    renderSteps(1);
+    // Initialize form pages
+    for (let i = 0; i < totalSteps; i++) {
+      formPagesContainer.appendChild(createFormPage(i));
+    }
+    renderSteps();
+    currentStepDisplay.textContent = currentStep + 1;
     updateNavigationButtons();
   });
 </script>
