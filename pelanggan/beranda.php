@@ -6,12 +6,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Beranda</title>
-    <!-- ======= Styles ====== -->
     <style>
-        /* =========== Google Fonts ============ */
 @import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap");
 
-/* =============== Globals ============== */
+
 * {
   font-family: "Ubuntu", sans-serif;
   margin: 0;
@@ -20,185 +18,191 @@
 }
 
 :root {
-  --green:#009688;
+  --green1: rgba(20, 116, 114, 1);
+  --green2: rgba(3, 178, 176, 1);
+  --green3: rgba(186, 231, 228, 1);
+  --green4: rgba(12, 109, 108, 0.61);
+  --green5: rgba(3, 178, 176, 0.29);
+  --green6: rgba(240, 243, 243, 1);
+  --green7: rgba(228, 240, 240, 1);
+  --green8: rgba(136, 181, 181, 0.26);
   --white: #fff;
   --gray: #f5f5f5;
   --black1: #222;
   --black2: #999;
+  --black3: rgba(0, 0, 0, 0.4);
 }
 
 body {
-  min-height: 100vh;
-  overflow-x: hidden;
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
 .container {
-  position: relative;
-  width: 100%;
+    position: relative;
+    width: 100%;
 }
 
-/* =============== Navigation ================ */
 .navigation {
-  position: fixed;
-  width: 230px;
-  height: 100%;
-  background: var(--green);
-  border-left: 10px solid var(--green);
-  transition: 0.5s;
-  overflow: hidden;
+    position: fixed;
+    width: 230px;
+    height: 100%;
+    background: var(--green2);
+    border-left: 10px solid var(--green2);
+    transition: 0.5s;
+    overflow: hidden;
+    z-index: 1000
 }
+
 .navigation.active {
-  width: 80px;
+    width: 80px;
 }
 
 .navigation ul {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
+    position: absolute;
+    top: 0px;
+    left: 0;
+    width: 100%;
 }
 
 .navigation ul li {
-  position: relative;
-  width: 100%;
-  list-style: none;
-  border-top-left-radius: 20px;
-  border-bottom-left-radius: 20px;
+    position: relative;
+    width: 100%;
+    list-style: none;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
 }
 
 .navigation ul li:hover,
 .navigation ul li.hovered {
-  background-color: var(--white);
+    background-color: var(--white);
 }
 
 .navigation ul li:nth-child(1) {
-  margin-bottom: 40px;
-  pointer-events: none;
+    margin-bottom: -30px;
+    pointer-events: none;
 }
 
 .navigation ul li a {
-  position: relative;
-  display: block;
-  width: 100%;
-  display: flex;
-  text-decoration: none;
-  color: var(--white);
+    position: relative;
+    display: block;
+    width: 100%;
+    display: flex;
+    text-decoration: none;
+    color: var(--white);
 }
 .navigation ul li:hover a,
 .navigation ul li.hovered a {
-  color: var(--green);
+    color: var(--green2);
 }
 
 .navigation ul li a .icon {
-  position: relative;
-  display: block;
-  min-width: 60px;
-  height: 60px;
-  line-height: 75px;
-  text-align: center;
+    position: relative;
+    display: block;
+    min-width: 60px;
+    height: 60px;
+    line-height: 75px;
+    text-align: center;
 }
 
 .navigation ul li.signout {
-  position: absolute;
-  bottom: -300px;
-  width: 100%;
+    position: absolute;
+    bottom: -150px;
+    width: 100%;
 }
 
 .navigation ul li.signout:hover,
 .navigation ul li.signout.hovered {
-  background-color: var(--white);
+    background-color: var(--white);
 }
 
 .navigation ul li.signout a {
-  position: relative;
-  display: block;
-  width: 100%;
-  display: flex;
-  text-decoration: none;
-  color: var(--white);
+    position: relative;
+    display: block;
+    width: 100%;
+    display: flex;
+    text-decoration: none;
+    color: var(--white);
 }
 
 .navigation ul li.signout:hover a {
-  color: var(--green);
+    color: var(--green2);
 }
 
 .navigation ul li.signout a .icon {
-  position: relative;
-  display: block;
-  min-width: 60px;
-  height: 60px;
-  line-height: 75px;
-  text-align: center;
+    position: relative;
+    display: block;
+    min-width: 60px;
+    height: 60px;
+    line-height: 75px;
+    text-align: center;
 }
 
 .navigation ul li.signout a .icon ion-icon {
-  font-size: 1.75rem;
+    font-size: 1.75rem;
 }
 
 .navigation ul li.signout a .title {
-  font-size: 16px;
-  color: black;
-  white-space: nowrap;
+    font-size: 16px;
+    color: black;
+    white-space: nowrap;
 }
 
 .navigation ul li a .icon ion-icon {
-  font-size: 1.75rem;
+    font-size: 1.75rem;
 }
 
 .navigation ul li a .title-logo {
-  position: relative;
-  display: block;
-  font: Poppins;
-  font-size: 22px; 
-  color: black; 
-  padding: 0 10px;
-  height: 230px;
-  line-height: 70px;
-  text-align: start;
-  white-space: nowrap;
+    position: relative;
+    display: block;
+    font-family: 'Poppins', sans-serif;
+    font-size: 22px; 
+    color: black; 
+    padding: 0 10px;
+    height: 230px;
+    line-height: 70px;
+    text-align: start;
+    white-space: nowrap;
 }
-
 
 .navigation ul li a .title {
-  position: relative;
-  display: block;
-  font: Poppins;
-  color: black; 
-  padding: 0 10px;
-  height: 70px;
-  line-height: 60px;
-  text-align: start;
-  white-space: nowrap;
+    position: relative;
+    display: block;
+    font-family: 'Poppins', sans-serif;
+    color: black; 
+    padding: 0 10px;
+    height: 70px;
+    line-height: 60px;
+    text-align: start;
+    white-space: nowrap;
 }
 
-/* --------- curve outside ---------- */
 .navigation ul li:hover a::before,
 .navigation ul li.hovered a::before {
-  content: "";
-  position: absolute;
-  right: 0;
-  top: -50px;
-  width: 50px;
-  height: 50px;
-  background-color: transparent;
-  border-radius: 50%;
-  box-shadow: 35px 35px 0 10px var(--white);
-  pointer-events: none;
+    content: "";
+    position: absolute;
+    right: 0;
+    top: -50px;
+    width: 50px;
+    height: 50px;
+    background-color: transparent;
+    border-radius: 50%;
+    box-shadow: 35px 35px 0 10px var(--white);
+    pointer-events: none;
 }
 .navigation ul li:hover a::after,
 .navigation ul li.hovered a::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  bottom: -50px;
-  width: 50px;
-  height: 50px;
-  background-color: transparent;
-  border-radius: 50%;
-  box-shadow: 35px -35px 0 10px var(--white);
-  pointer-events: none;
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: -50px;
+    width: 50px;
+    height: 50px;
+    background-color: transparent;
+    border-radius: 50%;
+    box-shadow: 35px -35px 0 10px var(--white);
+    pointer-events: none;
 }
-
 /* ===================== Main ===================== */
 .main {
   position: absolute;
@@ -542,13 +546,12 @@ body {
 </head>
 
 <body>
-    <!-- =============== Navigation ================ -->
     <div class="container">
         <div class="navigation">
             <ul>
                 <li>
-                    <a href="#">
-                         <span class="icon">
+                    <a href="beranda.php">
+                        <span class="icon">
                             <img src="../assets/microscope.png" alt="logo">
                         </span>
                         <span class="title-logo">MedPath</span>
@@ -556,7 +559,7 @@ body {
                 </li>
 
                 <li>
-                    <a href="#">
+                    <a href="beranda.php">
                         <span class="icon">
                             <img src="../assets/dashboard.png" alt="dashboard">
                         </span>
@@ -565,15 +568,42 @@ body {
                 </li>
 
                 <li>
-                    <a href="#">
+                    <a href="pengajuan/pages/pengajuan.php">
                         <span class="icon">
-                            <img src="../assets/sample.png" alt="sample">
+                            <img src="../assets/pengajuan.png" alt="pengajuan">
                         </span>
-                        <span class="title">Pengujian</span>
+                        <span class="title">Pengajuan</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="pengambilan/pages/pengambilan.php">
+                        <span class="icon">
+                            <img src="../assets/pengambilan.png" alt="pengambilan">
+                        </span>
+                        <span class="title">Pengambilan</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="prosesUji/pages/pengujian.php">
+                        <span class="icon">
+                            <img src="../assets/prosesuji.png" alt="prosesuji">
+                        </span>
+                        <span class="title">Proses Uji</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="prosesUji/pages/riwayat.php">
+                        <span class="icon">
+                            <img src="../assets/riwayat.png" alt="riwayat">
+                        </span>
+                        <span class="title">Riwayat Uji</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="pembayaran/pages/pembayaran.php">
                         <span class="icon">
                             <img src="../assets/money.png" alt="money">
                         </span>
@@ -582,7 +612,7 @@ body {
                 </li>
 
                 <li>
-                    <a href="#">
+                    <a href="pengaturan/pages/pengaturan.php">
                         <span class="icon">
                             <img src="../assets/setting.png" alt="setting">
                         </span>
@@ -590,10 +620,10 @@ body {
                     </a>
                 </li>
 
-                <li class = "signout">
-                    <a href="#">
+                <li class="signout">
+                    <a href="../signout">
                         <span class="icon">
-                            <ion-icon name="log-out-outline" style = "color: black"></ion-icon>
+                            <ion-icon name="log-out-outline" style="color: black"></ion-icon>
                         </span>
                         <span class="title">Sign Out</span>
                     </a>

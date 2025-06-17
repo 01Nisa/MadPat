@@ -3,7 +3,7 @@ $jumlah = isset($_GET['jumlah']) ? intval($_GET['jumlah']) : 1;
 $halaman = isset($_GET['halaman']) ? intval($_GET['halaman']) : 1;
 $max = max(1, $jumlah);
 $halaman = max(1, min($halaman, $max));
-$currentStep = $halaman - 1; // Adjust for 0-based indexing in JavaScript
+$currentStep = $halaman - 1;
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -22,8 +22,8 @@ $currentStep = $halaman - 1; // Adjust for 0-based indexing in JavaScript
       margin: 0;
       height: 100vh;
       display: flex;
-      justify-content: center; 
-      align-items: center;   
+      justify-content: center;
+      align-items: center;
     }
 
     :root {
@@ -54,13 +54,13 @@ $currentStep = $halaman - 1; // Adjust for 0-based indexing in JavaScript
       right: 20px;
       font-size: 24px;
       font-weight: bold;
-      color: #333;
+      color: var(--green1);
       cursor: pointer;
       transition: color 0.3s;
     }
 
     .close-button:hover {
-      color: red;
+      color: var(--green5);
     }
 
     .progress-section {
@@ -73,14 +73,15 @@ $currentStep = $halaman - 1; // Adjust for 0-based indexing in JavaScript
       background-color: var(--green5);
       display: flex;
       flex-direction: column;
-      align-items: center; 
-      justify-content: flex-start; 
+      align-items: center;
+      justify-content: flex-start;
     }
 
     .progress-section h3 {
       margin-top: 30px;
       margin-bottom: 20px;
       color: black;
+      font-size: 1.2em;
       text-align: center;
     }
 
@@ -120,7 +121,7 @@ $currentStep = $halaman - 1; // Adjust for 0-based indexing in JavaScript
     }
 
     .step-circle.completed::before {
-      content: "✔";
+      content: "✓";
       font-size: 1em;
     }
 
@@ -133,7 +134,7 @@ $currentStep = $halaman - 1; // Adjust for 0-based indexing in JavaScript
       width: 2px;
       height: 40px;
       background-color: #b0bec5;
-      margin: 10px 0 0 -65px; 
+      margin: 10px 0 0 -65px;
       transition: background-color 0.3s;
     }
 
@@ -161,9 +162,10 @@ $currentStep = $halaman - 1; // Adjust for 0-based indexing in JavaScript
     }
 
     .form-container h2 {
-      text-align: center;
+      text-align: left;
       color: var(--green2);
       margin-bottom: 20px;
+      font-size: 1.5em;
     }
 
     .form-section-title {
@@ -179,11 +181,12 @@ $currentStep = $halaman - 1; // Adjust for 0-based indexing in JavaScript
       font-weight: bold;
       margin-top: 16px;
       margin-bottom: 2px;
+      font-size: 0.9em;
     }
 
     .form-note-green {
       color: var(--green1);
-      font-size: 15px;
+      font-size: 0.9em;
       margin-top: 4px;
     }
 
@@ -200,6 +203,22 @@ $currentStep = $halaman - 1; // Adjust for 0-based indexing in JavaScript
       font-size: 16px;
     }
 
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .checkbox-group label {
+      margin: 0;
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.9em;
+      color: #333;
+      font-weight: 500;
+    }
+
     input[type="text"],
     input[type="email"],
     input[type="number"],
@@ -212,6 +231,11 @@ $currentStep = $halaman - 1; // Adjust for 0-based indexing in JavaScript
       border-radius: 8px;
       background-color: white;
       transition: border-color 0.3s, background-color 0.3s;
+      font-size: 0.9em;
+    }
+
+    input[type="checkbox"] {
+      margin-right: 5px;
     }
 
     input:hover,
@@ -244,7 +268,7 @@ $currentStep = $halaman - 1; // Adjust for 0-based indexing in JavaScript
       padding: 12px 20px;
       border-radius: 8px;
       cursor: pointer;
-      font-size: 16px;
+      font-size: 0.9em;
       font-weight: bold;
       transition: background-color 0.3s;
       min-width: 120px;
@@ -298,20 +322,24 @@ $currentStep = $halaman - 1; // Adjust for 0-based indexing in JavaScript
         margin-left: 0;
         width: 100%;
       }
+
+      .checkbox-group {
+        flex-direction: column;
+      }
     }
   </style>
 </head>
 <body>
 <div class="container">
-  <div class="close-button" onclick="window.location='index.php'">×</div>
+  <div class="close-button" onclick="window.location='pengajuan.php'">×</div>
   <div class="progress-section">
     <h3>Lembar Pengajuan</h3>
     <div id="stepsContainer"></div>
   </div>
 
   <div class="form-container">
-    <h2>Formulir Pengajuan Sampel <span id="currentStepDisplay"></span></h2>
-    <form id="formPengajuan" action="formPengajuan.php" method="get">
+    <h2>Formulir Pengujian Sitologi Ginekologi <span id="currentStepDisplay"></span></h2>
+    <form id="formPengajuan" action="../process/proSitologiGinekologi.php" method="post">
       <input type="hidden" name="jumlah" value="<?= $jumlah ?>">
       <input type="hidden" name="halaman" id="halaman" value="<?= $halaman ?>">
       <div id="formPagesContainer"></div>
@@ -319,6 +347,10 @@ $currentStep = $halaman - 1; // Adjust for 0-based indexing in JavaScript
     </form>
   </div>
 </div>
+
+<noscript>
+  <p style="color: red; text-align: center;">JavaScript diperlukan untuk mengisi formulir ini. Aktifkan JavaScript di browser Anda.</p>
+</noscript>
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
@@ -333,24 +365,26 @@ $currentStep = $halaman - 1; // Adjust for 0-based indexing in JavaScript
 
     const validateForm = () => {
       const currentPage = document.querySelector(`.form-page[data-index="${currentStep}"]`);
-      const requiredFields = currentPage.querySelectorAll('input[required], textarea[required], select[required]');
       let isValid = true;
+      let missingFields = [];
 
+      const requiredFields = currentPage.querySelectorAll('input[required], textarea[required], select[required]');
       requiredFields.forEach(field => {
         if (!field.value.trim()) {
           isValid = false;
+          missingFields.push(field.name);
           field.style.borderColor = 'red';
         } else {
           field.style.borderColor = 'var(--green1)';
         }
       });
 
-      const radioGroups = currentPage.querySelectorAll('input[type="radio"][required]');
-      radioGroups.forEach(radio => {
-        const name = radio.name;
+      const radioNames = ['jk_' + currentStep, 'patologi_' + currentStep];
+      radioNames.forEach(name => {
         const checked = currentPage.querySelector(`input[name="${name}"]:checked`);
         if (!checked) {
           isValid = false;
+          missingFields.push(name);
           const radioInputs = currentPage.querySelectorAll(`input[name="${name}"]`);
           radioInputs.forEach(r => r.parentElement.style.color = 'red');
         } else {
@@ -360,7 +394,8 @@ $currentStep = $halaman - 1; // Adjust for 0-based indexing in JavaScript
       });
 
       if (!isValid) {
-        alert('Mohon isi semua kolom yang wajib diisi sebelum melanjutkan.');
+        console.log('Missing required fields:', missingFields);
+        alert('Mohon isi semua kolom yang wajib diisi sebelum melanjutkan: ' + missingFields.join(', '));
       }
       return isValid;
     };
@@ -390,15 +425,17 @@ $currentStep = $halaman - 1; // Adjust for 0-based indexing in JavaScript
         </div>
         <div class="form-group">
           <label for="usia_${index}">Usia</label>
-          <input type="number" id="usia_${index}" name="usia_${index}" required />
+          <input type="number" id="usia_${index}" name="usia_${index}" min="1" required />
         </div>
       </div>
 
       <div class="inline-group">
         <div class="form-group">
           <label for="jk_${index}">Jenis Kelamin</label>
-          <input type="radio" name="jk_${index}" value="perempuan" required /> Perempuan
-          <input type="radio" name="jk_${index}" value="laki-laki" required /> Laki-laki
+          <div class="checkbox-group">
+            <input type="radio" name="jk_${index}" value="perempuan" required /> <label>Perempuan</label>
+            <input type="radio" name="jk_${index}" value="laki-laki" /> <label>Laki-laki</label>
+          </div>
         </div>
         <div class="form-group">
           <label for="negara_${index}">Negara</label>
@@ -411,57 +448,174 @@ $currentStep = $halaman - 1; // Adjust for 0-based indexing in JavaScript
         <textarea name="alamat_${index}" id="alamat_${index}" required></textarea>
       </div>
 
-      <div class="form-section-title">Pemeriksaan Jaringan Tubuh</div>
+      <div class="form-section-title">Keterangan Sampel</div>
       <div class="form-group">
-        <label for="asal_${index}">Berasal dari</label>
-        <input type="text" id="asal_${index}" name="asal_${index}" required />
-      </div>
-      <div class="form-group">
-        <label for="perendaman_${index}">Direndam dalam</label>
-        <div class="form-note-green">Umumnya digunakan formalin 10%</div>
-        <input type="text" id="perendaman_${index}" name="perendaman_${index}" required />
-      </div>
-      <div class="form-group">
-        <label for="diagKlinik_${index}">Diagnosis Klinik</label>
-        <textarea name="diagKlinik_${index}" id="diagKlinik_${index}" required></textarea>
-      </div>
-
-      <div class="form-section-title">Penyakit Pasien</div>
-      <div class="form-group">
-        <label for="keterangan_${index}">Keterangan penyakit pasien</label>
-        <div class="form-note-green">Jika mengirimkan kerokan rahim, hendaknya disebutkan tanggal haid terakhir</div>
-        <textarea name="keterangan_${index}" id="keterangan_${index}" required></textarea>
+        <label for="bahan_${index}">Bahan tersedia</label>
+        <div class="checkbox-group">
+          <input type="checkbox" id="endometrium_${index}" name="bahan_${index}[]" value="endometrium" />
+          <label for="endometrium_${index}">Endometrium</label>
+          <input type="checkbox" id="endoservix_${index}" name="bahan_${index}[]" value="endoservix" />
+          <label for="endoservix_${index}">Endoservix</label>
+          <input type="checkbox" id="cervix_${index}" name="bahan_${index}[]" value="cervix" />
+          <label for="cervix_${index}">Cervix</label>
+          <input type="checkbox" id="fornik_${index}" name="bahan_${index}[]" value="fornik" />
+          <label for="fornik_${index}">Fornik</label>
+          <input type="checkbox" id="vagina_${index}" name="bahan_${index}[]" value="vagina" />
+          <label for="vagina_${index}">Vagina</label>
+          <input type="checkbox" id="lainnya_${index}" name="bahan_${index}[]" value="lainnya" />
+          <label for="lainnya_${index}">Lainnya</label>
+        </div>
       </div>
 
       <div class="form-group">
-        <label for="patologi_${index}">Pemeriksaan Patologi</label>
-        <input type="radio" name="patologi_${index}" value="sudah" required /> Sudah
-        <input type="radio" name="patologi_${index}" value="belum" required /> Belum
-      </div>
-
-      <div class="form-note-red">Data di bawah ini diisi ketika sudah dilakukan pemeriksaan patologi</div>
-      <div class="form-group">
-        <label for="noPemeriksa_${index}">Nomor Pemeriksaan</label>
-        <input type="text" id="noPemeriksa_${index}" name="noPemeriksa_${index}" />
-      </div>
-      <div class="form-group">
-        <label for="tglPeriksa_${index}">Tanggal Pemeriksaan</label>
-        <input type="date" id="tglPeriksa_${index}" name="tglPeriksa_${index}" />
-      </div>
-      <div class="form-group">
-        <label for="diagPeriksa_${index}">Diagnosis Pemeriksaan</label>
-        <textarea name="diagPeriksa_${index}" id="diagPeriksa_${index}"></textarea>
+        <label for="diambil_${index}">Diambil dengan</label>
+        <div class="checkbox-group">
+          <input type="checkbox" id="yScaper_${index}" name="diambil_${index}[]" value="Y.Scaper" />
+          <label for="yScaper_${index}">Y.Scaper</label>
+          <input type="checkbox" id="spatel_${index}" name="diambil_${index}[]" value="spatel" />
+          <label for="spatel_${index}">Spatel</label>
+          <input type="checkbox" id="lidiKapas_${index}" name="diambil_${index}[]" value="lidiKapas" />
+          <label for="lidiKapas_${index}">Lidi Kapas</label>
+          <input type="checkbox" id="sarungTangan_${index}" name="diambil_${index}[]" value="sarungTangan" />
+          <label for="sarungTangan_${index}">Sarung Tangan</label>
+          <input type="checkbox" id="aspirasi_${index}" name="diambil_${index}[]" value="aspirasi" />
+          <label for="aspirasi_${index}">Aspirasi</label>
+          <input type="checkbox" id="lainnya_${index}" name="diambil_${index}[]" value="lainnya" />
+          <label for="lainnya_${index}">Lainnya</label>
+        </div>
       </div>
 
       <div class="inline-group">
         <div class="form-group">
-          <label for="poliklinik_${index}">Poliklinik</label>
-          <input type="text" id="poliklinik_${index}" name="poliklinik_${index}" required />
+          <label for="jumlahSampel_${index}">Jumlah sampel dikirim</label>
+          <input type="number" id="jumlahSampel_${index}" name="jumlahSampel_${index}" required />
         </div>
         <div class="form-group">
-          <label for="klas_${index}">Klas</label>
-          <input type="text" id="klas_${index}" name="klas_${index}" required />
+          <label for="jenis_${index}">Jenis Preparat</label>
+          <div class="checkbox-group">
+            <input type="radio" name="jenis_${index}" value="basah" required /> <label>Basah</label>
+            <input type="radio" name="jenis_${index}" value="kering" /> <label>Kering</label>
+          </div>
         </div>
+      </div>
+
+      <div class="form-group">
+        <label for="perendaman_${index}">Fiksasi</label>
+        <div class="form-note-green">Ketentuan fiksasi:</div>
+        <div class="form-note-green">1. Preparat apus, dipakai alkohol 95% atau alkohol arther aa rata-rata selama 2 jam</div>
+        <div class="form-note-green">2. Cairan, dipakai alcohol 50% dengan cairannya</div>
+        <div class="checkbox-group">
+          <input type="checkbox" id="alkohol95%_${index}" name="perendaman_${index}[]" value="alkohol95%" />
+          <label for="alkohol95%_${index}">Alkohol 95%</label>
+          <input type="checkbox" id="alkoholAetherAA_${index}" name="perendaman_${index}[]" value="alkoholAetherAA" />
+          <label for="alkoholAetherAA_${index}">Alkohol aether aa</label>
+          <input type="checkbox" id="lainnya_${index}" name="perendaman_${index}[]" value="lainnya" />
+          <label for="lainnya_${index}">Lainnya</label>
+        </div>
+      </div>
+
+      <div class="form-section-title">Keterangan Klinik</div>
+      <div class="form-group">
+        <label for="statusDiri_${index}">Status</label>
+        <div class="checkbox-group">
+          <input type="checkbox" id="belumKawin_${index}" name="statusDiri_${index}[]" value="belumKawin" />
+          <label for="belumKawin_${index}">Belum kawin</label>
+          <input type="checkbox" id="kawin_${index}" name="statusDiri_${index}[]" value="kawin" />
+          <label for="kawin_${index}">Kawin</label>
+          <input type="checkbox" id="lainnya_${index}" name="statusDiri_${index}[]" value="lainnya" />
+          <label for="lainnya_${index}">Lainnya</label>
+        </div>
+      </div>
+
+      <div class="inline-group">
+        <div class="form-group">
+          <label for="jumlahAnak_${index}">Jumlah anak</label>
+          <input type="number" id="jumlahAnak_${index}" name="jumlahAnak_${index}"/>
+        </div>
+        <div class="form-group">
+          <label for="kontrasepsi_${index}">Status</label>
+          <div class="checkbox-group">
+            <input type="checkbox" id="iud_${index}" name="kontrasepsi_${index}[]" value="iud" />
+            <label for="iud_${index}">IUD</label>
+            <input type="checkbox" id="pil_${index}" name="kontrasepsi_${index}[]" value="pil" />
+            <label for="pil_${index}">Pil</label>
+            <input type="checkbox" id="suntik_${index}" name="kontrasepsi_${index}[]" value="suntik" />
+            <label for="suntik_${index}">Suntikan</label>
+            <input type="checkbox" id="lainnya_${index}" name="kontrasepsi_${index}[]" value="lainnya" />
+            <label for="lainnya_${index}">Lainnya</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="keluhan_${index}">Keluhan</label>
+        <div class="checkbox-group">
+          <input type="checkbox" id="fluor_${index}" name="keluhan_${index}[]" value="fluor" />
+          <label for="fluor_${index}">Fluor</label>
+          <input type="checkbox" id="gatal_${index}" name="keluhan_${index}[]" value="gatal" />
+          <label for="gatal_${index}">Gatal</label>
+          <input type="checkbox" id="pendarahan_${index}" name="keluhan_${index}[]" value="pendarahanVagina" />
+          <label for="pendarahan_${index}">Pendarahan vagina</label>
+          <input type="checkbox" id="contact_${index}" name="keluhan_${index}[]" value="contactBleeding" />
+          <label for="contact_${index}">Contact bleeding</label>
+          <input type="checkbox" id="lainnya_${index}" name="keluhan_${index}[]" value="lainnya" />
+          <label for="lainnya_${index}">Lainnya</label>
+        </div>
+      </div>
+
+      <div class="form-section-title">Pemeriksaan</div>
+      <div class="form-group">
+        <label for="cairanVagina_${index}">Cairan vagina</label>
+        <div class="checkbox-group">
+          <input type="checkbox" id="putih_${index}" name="cairanVagina_${index}[]" value="putih" />
+          <label for="putih_${index}">Putih</label>
+          <input type="checkbox" id="coklat_${index}" name="cairanVagina_${index}[]" value="coklat" />
+          <label for="coklat_${index}">Coklat</label>
+          <input type="checkbox" id="kuning_${index}" name="cairanVagina_${index}[]" value="kuning" />
+          <label for="kuning_${index}">Kuning</label>
+          <input type="checkbox" id="berdarah_${index}" name="cairanVagina_${index}[]" value="berdarah" />
+          <label for="berdarah_${index}">Berdarah</label>
+          <input type="checkbox" id="berbau_${index}" name="cairanVagina_${index}[]" value="berbau" />
+          <label for="berbau_${index}">Berbau</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="keadaanServix_${index}">Keadaan servix</label>
+        <div class="checkbox-group">
+          <input type="checkbox" id="tenang_${index}" name="keadaanServix_${index}[]" value="tenang" />
+          <label for="tenang_${index}">Tenang</label>
+          <input type="checkbox" id="erosi_${index}" name="keadaanServix_${index}[]" value="erosi" />
+          <label for="erosi_${index}">Erosi</label>
+          <input type="checkbox" id="mencurigakan_${index}" name="keadaanServix_${index}[]" value="mencurigakan" />
+          <label for="mencurigakan_${index}">Mencurigakan</label>
+          <input type="checkbox" id="keganasan_${index}" name="keadaanServix_${index}[]" value="keganasan" />
+          <label for="keganasan_${index}">Keganasan</label>
+        </div>
+      </div>
+
+      <div class="inline-group">
+        <div class="form-group">
+          <label for="sitologi_${index}">Pemeriksaan Sitologi</label>
+          <div class="checkbox-group">
+            <input type="radio" name="sitologi_${index}" value="baru" required /> <label>Baru</label>
+            <input type="radio" name="sitologi_${index}" value="ulangan" /> <label>Ulangan</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="noPemeriksa_${index}">Nomor Pemeriksaan</label>
+          <input type="text" id="noPemeriksa_${index}" name="noPemeriksa_${index}" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="diagKlinik_${index}">Diagnosis Klinik</label>
+        <textarea name="diagKlinik_${index}" id="diagKlinik_${index}"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="keterangan_${index}">Keterangan penyakit pasien</label>
+        <textarea name="keterangan_${index}" id="keterangan_${index}"></textarea>
       </div>
       `;
       return page;
