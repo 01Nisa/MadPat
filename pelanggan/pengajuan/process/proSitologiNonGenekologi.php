@@ -15,7 +15,6 @@ $tahun = date('Y');
 
 try {
     for ($i = 0; $i < $jumlah; $i++) {
-        // Data pelanggan
         $nama_pasien = $_POST["namaPasien_$i"] ?? '';
         $usia = isset($_POST["usia_$i"]) ? intval($_POST["usia_$i"]) : 0;
         $jenis_kelamin = $_POST["jk_$i"] ?? '';
@@ -43,7 +42,6 @@ try {
         $id_pelanggan = $connect->insert_id;
         $stmt_pelanggan->close();
 
-        // Data pengajuan sitologi non ginekologi
         $nama_dokter = $_POST["namaDokter_$i"] ?? '';
         $alamat_rs = $_POST["rs_$i"] ?? '';
         $bahan_tersedia = isset($_POST["bahan_$i"]) && is_array($_POST["bahan_$i"]) ? implode(",", $_POST["bahan_$i"]) : '';
@@ -64,7 +62,7 @@ try {
         $status_tindakan = $_POST["statusTindakan_$i"] ?? '';
         $diagnosis_klinik = $_POST["diagKlinik_$i"] ?? '';
         $keterangan_penyakit = $_POST["keterangan_$i"] ?? '';
-        $tanggal_pengajuan = date('Y-m-d'); // Sesuai dengan format date
+        $tanggal_pengajuan = date('Y-m-d'); 
 
         $missing_pengajuan = [];
         if (empty($nama_dokter)) $missing_pengajuan[] = "nama_dokter";
@@ -78,7 +76,6 @@ try {
             throw new Exception("Missing required submission fields for submission " . ($i + 1) . ": " . implode(", ", $missing_pengajuan));
         }
 
-        // Hitung urutan berdasarkan jumlah pengajuan di tahun ini
         $stmt_count = $connect->prepare("SELECT COUNT(*) FROM pengajuan WHERE YEAR(tanggal_pengajuan) = ?");
         $stmt_count->bind_param("i", $tahun);
         $stmt_count->execute();
@@ -100,7 +97,7 @@ try {
         }
         $status = 'Menunggu Verifikasi';
         $stmt_sitologiNon->bind_param(
-            "sisssissssssssssssssss",
+            "sisssisssssissssssssssss",
             $id_pengajuan, $id_pelanggan, $nama_dokter, $alamat_rs, $bahan_tersedia, $jumlah_sampel,
             $jenis_preparat, $fiksasi, $pemeriksaan_sitologi, $nomor_pemeriksaan, $jumlah_rokok,
             $lain, $tumor, $kelenjar_regional, $jenis_lesi, $asal_lesi, $metastasis, $ro_foto,
