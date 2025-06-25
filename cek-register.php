@@ -20,14 +20,10 @@
         $connect->begin_transaction();
 
         try {
-            $stmtUsers = $connect->prepare("INSERT INTO users (nama, alamat, nomortlp) VALUES (?, ?, ?)");
-            $stmtUsers->bind_param("sss", $name, $alamat, $nomortlp);
+            $stmtUsers = $connect->prepare("INSERT INTO pengguna (email, password, nama, alamat, nomortlp) VALUES (?, ?, ?, ?, ?)");
+            $stmtUsers->bind_param("sssss", $email, $plainPassword, $name, $alamat, $nomortlp);
             $stmtUsers->execute();
-
-            $stmtLogin = $connect->prepare("INSERT INTO login (email, password) VALUES (?, ?)");
-            $stmtLogin->bind_param("ss", $email, $plainPassword);
-            $stmtLogin->execute();
-
+            
             $connect->commit();
 
             echo '<script>

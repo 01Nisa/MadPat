@@ -17,20 +17,19 @@
         }
 
         :root {
-          --green1: rgba(20, 116, 114, 1);
-          --green2: rgba(3, 178, 176, 1);
-          --green3: rgba(186, 231, 228, 1);
-          --green4: rgba(12, 109, 108, 0.61);
-          --green5: rgba(3, 178, 176, 0.29);
-          --green6: rgba(240, 243, 243, 1);
-          --green7: rgba(228, 240, 240, 1);
-          --green8: rgba(136, 181, 181, 0.26);
-          --green9: rgba(136, 181, 181, 0.51);
-          --white: #fff;
-          --gray: #f5f5f5;
-          --black1: #222;
-          --black2: #999;
-          --black3: rgba(0, 0, 0, 0.4);
+            --green1: rgba(20, 116, 114, 1);
+            --green2: rgba(3, 178, 176, 1);
+            --green3: rgba(186, 231, 228, 1);
+            --green4: rgba(12, 109, 108, 0.61);
+            --green5: rgba(3, 178, 176, 0.29);
+            --green6: rgba(240, 243, 243, 1);
+            --green7: rgba(228, 240, 240, 1);
+            --green8: rgba(136, 181, 181, 0.26);
+            --white: #fff;
+            --gray: #f5f5f5;
+            --black1: #222;
+            --black2: #999;
+            --black3: rgba(0, 0, 0, 0.4);
         }
 
         body {
@@ -269,99 +268,127 @@
             margin-right: 10px;
         }
 
-        .search-bar {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 20px;
-            justify-content: flex-start;
+        .cardBox {
             position: relative;
-            z-index: 1001;
+            padding-left: 1000px;
+            margin-top: 90px;
+            height: 150px; 
+            overflow: hidden;
         }
 
-        .search-bar input {
-            width: 853px;
-            height: 66px;
-            margin-top: 100px;
-            flex-shrink: 0;
-            border-radius: 10px;
-            padding: 5px 50px 5px 20px;
-            font-size: 16px;
-            outline: none;
-            border: 0px solid var(--black2);
-            background: var(--green7);
-        }
-
-        .search-bar .search-icon {
+        .cardBox .card {
             position: absolute;
-            left: 790px;
-            top: 30%;
-            transform: translateY(-50%);
-            width: 27px;
-            height: 27px;
-            flex-shrink: 0;
-            aspect-ratio: 1/1;
-            margin-top: 85px;
+            top: 0;
+            left: 6px;
+            width: 98%;
+            height: 80%;
+            background: rgba(171, 224, 223, 1);
+            padding: 30px;
+            border-radius: 20px;
+            z-index: 1;
         }
 
-        .filter-card {
-          width: 90px;
-          height: 66px;
-          flex-shrink: 0;
-          margin-top: 100px;
-          background: var(--green7);
-          border-radius: 20px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          z-index: 1001;
-        }
-
-        .filter-card ion-icon {
-            font-size: 1.5rem;
+        .cardBox .card .proses {
+            position: relative;
+            font-weight: 400;
+            font-size: 20px;
+            margin-top: -10px;
             color: var(--black1);
         }
 
-        .tambah-card {
-            width: 280px;
+        .cardBox .step-container {
+            display: flex;
+            align-items: center;
+            margin-right: 900px;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .cardBox .step {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--green1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .cardBox .step.active {
+            background-color: var(--green1);
+            border-color: var(--green1);
+        }
+
+        .cardBox .step.inactive {
+            background-color: transparent;
+        }
+
+        .cardBox .step-line {
+            flex-grow: 1;
+            height: 2px;
+            background-color: var(--green1);
+            width: 100px;
+        }
+
+        .cardBox .step span {
+            position: absolute;
+            bottom: -25px; 
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: var(--black1);
+            white-space: nowrap;
+        }
+
+        .cardBox .pilihan {
+            position: relative;
+            display: flex;
+            gap: 20px;
+            z-index: 2; 
+            margin-top: 30px; 
+            text-align: right;
+        }
+
+        .detail-card, .ajukan-card {
+            width: 262px;
             height: 66px;
             flex-shrink: 0;
             background: var(--green1);
             color: var(--white);
             border: none;
-            border-radius: 20px;
+            border-radius: 25px;
             cursor: pointer;
             font-size: 18px;
             font-weight: 500;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-left: auto;
-            margin-top: 100px;
             z-index: 1001;
+            text-align: center;
+            text-decoration: none; 
+            color: var(--white);
         }
 
-        .tambah-card:hover {
+        .detail-card:hover, .ajukan-card:hover {
             background: var(--green6);
         }
 
-        .tambah-card img {
-            margin-left: -10px;
-            margin-right: 20px;
+        .detail-card img, .ajukan-card img {
             width: 30px;
-            height: 30px;
+            height: 35px;
+            margin-right: 10px; 
         }
 
         .details {
-            padding: 20px;
+            padding: 10px;
             z-index: 1001;
         }
 
         .pengajuan {
             background: var(--green7);
             padding: 20px;
-            border-radius: 15px;
+            border-radius: 10px;
             max-height: 60vh;
             overflow-y: auto;
             z-index: 1001;
@@ -375,7 +402,6 @@
         }
 
         .cardHeader h2 {
-            margin-top: 10px;
             font-weight: 600;
             color: var(--black1);
         }
@@ -431,7 +457,7 @@
             text-align: center;
         }
 
-        .pengajuan .row .status_pengajuan {
+        .pengajuan .row .status {
             padding: 10px 10px;
             border-radius: 15px;
             font-size: 14px;
@@ -439,13 +465,13 @@
             margin-left: 60px;
         }
 
-        .status_pengajuan.verified {
-            background: rgba(138, 242, 150, 1); 
+        .status.verified {
+            background: rgba(138, 242, 150, 1);
             color: var(--black);
         }
 
-        .status_pengajuan.pending {
-            background: rgba(255, 226, 110, 1); 
+        .status.pending {
+            background: rgba(255, 226, 110, 1);
             color: var(--black);
         }
 
@@ -467,14 +493,13 @@
 
         .menu-card {
             position: fixed;
-            top: 40%;
-            right: 90px;
+            top: 55%;
+            right: 330px;
             transform: translateY(-50%);
-            width: 310px;
-            height: 186px;
+            width: 100px;
+            height: 130px;
             background: var(--white);
             padding: 20px;
-            box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
             border-radius: 10px;
             z-index: 1003;
             flex-direction: column;
@@ -492,6 +517,8 @@
             color: var(--black1);
             text-align: left;
             padding: 10px 0;
+            margin-top: 2px;
+            margin-bottom: 2px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -506,10 +533,6 @@
             color: var(--black1);
         }
 
-        .menu-option .plus-icon {
-            font-size: 1.2rem;
-        }
-
         .menu-separator {
             width: 100%;
             height: 1px;
@@ -517,69 +540,19 @@
             margin: 5px 0;
         }
 
-        .jumlah-card {
-            position: fixed;
-            top: 45%;
-            right: 450px;
-            transform: translateY(-50%);
-            width: 235px;
-            height: 125px;
-            background: var(--white);
-            padding: 20px;
-            box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
-            border-radius: 10px;
-            z-index: 1003;
-            flex-direction: column;
-            justify-content: space-around;
-            align-items: left;
-            display: none;
-        }
-
-        .jumlah-card.active {
-            display: flex;
-        }
-
-        .jumlah-card h2 {
-            font-size: 16px;
-            color: var(--black1);
-            margin-left: -10px;
-            margin-top: 3px;
-            margin-bottom: 5px;
-        }
-
-        .jumlah-card .form-group {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .jumlah-card input {
-            width: 214px;
-            height: 25px;
-            padding: 5px 10px;
-            border: 2px solid var(--green1);
-            border-radius: 5px;
-            font-size: 16px;
-            text-align: left;
-        }
-
-        .jumlah-card .btn-submit {
-            width: 48px;
-            height: 27px;
-            padding: 5px 10px;
-            margin: 10px 0 60px 150px;
-            background: var(--green8);
-            color: var(--black);
-            border: none;
-            border-radius: 5px;
+        .close-button {
+            position: absolute;
+            top: 4px;
+            right: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--green1);
             cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
+            transition: color 0.3s;
         }
 
-        .jumlah-card .btn-submit:hover {
-            color: var(--white);
-            background: var(--green1);
+        .close-button:hover {
+            color: var(--green5);
         }
 
         @media (max-width: 991px) {
@@ -606,21 +579,8 @@
             .pengajuan {
                 overflow-x: auto;
             }
-            .search-bar {
-                flex-direction: column;
-                gap: 10px;
-            }
-            .search-bar input, .filter-card, .tambah-card {
-                width: 100%;
-            }
-            .tambah-card {
-                margin-left: 0;
-            }
             .menu-card {
                 right: 10px;
-            }
-            .jumlah-card {
-                left: 10px;
             }
         }
 
@@ -654,9 +614,6 @@
             }
             .user span {
                 display: none;
-            }
-            .search-bar {
-                margin: 10px;
             }
             .menu-card {
                 width: 250px;
@@ -693,7 +650,7 @@
                 </li>
 
                 <li>
-                    <a href="pengajuan.php">
+                    <a href="../../pengajuan/pages/pengajuan.php">
                         <span class="icon">
                             <img src="../../../assets/pengajuan.png" alt="pengajuan">
                         </span>
@@ -711,7 +668,7 @@
                 </li>
 
                 <li>
-                    <a href="../../prosesUji/pages/pengujian.php">
+                    <a href="pengujian.php">
                         <span class="icon">
                             <img src="../../../assets/prosesuji.png" alt="prosesuji">
                         </span>
@@ -720,7 +677,7 @@
                 </li>
 
                 <li>
-                    <a href="../../prosesUji/pages/riwayat.php">
+                    <a href="riwayat.php">
                         <span class="icon">
                             <img src="../../../assets/riwayat.png" alt="riwayat">
                         </span>
@@ -767,26 +724,31 @@
                     <span>RS Indah Permata</span>
                 </div>
             </div>
-
-            <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="Search pengajuan">
-                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="27" height="27" viewBox="0 0 27 27" fill="none">
-                    <g clip-path="url(#clip0_306_10765)">
-                        <path d="M17.1809 0C11.7598 0 7.36172 4.39805 7.36172 9.81914C7.36172 11.5857 7.83633 13.2363 8.64844 14.6707L0 23.3191L1.22871 25.7713L3.68086 27L12.3293 18.3516C13.7584 19.1689 15.4143 19.6383 17.1809 19.6383C22.602 19.6383 27 15.2402 27 9.81914C27 4.39805 22.602 0 17.1809 0ZM17.1809 16.5691C13.4525 16.5691 10.4309 13.5475 10.4309 9.81914C10.4309 6.09082 13.4525 3.06914 17.1809 3.06914C20.9092 3.06914 23.9309 6.09082 23.9309 9.81914C23.9309 13.5475 20.9092 16.5691 17.1809 16.5691Z" fill="black"/>
-                    </g>
-                    <defs>
-                        <clipPath id="clip0_306_10765">
-                            <rect width="27" height="27" fill="white"/>
-                        </clipPath>
-                    </defs>
-                </svg>
-                <div class="filter-card">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34" fill="none">
-                      <path d="M31.3438 11.1562H2.65625C2.23356 11.1562 1.82818 10.9883 1.5293 10.6895C1.23041 10.3906 1.0625 9.98519 1.0625 9.5625C1.0625 9.13981 1.23041 8.73443 1.5293 8.43555C1.82818 8.13666 2.23356 7.96875 2.65625 7.96875H31.3438C31.7664 7.96875 32.1718 8.13666 32.4707 8.43555C32.7696 8.73443 32.9375 9.13981 32.9375 9.5625C32.9375 9.98519 32.7696 10.3906 32.4707 10.6895C32.1718 10.9883 31.7664 11.1562 31.3438 11.1562ZM26.0312 18.5938H7.96875C7.54606 18.5938 7.14068 18.4258 6.8418 18.127C6.54291 17.8281 6.375 17.4227 6.375 17C6.375 16.5773 6.54291 16.1719 6.8418 15.873C7.14068 15.5742 7.54606 15.4062 7.96875 15.4062H26.0312C26.4539 15.4062 26.8593 15.5742 27.1582 15.873C27.4571 16.1719 27.625 16.5773 27.625 17C27.625 17.4227 27.4571 17.8281 27.1582 18.127C26.8593 18.4258 26.4539 18.5938 26.0312 18.5938ZM19.6562 26.0312H14.3438C13.9211 26.0312 13.5157 25.8633 13.2168 25.5645C12.9179 25.2656 12.75 24.8602 12.75 24.4375C12.75 24.0148 12.9179 23.6094 13.2168 23.3105C13.5157 23.0117 13.9211 22.8438 14.3438 22.8438H19.6562C20.0789 22.8438 20.4843 23.0117 20.7832 23.3105C21.0821 23.6094 21.25 24.0148 21.25 24.4375C21.25 24.8602 21.0821 25.2656 20.7832 25.5645C20.4843 25.8633 20.0789 26.0312 19.6562 26.0312Z" fill="black"/>
-                    </svg>
+            <div class="cardBox">
+                <div class="card">
+                    <div>
+                        <div class="proses">Proses Pembayaran</div>
+                        <div class="step-container">
+                            <div class="step active" title="Diajukan"><span>Diajukan</span></div>
+                            <div class="step-line"></div>
+                            <div class="step inactive" title="Menunggu Konfirmasi"><span>Menunggu Konfirmasi</span></div>
+                            <div class="step-line"></div>
+                            <div class="step inactive" title="Selesai"><span>Selesai</span></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="tambah-card"><img src="../../../assets/plus.png" alt="Detail Icon">Tambah Pengajuan</div>
+                <div class="pilihan">
+                    <a href="detail.php" class="detail-card">
+                        <img src="../../../assets/details.png" alt="Detail Icon">
+                        Detail Pembayaran
+                    </a>
+                    <a href="ajukan.php" class="ajukan-card">
+                        <img src="../../../assets/money-bag.png" alt="Ajukan Icon">
+                        Ajukan Pembayaran
+                    </a>
+                </div>
             </div>
+           
             <div class="details">
                 <div class="pengajuan">
                     <div class="cardHeader">
@@ -796,30 +758,30 @@
                         <table>
                             <tr>
                                 <th>Sampel Atas Nama</th>
-                                <th>Tanggal Pengajuan</th>
-                                <th>Jenis Pengajuan</th>
-                                <th>Status Pengajuan</th>
+                                <th>Tanggal Terima</th>
+                                <th>Jenis Pengujian Sampel</th>
+                                <th>Status Pengujian</th>
+                                <th>Tanggal Jadi</th>
+                                <th>Hasil Pengujian</th>
                             </tr>
                         </table>
                     </div>
                     <?php
-                    include '../../../koneksi.php';
+                    include '../../../koneksi.php'; 
 
-                    $currentYear = date('Y'); 
-                    $sql = "SELECT id_pengajuan, nama_pasien, tanggal_pengajuan, status_pengajuan 
-                            FROM pengajuan 
-                            WHERE YEAR(tanggal_pengajuan) = ? 
-                            ORDER BY tanggal_pengajuan DESC";
-                    $stmt = $connect->prepare($sql);
-                    $stmt->bind_param("i", $currentYear);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
+                    $sql = "SELECT p.nama_pasien, pg.tanggal_pengajuan, pg.id_pengajuan, pg.status 
+                            FROM pelanggan p 
+                            JOIN pengajuan pg ON p.id_pelanggan = pg.id_pelanggan 
+                            ORDER BY pg.tanggal_pengajuan DESC LIMIT 8";
+                    $result = $connect->query($sql);
 
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
-                            $tanggal = date('Y/m/d', strtotime($row['tanggal_pengajuan']));
-                            $status_pengajuan_class = ($row['status_pengajuan'] == 'Verifikasi' || $row['status_pengajuan'] == 'Diverifikasi') ? 'verified' : ($row['status_pengajuan'] == 'Menunggu Verifikasi' ? 'pending' : '');
-                            $id_pengajuan = $row['id_pengajuan'];
+                            $tanggal_terima = date('Y/m/d', strtotime($row['tanggal_terima'])); 
+                            $tanggal_jadi = date('Y/m/d', strtotime($row['tanggal_jadi'])); 
+                            $status_class = ($row['status'] == 'Diverifikasi') ? 'verified' : 'pending'; 
+
+                            $id_pengajuan = $row['id_penerimaan'];
                             $jenis_pengujian = '';
                             if (strpos($id_pengajuan, 'JRM-') === 0) {
                                 $jenis_pengujian = 'Jaringan';
@@ -829,48 +791,37 @@
                                 $jenis_pengujian = 'Sitologi Non Ginekologi';
                             }
                     ?>
-                            <div class="row" data-href="tampil.php?id=<?php echo urlencode($id_pengajuan); ?>">
+                            <div class="row" data-href="tampil.php">
                                 <span><?php echo htmlspecialchars($row['nama_pasien']); ?></span>
-                                <span><?php echo $tanggal; ?></span>
+                                <span><?php echo $tanggal_terima; ?></span>
                                 <span><?php echo htmlspecialchars($jenis_pengujian); ?></span>
-                                <span class="status_pengajuan <?php echo $status_pengajuan_class; ?>"><?php echo htmlspecialchars($row['status_pengajuan']); ?></span>
+                                <span class="status <?php echo $status_class; ?>"><?php echo htmlspecialchars($row['status']); ?></span>
+                                <span><?php echo $tanggal_jadi; ?></span>
+                                <span><?php echo $tanggal_jadi; ?></span>
                             </div>
                     <?php
                         }
                     } else {
                         echo "<div class='row'><span colspan='4'>Tidak ada data yang ditemukan.</span></div>";
                     }
-                    $stmt->close();
                     $connect->close();
                     ?>
                 </div>
             </div>
-
+        
             <div class="overlay"></div>
 
             <div class="menu-card">
-                <div class="menu-option" data-type="jaringan">Jaringan <ion-icon class="plus-icon" name="add-outline"></ion-icon></div>
+                <div class="close-button" onclick="window.location='pengujian.php'">×</div>
+                <div class="menu-option" data-type="pdf">pdf</div>
                 <div class="menu-separator"></div>
-                <div class="menu-option" data-type="Sitologi Ginekologi">Sitologi Ginekologi <ion-icon class="plus-icon" name="add-outline"></ion-icon></div>
-                <div class="menu-separator"></div>
-                <div class="menu-option" data-type="Sitologi Non Ginekologi">Sitologi Non Ginekologi <ion-icon class="plus-icon" name="add-outline"></ion-icon></div>
+                <div class="menu-option" data-type="word">word</div>
             </div>
 
-            <div class="jumlah-card">
-                <h2>Jumlah</h2>
-                <form id="jumlahForm" action="" method="get">
-                    <div class="form-group">
-                        <input type="number" id="jumlah" name="jumlah" min="1" value="1" required />
-                    </div>
-                    <button type="submit" class="btn-submit">Oke</button>
-                    <input type="hidden" id="type" name="type">
-                </form>
-            </div>
         </div>
     </div>
 
     <script>
-        // Add hovered class to selected list item
         let list = document.querySelectorAll(".navigation li");
 
         function activeLink() {
@@ -892,83 +843,21 @@
             main.classList.toggle("active");
         };
 
-        // Search Functionality
-        const searchInput = document.getElementById('searchInput');
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const rows = document.querySelectorAll('.row');
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
-            });
-        });
-
-        // Make rows clickable to tampil.php with id_pengajuan
-        const rows = document.querySelectorAll('.row');
-        rows.forEach(row => {
-            row.addEventListener('click', function() {
-                const id = this.getAttribute('data-href').split('id=')[1];
-                window.location.href = `tampil.php?id=${id}`;
-            });
-        });
-
-        // Tambah Pengajuan Menu and Jumlah
-        const tambahCard = document.querySelector('.tambah-card');
-        const menuCard = document.querySelector('.menu-card');
-        const jumlahCard = document.querySelector('.jumlah-card');
-        const menuOptions = document.querySelectorAll('.menu-option');
-        const jumlahForm = document.getElementById('jumlahForm');
-        const typeInput = document.getElementById('type');
-        const overlay = document.querySelector('.overlay');
-
-        tambahCard.addEventListener('click', function() {
-            menuCard.classList.add('active');
-            overlay.classList.add('active');
-            menuOptions.forEach(option => option.classList.remove('selected'));
-            typeInput.value = '';
-        });
-
-        menuOptions.forEach(option => {
-            option.addEventListener('click', function() {
-                const type = this.getAttribute('data-type');
-                menuOptions.forEach(opt => opt.classList.remove('selected'));
-                this.classList.add('selected');
-                typeInput.value = type;
-                jumlahCard.classList.add('active');
-                jumlahForm.querySelector('#jumlah').focus();
-            });
-        });
-
-        // Form Submission with Conditional Redirect
-        jumlahForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            const jumlah = jumlahForm.querySelector('#jumlah').value;
-            const type = typeInput.value;
-            let redirectUrl = '';
-
-            if (type === 'jaringan') {
-                redirectUrl = `formJaringan.php?jumlah=${jumlah}`;
-            } else if (type === 'Sitologi Ginekologi') {
-                redirectUrl = `formSitologiGinekologi.php?jumlah=${jumlah}`;
-            } else if (type === 'Sitologi Non Ginekologi') {
-                redirectUrl = `formSitologiNonGinekologi.php?jumlah=${jumlah}`;
-            }
-
-            if (redirectUrl) {
-                window.location.href = redirectUrl;
-            }
-        });
-
-        // Close cards and overlay on outside click
-        document.addEventListener('click', function(event) {
-            if (!menuCard.contains(event.target) && !tambahCard.contains(event.target) && !jumlahCard.contains(event.target)) {
-                menuCard.classList.remove('active');
-                jumlahCard.classList.remove('active');
-                overlay.classList.remove('active');
+        // Dynamic step status (example logic, adjust based on your data)
+        const steps = document.querySelectorAll('.step');
+        const currentStep = 0; // Adjust this based on your payment status logic (0 = Diajukan, 1 = Menunggu Konfirmasi, 2 = Selesai)
+        steps.forEach((step, index) => {
+            if (index < currentStep) {
+                step.classList.add('active');
+            } else if (index === currentStep) {
+                step.classList.add('active');
+            } else {
+                step.classList.add('inactive');
             }
         });
     </script>
 
+    <!-- ====== ionicons ======= -->
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 </body>

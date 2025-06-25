@@ -5,7 +5,7 @@ include "koneksi.php";
 $email = $_POST['email'];
 $password = $_POST['password'];
 
-$query = mysqli_query($connect, "SELECT* FROM login WHERE email = '$email' && password = '$password'") or die (mysqli_error($connect));
+$query = mysqli_query($connect, "SELECT* FROM pengguna WHERE email = '$email' && password = '$password'") or die (mysqli_error($connect));
 
 $cek = mysqli_num_rows($query);
 

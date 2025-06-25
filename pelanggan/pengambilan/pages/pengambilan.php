@@ -17,19 +17,19 @@
         }
 
         :root {
-          --green1: rgba(20, 116, 114, 1);
-          --green2: rgba(3, 178, 176, 1);
-          --green3: rgba(186, 231, 228, 1);
-          --green4: rgba(12, 109, 108, 0.61);
-          --green5: rgba(3, 178, 176, 0.29);
-          --green6: rgba(240, 243, 243, 1);
-          --green7: rgba(228, 240, 240, 1);
-          --green8: rgba(136, 181, 181, 0.26);
-          --white: #fff;
-          --gray: #f5f5f5;
-          --black1: #222;
-          --black2: #999;
-          --black3: rgba(0, 0, 0, 0.4);
+            --green1: rgba(20, 116, 114, 1);
+            --green2: rgba(3, 178, 176, 1);
+            --green3: rgba(186, 231, 228, 1);
+            --green4: rgba(12, 109, 108, 0.61);
+            --green5: rgba(3, 178, 176, 0.29);
+            --green6: rgba(240, 243, 243, 1);
+            --green7: rgba(228, 240, 240, 1);
+            --green8: rgba(136, 181, 181, 0.26);
+            --white: #fff;
+            --gray: #f5f5f5;
+            --black1: #222;
+            --black2: #999;
+            --black3: rgba(0, 0, 0, 0.4);
         }
 
         body {
@@ -50,7 +50,7 @@
             border-left: 10px solid var(--green2);
             transition: 0.5s;
             overflow: hidden;
-            z-index: 1000
+            z-index: 1000;
         }
 
         .navigation.active {
@@ -90,6 +90,7 @@
             text-decoration: none;
             color: var(--white);
         }
+
         .navigation ul li:hover a,
         .navigation ul li.hovered a {
             color: var(--green2);
@@ -155,8 +156,8 @@
             position: relative;
             display: block;
             font-family: 'Poppins', sans-serif;
-            font-size: 22px; 
-            color: black; 
+            font-size: 22px;
+            color: black;
             padding: 0 10px;
             height: 230px;
             line-height: 70px;
@@ -168,7 +169,7 @@
             position: relative;
             display: block;
             font-family: 'Poppins', sans-serif;
-            color: black; 
+            color: black;
             padding: 0 10px;
             height: 70px;
             line-height: 60px;
@@ -189,6 +190,7 @@
             box-shadow: 35px 35px 0 10px var(--white);
             pointer-events: none;
         }
+
         .navigation ul li:hover a::after,
         .navigation ul li.hovered a::after {
             content: "";
@@ -211,6 +213,7 @@
             background: var(--white);
             transition: 0.5s;
         }
+
         .main.active {
             width: calc(100% - 80px);
             left: 80px;
@@ -265,141 +268,11 @@
             margin-right: 10px;
         }
 
-        .cardBox {
-            position: relative;
-            width: 100%;
+        .pengambilan {
+            background: var(--green7);
             padding: 20px;
-            margin-top: 90px;
-            display: grid;
-            grid-template-columns: repeat(3, 0.7fr);
-            grid-gap: 30px;
-        }
-
-        .cardBox .card {
-            position: relative;
-            background: var(--green1);
-            padding: 30px;
-            border-radius: 20px;
-            display: flex;
-            justify-content: space-between;
-            cursor: pointer;
-            box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
-        }
-
-        .cardBox .card .jenisPengujian {
-            position: relative;
-            font-weight: 500;
-            font-size: 30px;
-            color: var(--white);
-        }
-
-        .cardBox .card .cardName {
-            color: var(--black2);
-            font-size: 1.1rem;
-            margin-top: 5px;
-        }
-
-        .cardBox .card .iconBx {
-            font-size: 3.5rem;
-            color: var(--black2);
-        }
-
-        .cardBox .card:hover {
-            background: var(--white);
-        }
-        .cardBox .card:hover .jenisPengujian,
-        .cardBox .card:hover .cardName,
-        .cardBox .card:hover .iconBx {
-            color: var(--green1);
-        }
-
-        .search-bar {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            border-radius: 10px;
             margin: 20px;
-            justify-content: flex-start;
-            position: relative;
-            z-index: 1001;
-        }
-
-        .search-bar input {
-            width: 853px;
-            height: 66px;
-            margin-top: 20px;
-            flex-shrink: 0;
-            border-radius: 10px;
-            padding: 5px 50px 5px 20px; 
-            font-size: 16px;
-            outline: none;
-            border: 0px solid var(--black2);
-            background: var(--green7);
-        }
-
-        .search-bar .search-icon {
-            position: absolute;
-            left: 790px; 
-            top: 30%;
-            transform: translateY(-50%);
-            width: 27px;
-            height: 27px;
-            flex-shrink: 0;
-            aspect-ratio: 1/1;
-            margin-top: 30px;
-        }
-
-        .filter-card {
-          width: 90px;
-          height: 66px;
-          flex-shrink: 0;
-          margin-top: 20px;
-          background: var(--green7);
-          border-radius: 20px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          z-index: 1001;
-        }
-
-        .filter-card ion-icon {
-            font-size: 1.5rem;
-            color: var(--black1);
-        }
-
-        .tambah-card {
-            width: 397px;
-            height: 66px;
-            flex-shrink: 0;
-            background: var(--green1);
-            color: var(--white);
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 18px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: auto;
-            margin-top: 20px;
-            z-index: 1001;
-        }
-
-        .tambah-card:hover {
-            background: var(--green6);
-        }
-
-        .details {
-            padding: 20px;
-            z-index: 1001;
-        }
-
-        .pengajuan {
-            background: var(--green7);
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 100px;
             max-height: 60vh;
             overflow-y: auto;
             z-index: 1001;
@@ -411,76 +284,83 @@
             align-items: center;
             margin-bottom: 20px;
         }
+
         .cardHeader h2 {
             font-weight: 600;
             color: var(--black1);
+            margin: 0;
         }
+
         .cardHeader .btn {
             padding: 5px 10px;
             background: var(--green2);
             text-decoration: none;
             color: var(--white);
             border-radius: 6px;
+            font-size: 14px;
         }
 
-       .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 12px;
-            z-index: 1001;
+        .column-titles {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            color: var(--black1);
+            margin-bottom: 10px;
+            padding: 0 20px;
         }
 
-        .table table {
-            width: 100%;
-        }
-
-        .table th {
-            color: var(--black);
-            padding: 10px;
+        .column-titles span {
+            flex: 1;
             text-align: center;
+            font-size: 14px;
         }
 
-        .pengajuan .row {
-            height: 69px;
-            flex-shrink: 0;
+        .pengambilan .row {
+            height: 60px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 30px;
+            padding: 10px 20px;
             background: var(--white);
-            margin-bottom: 15px;
-            border-radius: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
             cursor: pointer;
             transition: background 0.3s;
             z-index: 1001;
         }
 
-        .pengajuan .row:hover {
-            background: var(--green9);
+        .pengambilan .row:hover {
+            background: var(--green6);
         }
 
-        .pengajuan .row span {
+        .pengambilan .row span {
             flex: 1;
-            margin-left: 90px;
-            margin-right: 100px;
-            text-align: center; 
-        }
-
-        .pengajuan .row .status {
-            padding: 10px 10px;
-            border-radius: 15px;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
             font-size: 14px;
-            margin-right: 60px;
-            margin-left: 60px;
         }
 
-        .status.verified {
-            background:rgba(138, 242, 150, 1);
+        .status_pengambilan {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            display: inline-block;
+        }
+
+        .status_pengambilan.verified {
+            background: rgba(138, 242, 150, 1);
             color: var(--black);
         }
 
-        .status.pending {
+        .status_pengambilan.pending {
             background: rgba(255, 226, 110, 1);
+            color: var(--black);
+        }
+
+        .status_pengambilan.waiting {
+            background: rgba(255, 133, 128, 1);
             color: var(--black);
         }
 
@@ -493,8 +373,9 @@
             height: 100%;
             background-color: var(--black3);
             background-blend-mode: overlay;
-            z-index: 1002; 
+            z-index: 1002;
         }
+
         .overlay.active {
             display: block;
         }
@@ -502,7 +383,7 @@
         .menu-card {
             position: fixed;
             top: 55%;
-            right: 330px; 
+            right: 330px;
             transform: translateY(-50%);
             width: 100px;
             height: 130px;
@@ -581,30 +462,24 @@
         }
 
         @media (max-width: 768px) {
-            .details {
-                grid-template-columns: 1fr;
+            .pengambilan {
+                margin: 10px;
             }
-            .pengajuan {
-                overflow-x: auto;
+            .column-titles span {
+                font-size: 12px;
             }
-            .search-bar {
-                flex-direction: column;
-                gap: 10px;
+            .pengambilan .row {
+                padding: 8px 15px;
+                height: 50px;
             }
-            .search-bar input, .filter-card, .tambah-card {
-                width: 100%;
-            }
-            .tambah-card {
-                margin-left: 0;
-            }
-            .menu-card {
-                right: 10px;
+            .pengambilan .row span {
+                font-size: 12px;
             }
         }
 
         @media (max-width: 480px) {
             .cardHeader h2 {
-                font-size: 20px;
+                font-size: 18px;
             }
             .user {
                 min-width: 40px;
@@ -633,16 +508,19 @@
             .user span {
                 display: none;
             }
-            .search-bar {
-                margin: 10px;
-            }
             .menu-card {
-                width: 250px;
+                width: 200px;
                 right: 5px;
             }
-            .jumlah-card {
-                width: 250px;
-                left: 5px;
+            .column-titles span {
+                font-size: 10px;
+            }
+            .pengambilan .row {
+                height: 45px;
+                padding: 6px 10px;
+            }
+            .pengambilan .row span {
+                font-size: 10px;
             }
         }
     </style>
@@ -689,7 +567,7 @@
                 </li>
 
                 <li>
-                    <a href="pengujian.php">
+                    <a href="../../prosesUji/pages/pengujian.php">
                         <span class="icon">
                             <img src="../../../assets/prosesuji.png" alt="prosesuji">
                         </span>
@@ -745,116 +623,52 @@
                     <span>RS Indah Permata</span>
                 </div>
             </div>
-            <div class="cardBox">
-                <div class="card">
-                    <div>
-                        <div class="jenisPengujian">Pengujian Jaringan</div>
-                    </div>
+           
+            
 
-                    <div class="iconBx">
-                        <ion-icon name="eye-outline"></ion-icon>
-                    </div>
-                </div>
 
-                <div class="card">
-                    <div>
-                        <div class="jenisPengujian">Pengujian Sitologi Ginekologi</div>
-                    </div>
 
-                    <div class="iconBx">
-                        <ion-icon name="cart-outline"></ion-icon>
-                    </div>
-                </div>
-
-                
-
-                <div class="card">
-                    <div>
-                        <div class="jenisPengujian">Pengujian Sitologi Non Ginekologi</div>
-                    </div>
-
-                    <div class="iconBx">
-                        <ion-icon name="cash-outline"></ion-icon>
-                    </div>
-                </div>
-            </div>
-                
-            <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="Search pengajuan">
-                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="27" height="27" viewBox="0 0 27 27" fill="none">
-                    <g clip-path="url(#clip0_306_10765)">
-                        <path d="M17.1809 0C11.7598 0 7.36172 4.39805 7.36172 9.81914C7.36172 11.5857 7.83633 13.2363 8.64844 14.6707L0 23.3191L1.22871 25.7713L3.68086 27L12.3293 18.3516C13.7584 19.1689 15.4143 19.6383 17.1809 19.6383C22.602 19.6383 27 15.2402 27 9.81914C27 4.39805 22.602 0 17.1809 0ZM17.1809 16.5691C13.4525 16.5691 10.4309 13.5475 10.4309 9.81914C10.4309 6.09082 13.4525 3.06914 17.1809 3.06914C20.9092 3.06914 23.9309 6.09082 23.9309 9.81914C23.9309 13.5475 20.9092 16.5691 17.1809 16.5691Z" fill="black"/>
-                    </g>
-                    <defs>
-                        <clipPath id="clip0_306_10765">
-                            <rect width="27" height="27" fill="white"/>
-                        </clipPath>
-                    </defs>
-                </svg>
-                <div class="filter-card">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34" fill="none">
-                      <path d="M31.3438 11.1562H2.65625C2.23356 11.1562 1.82818 10.9883 1.5293 10.6895C1.23041 10.3906 1.0625 9.98519 1.0625 9.5625C1.0625 9.13981 1.23041 8.73443 1.5293 8.43555C1.82818 8.13666 2.23356 7.96875 2.65625 7.96875H31.3438C31.7664 7.96875 32.1718 8.13666 32.4707 8.43555C32.7696 8.73443 32.9375 9.13981 32.9375 9.5625C32.9375 9.98519 32.7696 10.3906 32.4707 10.6895C32.1718 10.9883 31.7664 11.1562 31.3438 11.1562ZM26.0312 18.5938H7.96875C7.54606 18.5938 7.14068 18.4258 6.8418 18.127C6.54291 17.8281 6.375 17.4227 6.375 17C6.375 16.5773 6.54291 16.1719 6.8418 15.873C7.14068 15.5742 7.54606 15.4062 7.96875 15.4062H26.0312C26.4539 15.4062 26.8593 15.5742 27.1582 15.873C27.4571 16.1719 27.625 16.5773 27.625 17C27.625 17.4227 27.4571 17.8281 27.1582 18.127C26.8593 18.4258 26.4539 18.5938 26.0312 18.5938ZM19.6562 26.0312H14.3438C13.9211 26.0312 13.5157 25.8633 13.2168 25.5645C12.9179 25.2656 12.75 24.8602 12.75 24.4375C12.75 24.0148 12.9179 23.6094 13.2168 23.3105C13.5157 23.0117 13.9211 22.8438 14.3438 22.8438H19.6562C20.0789 22.8438 20.4843 23.0117 20.7832 23.3105C21.0821 23.6094 21.25 24.0148 21.25 24.4375C21.25 24.8602 21.0821 25.2656 20.7832 25.5645C20.4843 25.8633 20.0789 26.0312 19.6562 26.0312Z" fill="black"/>
-                    </svg>
-                </div>
-                <div class="tambah-card">Unduh Hasil Pengujian</div>
-                <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34" fill="none">
-                
-            </div>
-
-             <div class="details">
-                <div class="pengajuan">
+            <div class="details">
+                <div class="pengambilan">
                     <div class="cardHeader">
-                        <h2>Pengajuan Sampel</h2>
+                        <h2>Pengambilan Sampel</h2>
                     </div>
-                    <div class="table">
-                        <table>
-                            <tr> 
-                                <th>Sampel Atas Nama</th>
-                                <th>Tanggal Terima</th>
-                                <th>Jenis Pengujian Sampel</th>
-                                <th>Status Pengujian</th>
-                                <th>Tanggal Jadi</th>
-                                <th>Hasil Pengujian</th>
-                            </tr>
-                        </table>
+                    <div class="column-titles">
+                        <span>Sampel Atas Nama</span>
+                        <span>Tanggal Pengajuan</span>
+                        <span>Tanggal Pengambilan</span>
+                        <span>Status Pengambilan</span>
+                        <span>Tanggal Pengambilan Ulang</span>
                     </div>
                     <?php
-                    include '../../../koneksi.php'; 
+                    include '../../../koneksi.php';
 
-                    $sql = "SELECT p.nama_pasien, pg.tanggal_pengajuan, pg.id_pengajuan, pg.status 
-                            FROM pelanggan p 
-                            JOIN pengajuan pg ON p.id_pelanggan = pg.id_pelanggan 
+                    $sql = "SELECT pg.nama_pasien, pg.tanggal_pengajuan, png.tanggal_pengambilan, png.status_pengambilan, png.tanggal_pengambilan_ulang 
+                            FROM pengajuan pg 
+                            JOIN pengambilan png ON pg.id_pengajuan = png.id_pengajuan
                             ORDER BY pg.tanggal_pengajuan DESC LIMIT 8";
                     $result = $connect->query($sql);
 
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
-                            $tanggal_terima = date('Y/m/d', strtotime($row['tanggal_terima'])); 
-                            $tanggal_jadi = date('Y/m/d', strtotime($row['tanggal_jadi'])); 
-                            $status_class = ($row['status'] == 'Diverifikasi') ? 'verified' : 'pending'; 
-
-                            $id_pengajuan = $row['id_penerimaan'];
-                            $jenis_pengujian = '';
-                            if (strpos($id_pengajuan, 'JRM-') === 0) {
-                                $jenis_pengujian = 'Jaringan';
-                            } elseif (strpos($id_pengajuan, 'SRM-') === 0) {
-                                $jenis_pengujian = 'Sitologi Ginekologi';
-                            } elseif (strpos($id_pengajuan, 'SNRM-') === 0) {
-                                $jenis_pengujian = 'Sitologi Non Ginekologi';
-                            }
+                            $tanggal_pengajuan = date('Y/m/d', strtotime($row['tanggal_pengajuan']));
+                            $tanggal_pengambilan = !empty($row['tanggal_pengambilan']) ? date('Y/m/d', strtotime($row['tanggal_pengambilan'])) : '-';
+                            $status_pengambilan_class = ($row['status_pengambilan'] == 'Berhasil') ? 'verified' :
+                            (($row['status_pengambilan'] == 'Tertunda') ? 'pending' :
+                            (($row['status_pengambilan'] == 'Menunggu Pengambilan') ? 'waiting' : ''));
+                            $tanggal_pengambilan_ulang = !empty($row['tanggal_pengambilan_ulang']) ? date('Y/m/d', strtotime($row['tanggal_pengambilan_ulang'])) : '-';
                     ?>
                             <div class="row" data-href="tampil.php">
                                 <span><?php echo htmlspecialchars($row['nama_pasien']); ?></span>
-                                <span><?php echo $tanggal_terima; ?></span>
-                                <span><?php echo htmlspecialchars($jenis_pengujian); ?></span>
-                                <span class="status <?php echo $status_class; ?>"><?php echo htmlspecialchars($row['status']); ?></span>
-                                <span><?php echo $tanggal_jadi; ?></span>
-                                <span><?php echo $tanggal_jadi; ?></span>
+                                <span><?php echo $tanggal_pengajuan; ?></span>
+                                <span><?php echo $tanggal_pengambilan; ?></span>
+                                <span class="status_pengambilan <?php echo $status_pengambilan_class; ?>"><?php echo htmlspecialchars($row['status_pengambilan']); ?></span>
+                                <span><?php echo $tanggal_pengambilan_ulang; ?></span>
                             </div>
                     <?php
                         }
                     } else {
-                        echo "<div class='row'><span colspan='4'>Tidak ada data yang ditemukan.</span></div>";
+                        echo "<div class='row' style='text-align:center; color:var(--black1);'><span colspan='5'>Tidak ada data yang ditemukan.</span></div>";
                     }
                     $connect->close();
                     ?>
@@ -864,7 +678,7 @@
             <div class="overlay"></div>
 
             <div class="menu-card">
-               <div class="close-button" onclick="window.location='pengujian.php'">×</div>
+                <div class="close-button" onclick="window.location='pengujian.php'">×</div>
                 <div class="menu-option" data-type="pdf">pdf</div>
                 <div class="menu-separator"></div>
                 <div class="menu-option" data-type="word">word</div>
@@ -893,23 +707,6 @@
             navigation.classList.toggle("active");
             main.classList.toggle("active");
         };
-
-        const searchInput = document.getElementById('searchInput');
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const rows = document.querySelectorAll('.row');
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
-            });
-        });
-
-        const rows = document.querySelectorAll('.row');
-        rows.forEach(row => {
-            row.addEventListener('click', function() {
-                window.location.href = this.getAttribute('data-href');
-            });
-        });
     </script>
 
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>

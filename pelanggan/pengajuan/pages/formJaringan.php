@@ -340,7 +340,6 @@ $currentStep = $halaman - 1;
       let isValid = true;
       let missingFields = [];
 
-      // Validate text, number, textarea, select
       const requiredFields = currentPage.querySelectorAll('input[required], textarea[required], select[required]');
       requiredFields.forEach(field => {
         if (!field.value.trim()) {
