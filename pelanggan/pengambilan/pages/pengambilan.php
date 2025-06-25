@@ -268,6 +268,60 @@
             margin-right: 10px;
         }
 
+        .filter-card {
+          width: 90px;
+          height: 66px;
+          flex-shrink: 0;
+          margin-top: 100px;
+          background: var(--green7);
+          border-radius: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          z-index: 1001;
+        }
+
+        .filter-card ion-icon {
+            font-size: 1.5rem;
+            color: var(--black1);
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 20px;
+            justify-content: flex-start;
+            position: relative;
+            z-index: 1001;
+        }
+
+        .search-bar input {
+            width: 853px;
+            height: 66px;
+            margin-top: 100px;
+            flex-shrink: 0;
+            border-radius: 10px;
+            padding: 5px 50px 5px 20px;
+            font-size: 16px;
+            outline: none;
+            border: 0px solid var(--black2);
+            background: var(--green7);
+        }
+
+        .search-bar .search-icon {
+            position: absolute;
+            left: 790px;
+            top: 30%;
+            transform: translateY(-50%);
+            width: 27px;
+            height: 27px;
+            flex-shrink: 0;
+            aspect-ratio: 1/1;
+            margin-top: 85px;
+        }
+
         .pengambilan {
             background: var(--green7);
             padding: 20px;
@@ -468,6 +522,13 @@
             .column-titles span {
                 font-size: 12px;
             }
+            .search-bar {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .search-bar input, .filter-card, .tambah-card {
+                width: 100%;
+            }
             .pengambilan .row {
                 padding: 8px 15px;
                 height: 50px;
@@ -507,6 +568,9 @@
             }
             .user span {
                 display: none;
+            }
+            .search-bar {
+                margin: 10px;
             }
             .menu-card {
                 width: 200px;
@@ -624,6 +688,24 @@
                 </div>
             </div>
            
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search pengajuan">
+                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="27" height="27" viewBox="0 0 27 27" fill="none">
+                    <g clip-path="url(#clip0_306_10765)">
+                        <path d="M17.1809 0C11.7598 0 7.36172 4.39805 7.36172 9.81914C7.36172 11.5857 7.83633 13.2363 8.64844 14.6707L0 23.3191L1.22871 25.7713L3.68086 27L12.3293 18.3516C13.7584 19.1689 15.4143 19.6383 17.1809 19.6383C22.602 19.6383 27 15.2402 27 9.81914C27 4.39805 22.602 0 17.1809 0ZM17.1809 16.5691C13.4525 16.5691 10.4309 13.5475 10.4309 9.81914C10.4309 6.09082 13.4525 3.06914 17.1809 3.06914C20.9092 3.06914 23.9309 6.09082 23.9309 9.81914C23.9309 13.5475 20.9092 16.5691 17.1809 16.5691Z" fill="black"/>
+                    </g>
+                    <defs>
+                        <clipPath id="clip0_306_10765">
+                            <rect width="27" height="27" fill="white"/>
+                        </clipPath>
+                    </defs>
+                </svg>
+                <div class="filter-card">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34" fill="none">
+                      <path d="M31.3438 11.1562H2.65625C2.23356 11.1562 1.82818 10.9883 1.5293 10.6895C1.23041 10.3906 1.0625 9.98519 1.0625 9.5625C1.0625 9.13981 1.23041 8.73443 1.5293 8.43555C1.82818 8.13666 2.23356 7.96875 2.65625 7.96875H31.3438C31.7664 7.96875 32.1718 8.13666 32.4707 8.43555C32.7696 8.73443 32.9375 9.13981 32.9375 9.5625C32.9375 9.98519 32.7696 10.3906 32.4707 10.6895C32.1718 10.9883 31.7664 11.1562 31.3438 11.1562ZM26.0312 18.5938H7.96875C7.54606 18.5938 7.14068 18.4258 6.8418 18.127C6.54291 17.8281 6.375 17.4227 6.375 17C6.375 16.5773 6.54291 16.1719 6.8418 15.873C7.14068 15.5742 7.54606 15.4062 7.96875 15.4062H26.0312C26.4539 15.4062 26.8593 15.5742 27.1582 15.873C27.4571 16.1719 27.625 16.5773 27.625 17C27.625 17.4227 27.4571 17.8281 27.1582 18.127C26.8593 18.4258 26.4539 18.5938 26.0312 18.5938ZM19.6562 26.0312H14.3438C13.9211 26.0312 13.5157 25.8633 13.2168 25.5645C12.9179 25.2656 12.75 24.8602 12.75 24.4375C12.75 24.0148 12.9179 23.6094 13.2168 23.3105C13.5157 23.0117 13.9211 22.8438 14.3438 22.8438H19.6562C20.0789 22.8438 20.4843 23.0117 20.7832 23.3105C21.0821 23.6094 21.25 24.0148 21.25 24.4375C21.25 24.8602 21.0821 25.2656 20.7832 25.5645C20.4843 25.8633 20.0789 26.0312 19.6562 26.0312Z" fill="black"/>
+                    </svg>
+                </div>
+            </div>
             
 
 
@@ -706,7 +788,17 @@
         toggle.onclick = function () {
             navigation.classList.toggle("active");
             main.classList.toggle("active");
-        };
+        }
+
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('.row');
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
     </script>
 
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>

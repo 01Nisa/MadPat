@@ -702,7 +702,7 @@
                     </a>
                 </li>
 
-                <li class="signout">
+                 <li class="signout">
                     <a href="../../signout.php">
                         <span class="icon">
                             <ion-icon name="log-out-outline" style="color: black"></ion-icon>
