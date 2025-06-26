@@ -202,30 +202,30 @@
     </style>
 </head>
 <body class="login-page">
-<?php if (isset($_GET['pesan'])): ?>
-        <div class="overlay" id="messageOverlay">
-            <div class="message-box">
-                <img src="assets/peringatan.png" alt="peringatan">
-                <span class="close-btn" onclick="document.getElementById('messageOverlay').style.display='none'">&times;</span>
-                <p>
-                    <?php
-                        switch ($_GET['pesan']) {
-                            case 'gagal':
-                                echo "Maaf email atau password Anda salah!";
-                                break;
-                            case 'logout':
-                                echo "Berhasil logout.";
-                                break;
-                            case 'belum_login':
-                                echo "Silakan login terlebih dahulu.";
-                                break;
-                            default:
-                                echo "Terjadi kesalahan.";
-                        }
-                    ?>
-                </p>
-            </div>
+    <?php if (isset($_GET['pesan'])): ?>
+    <div class="overlay" id="messageOverlay">
+        <div class="message-box">
+            <img src="assets/peringatan.png" alt="peringatan">
+            <span class="close-btn" onclick="document.getElementById('messageOverlay').style.display='none'">&times;</span>
+            <p>
+                <?php
+                    switch ($_GET['pesan']) {
+                        case 'gagal':
+                            echo "Maaf email atau password Anda salah!";
+                            break;
+                        case 'logout':
+                            echo "Berhasil logout.";
+                            break;
+                        case 'belum_login':
+                            echo "Silakan login terlebih dahulu.";
+                            break;
+                        default:
+                            echo "Terjadi kesalahan.";
+                    }
+                ?>
+            </p>
         </div>
+    </div>
     <?php endif; ?>
 
     <div class="login-container">

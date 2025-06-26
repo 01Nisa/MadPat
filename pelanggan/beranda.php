@@ -621,7 +621,7 @@ body {
                 </li>
 
                 <li class="signout">
-                    <a href="../signout">
+                    <a href="../signout.php">
                         <span class="icon">
                             <ion-icon name="log-out-outline" style="color: black"></ion-icon>
                         </span>

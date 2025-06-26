@@ -50,7 +50,7 @@
             border-left: 10px solid var(--green2);
             transition: 0.5s;
             overflow: hidden;
-            z-index: 1000
+            z-index: 1000;
         }
 
         .navigation.active {
@@ -299,9 +299,10 @@
             margin-top: 5px;
         }
 
-        .cardBox .card .iconBx {
+        .cardBox .card .jumlah {
             font-size: 3.5rem;
-            color: var(--black2);
+            padding-left: 20px;
+            color: var(--white);
         }
 
         .cardBox .card:hover {
@@ -309,7 +310,7 @@
         }
         .cardBox .card:hover .jenisPengujian,
         .cardBox .card:hover .cardName,
-        .cardBox .card:hover .iconBx {
+        .cardBox .card:hover .jumlah {
             color: var(--green1);
         }
 
@@ -367,7 +368,7 @@
             color: var(--black1);
         }
 
-        .tambah-card {
+        .unduh-card {
             width: 397px;
             height: 66px;
             flex-shrink: 0;
@@ -386,8 +387,15 @@
             z-index: 1001;
         }
 
-        .tambah-card:hover {
+        .unduh-card:hover {
             background: var(--green6);
+        }
+
+        .unduh-card img {
+            margin-left: -80px;
+            margin-right: 20px;
+            width: 30px;
+            height: 30px;
         }
 
         .details {
@@ -423,21 +431,23 @@
             border-radius: 6px;
         }
 
-       .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 12px;
-            z-index: 1001;
+        .column-titles {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: var(--black1);
+            margin-bottom: 10px;
+            padding: 0 30px;
+            height: 40px;
+            border-radius: 10px;
         }
 
-        .table table {
-            width: 100%;
-        }
-
-        .table th {
-            color: var(--black);
-            padding: 10px;
+        .column-titles span {
+            flex: 1;
             text-align: center;
+            font-size: 16px;
+            line-height: 40px; 
         }
 
         .pengajuan .row {
@@ -446,7 +456,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 30px;
+            padding: 10px 30px;
+            gap: 20px;
             background: var(--white);
             margin-bottom: 15px;
             border-radius: 15px;
@@ -461,27 +472,58 @@
 
         .pengajuan .row span {
             flex: 1;
-            margin-left: 90px;
-            margin-right: 100px;
-            text-align: center; 
+            text-align: center;
+            padding: 0;
+            margin: 0 60px; 
+            line-height: 30px; 
         }
 
-        .pengajuan .row .status {
-            padding: 10px 10px;
+        .pengajuan .row .status_pengujian {
+            width: 97px;
+            height: 37px;
+            padding: 2px 10px;
             border-radius: 15px;
             font-size: 14px;
-            margin-right: 60px;
-            margin-left: 60px;
+            margin-right: 50px;
+            margin-left: 50px;
+            position: relative;
+            bottom: 2px;
         }
 
-        .status.verified {
-            background:rgba(138, 242, 150, 1);
+        .status_pengujian.verified {
+            background: rgba(255, 182, 126, 1);
             color: var(--black);
         }
 
-        .status.pending {
-            background: rgba(255, 226, 110, 1);
+        .status_pengujian.pending {
+            background: rgba(138, 242, 150, 1);
             color: var(--black);
+        }
+
+        .result-btn {
+            width: 97px;
+            height: 37px;
+            border-radius: 15px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px; 
+            position: relative;
+            bottom: 2px; 
+        }
+
+        .result-btn.completed {
+            background-color: #4285f4; 
+            color: white;
+        }
+
+        .result-btn.in-progress {
+            background-color: #ccc; 
+            color: #666;
+            cursor: default;
+            pointer-events: none;
         }
 
         .overlay {
@@ -584,6 +626,9 @@
             .details {
                 grid-template-columns: 1fr;
             }
+            .column-titles span {
+                font-size: 12px;
+            }
             .pengajuan {
                 overflow-x: auto;
             }
@@ -591,14 +636,8 @@
                 flex-direction: column;
                 gap: 10px;
             }
-            .search-bar input, .filter-card, .tambah-card {
+            .search-bar input, .filter-card, .unduh-card {
                 width: 100%;
-            }
-            .tambah-card {
-                margin-left: 0;
-            }
-            .menu-card {
-                right: 10px;
             }
         }
 
@@ -636,13 +675,8 @@
             .search-bar {
                 margin: 10px;
             }
-            .menu-card {
-                width: 250px;
-                right: 5px;
-            }
-            .jumlah-card {
-                width: 250px;
-                left: 5px;
+            .column-titles span {
+                font-size: 10px;
             }
         }
     </style>
@@ -746,13 +780,35 @@
                 </div>
             </div>
             <div class="cardBox">
+                <?php
+                    include '../../../koneksi.php';
+
+                    // Query to count each type of testing
+                    $currentYear = date('Y');
+                    $sqlCount = "SELECT 
+                        SUM(CASE WHEN id_pengujian LIKE 'JRM-%' THEN 1 ELSE 0 END) as jaringan_count,
+                        SUM(CASE WHEN id_pengujian LIKE 'SRM-%' THEN 1 ELSE 0 END) as sitologi_ginekologi_count,
+                        SUM(CASE WHEN id_pengujian LIKE 'SNRM-%' THEN 1 ELSE 0 END) as sitologi_non_ginekologi_count
+                        FROM pengujian
+                        WHERE YEAR(tanggal_terima) = ?";
+                    $stmtCount = $connect->prepare($sqlCount);
+                    $stmtCount->bind_param("i", $currentYear);
+                    $stmtCount->execute();
+                    $resultCount = $stmtCount->get_result();
+                    $counts = $resultCount->fetch_assoc();
+
+                    $jaringanCount = $counts['jaringan_count'];
+                    $sitologiGinekologiCount = $counts['sitologi_ginekologi_count'];
+                    $sitologiNonGinekologiCount = $counts['sitologi_non_ginekologi_count'];
+
+                    $stmtCount->close();
+                ?>
                 <div class="card">
                     <div>
                         <div class="jenisPengujian">Pengujian Jaringan</div>
                     </div>
-
-                    <div class="iconBx">
-                        <ion-icon name="eye-outline"></ion-icon>
+                    <div class="jumlah">
+                        <?php echo $jaringanCount; ?>
                     </div>
                 </div>
 
@@ -760,21 +816,17 @@
                     <div>
                         <div class="jenisPengujian">Pengujian Sitologi Ginekologi</div>
                     </div>
-
-                    <div class="iconBx">
-                        <ion-icon name="cart-outline"></ion-icon>
+                    <div class="jumlah">
+                        <?php echo $sitologiGinekologiCount; ?>
                     </div>
                 </div>
-
-                
 
                 <div class="card">
                     <div>
                         <div class="jenisPengujian">Pengujian Sitologi Non Ginekologi</div>
                     </div>
-
-                    <div class="iconBx">
-                        <ion-icon name="cash-outline"></ion-icon>
+                    <div class="jumlah">
+                        <?php echo $sitologiNonGinekologiCount; ?>
                     </div>
                 </div>
             </div>
@@ -796,9 +848,7 @@
                       <path d="M31.3438 11.1562H2.65625C2.23356 11.1562 1.82818 10.9883 1.5293 10.6895C1.23041 10.3906 1.0625 9.98519 1.0625 9.5625C1.0625 9.13981 1.23041 8.73443 1.5293 8.43555C1.82818 8.13666 2.23356 7.96875 2.65625 7.96875H31.3438C31.7664 7.96875 32.1718 8.13666 32.4707 8.43555C32.7696 8.73443 32.9375 9.13981 32.9375 9.5625C32.9375 9.98519 32.7696 10.3906 32.4707 10.6895C32.1718 10.9883 31.7664 11.1562 31.3438 11.1562ZM26.0312 18.5938H7.96875C7.54606 18.5938 7.14068 18.4258 6.8418 18.127C6.54291 17.8281 6.375 17.4227 6.375 17C6.375 16.5773 6.54291 16.1719 6.8418 15.873C7.14068 15.5742 7.54606 15.4062 7.96875 15.4062H26.0312C26.4539 15.4062 26.8593 15.5742 27.1582 15.873C27.4571 16.1719 27.625 16.5773 27.625 17C27.625 17.4227 27.4571 17.8281 27.1582 18.127C26.8593 18.4258 26.4539 18.5938 26.0312 18.5938ZM19.6562 26.0312H14.3438C13.9211 26.0312 13.5157 25.8633 13.2168 25.5645C12.9179 25.2656 12.75 24.8602 12.75 24.4375C12.75 24.0148 12.9179 23.6094 13.2168 23.3105C13.5157 23.0117 13.9211 22.8438 14.3438 22.8438H19.6562C20.0789 22.8438 20.4843 23.0117 20.7832 23.3105C21.0821 23.6094 21.25 24.0148 21.25 24.4375C21.25 24.8602 21.0821 25.2656 20.7832 25.5645C20.4843 25.8633 20.0789 26.0312 19.6562 26.0312Z" fill="black"/>
                     </svg>
                 </div>
-                <div class="tambah-card">Unduh Hasil Pengujian</div>
-                <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34" fill="none">
-                
+                <div class="unduh-card"><img src="../../../assets/install.png" alt="Install Icon">Unduh Hasil Pengujian</div>
             </div>
 
              <div class="details">
@@ -806,56 +856,62 @@
                     <div class="cardHeader">
                         <h2>Pengajuan Sampel</h2>
                     </div>
-                    <div class="table">
-                        <table>
-                            <tr> 
-                                <th>Sampel Atas Nama</th>
-                                <th>Tanggal Terima</th>
-                                <th>Jenis Pengujian Sampel</th>
-                                <th>Status Pengujian</th>
-                                <th>Tanggal Jadi</th>
-                                <th>Hasil Pengujian</th>
-                            </tr>
-                        </table>
+                    <div class="column-titles">
+                        <span>Sampel Atas Nama</span>
+                        <span>Tanggal Terima</span>
+                        <span>Jenis Pengujian Sampel</span>
+                        <span>Status Pengujian</span>
+                        <span>Tanggal Jadi</span>
+                        <span>Hasil Pengujian</span>
                     </div>
                     <?php
                     include '../../../koneksi.php'; 
 
-                    $sql = "SELECT p.nama_pasien, pg.tanggal_pengajuan, pg.id_pengajuan, pg.status 
-                            FROM pelanggan p 
-                            JOIN pengajuan pg ON p.id_pelanggan = pg.id_pelanggan 
-                            ORDER BY pg.tanggal_pengajuan DESC LIMIT 8";
-                    $result = $connect->query($sql);
+                    $currentYear = date('Y'); 
+                    $sql = "SELECT id_pengujian, nama_pasien, tanggal_terima, status_pengujian, tanggal_jadi
+                            FROM pengujian
+                            WHERE YEAR(tanggal_terima) = ? 
+                            ORDER BY tanggal_terima DESC LIMIT 8";
+                    $stmt = $connect->prepare($sql);
+                    $stmt->bind_param("i", $currentYear);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
 
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
                             $tanggal_terima = date('Y/m/d', strtotime($row['tanggal_terima'])); 
                             $tanggal_jadi = date('Y/m/d', strtotime($row['tanggal_jadi'])); 
-                            $status_class = ($row['status'] == 'Diverifikasi') ? 'verified' : 'pending'; 
+                            $status_pengujian_class = ($row['status_pengujian'] == 'Selesai' || $row['status_pengujian'] == 'Diverifikasi') ? 'verified' : ($row['status_pengujian'] == 'Diproses' ? 'pending' : '');
 
-                            $id_pengajuan = $row['id_penerimaan'];
+                            $id_pengujian = $row['id_pengujian'];
                             $jenis_pengujian = '';
-                            if (strpos($id_pengajuan, 'JRM-') === 0) {
+                            if (strpos($id_pengujian, 'JRM-') === 0) {
                                 $jenis_pengujian = 'Jaringan';
-                            } elseif (strpos($id_pengajuan, 'SRM-') === 0) {
+                            } elseif (strpos($id_pengujian, 'SRM-') === 0) {
                                 $jenis_pengujian = 'Sitologi Ginekologi';
-                            } elseif (strpos($id_pengajuan, 'SNRM-') === 0) {
+                            } elseif (strpos($id_pengujian, 'SNRM-') === 0) {
                                 $jenis_pengujian = 'Sitologi Non Ginekologi';
                             }
                     ?>
-                            <div class="row" data-href="tampil.php">
+                            <div class="row">
                                 <span><?php echo htmlspecialchars($row['nama_pasien']); ?></span>
                                 <span><?php echo $tanggal_terima; ?></span>
                                 <span><?php echo htmlspecialchars($jenis_pengujian); ?></span>
-                                <span class="status <?php echo $status_class; ?>"><?php echo htmlspecialchars($row['status']); ?></span>
+                                <span class="status_pengujian <?php echo $status_pengujian_class; ?>"><?php echo htmlspecialchars($row['status_pengujian']); ?></span>
                                 <span><?php echo $tanggal_jadi; ?></span>
-                                <span><?php echo $tanggal_jadi; ?></span>
+                                <span>
+                                    <button class="result-btn <?php echo ($row['status_pengujian'] == 'Selesai' || $row['status_pengujian'] == 'Diverifikasi') ? 'completed' : 'in-progress'; ?>" 
+                                            data-id="<?php echo urlencode($id_pengujian); ?>">Lihat
+                                        <ion-icon name="<?php echo ($row['status_pengujian'] == 'Selesai' || $row['status_pengujian'] == 'Diverifikasi') ? 'eye-outline' : 'eye-off-outline'; ?>"></ion-icon>
+                                    </button> 
+                                </span>
                             </div>
                     <?php
                         }
                     } else {
-                        echo "<div class='row'><span colspan='4'>Tidak ada data yang ditemukan.</span></div>";
+                        echo "<div class='row'><span colspan='6'>Tidak ada data yang ditemukan.</span></div>";
                     }
+                    $stmt->close();
                     $connect->close();
                     ?>
                 </div>
@@ -904,10 +960,11 @@
             });
         });
 
-        const rows = document.querySelectorAll('.row');
-        rows.forEach(row => {
-            row.addEventListener('click', function() {
-                window.location.href = this.getAttribute('data-href');
+        const resultButtons = document.querySelectorAll('.result-btn.completed');
+        resultButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                window.location.href = `lihatHasil.php?id=${id}`;
             });
         });
     </script>

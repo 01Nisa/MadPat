@@ -1,3 +1,14 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['user'])) {
+    header("location:../../../login.php?pesan=belum_login");
+    exit();
+}
+
+$user = $_SESSION['user'];
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -870,7 +881,6 @@
     </div>
 
     <script>
-        // Add hovered class to selected list item
         let list = document.querySelectorAll(".navigation li");
 
         function activeLink() {
@@ -882,7 +892,6 @@
 
         list.forEach((item) => item.addEventListener("mouseover", activeLink));
 
-        // Menu Toggle
         let toggle = document.querySelector(".toggle");
         let navigation = document.querySelector(".navigation");
         let main = document.querySelector(".main");
@@ -892,7 +901,6 @@
             main.classList.toggle("active");
         };
 
-        // Search Functionality
         const searchInput = document.getElementById('searchInput');
         searchInput.addEventListener('input', function() {
             const searchTerm = this.value.toLowerCase();
@@ -903,7 +911,6 @@
             });
         });
 
-        // Make rows clickable to tampil.php with id_pengajuan
         const rows = document.querySelectorAll('.row');
         rows.forEach(row => {
             row.addEventListener('click', function() {
@@ -912,7 +919,6 @@
             });
         });
 
-        // Tambah Pengajuan Menu and Jumlah
         const tambahCard = document.querySelector('.tambah-card');
         const menuCard = document.querySelector('.menu-card');
         const jumlahCard = document.querySelector('.jumlah-card');

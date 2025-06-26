@@ -742,7 +742,7 @@
                         <img src="../../../assets/details.png" alt="Detail Icon">
                         Detail Pembayaran
                     </a>
-                    <a href="ajukan.php" class="ajukan-card">
+                    <a href="diajukan.php" class="ajukan-card">
                         <img src="../../../assets/money-bag.png" alt="Ajukan Icon">
                         Ajukan Pembayaran
                     </a>
@@ -758,18 +758,17 @@
                         <table>
                             <tr>
                                 <th>Sampel Atas Nama</th>
-                                <th>Tanggal Terima</th>
-                                <th>Jenis Pengujian Sampel</th>
-                                <th>Status Pengujian</th>
-                                <th>Tanggal Jadi</th>
-                                <th>Hasil Pengujian</th>
+                                <th>Jumlah Tagihan</th>
+                                <th>Status Pembayaran</th>
+                                <th>Batas Pembayaran</th>
+                                <th>Tanggal Pembayaran</th>
                             </tr>
                         </table>
                     </div>
                     <?php
                     include '../../../koneksi.php'; 
 
-                    $sql = "SELECT p.nama_pasien, pg.tanggal_pengajuan, pg.id_pengajuan, pg.status 
+                    $sql = "SELECT p.nama_pasien, pe.total_bayar, pe.id_pengujian, pe.status_pembayaran
                             FROM pelanggan p 
                             JOIN pengajuan pg ON p.id_pelanggan = pg.id_pelanggan 
                             ORDER BY pg.tanggal_pengajuan DESC LIMIT 8";
