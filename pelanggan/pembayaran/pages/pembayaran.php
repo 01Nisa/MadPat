@@ -1,3 +1,14 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['user'])) {
+    header("location:../../../login.php?pesan=belum_login");
+    exit();
+}
+
+$user = $_SESSION['user'];
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -385,13 +396,14 @@
             z-index: 1001;
         }
 
-        .pengajuan {
+        .pengajuan, .riwayat {
             background: var(--green7);
             padding: 20px;
             border-radius: 10px;
             max-height: 60vh;
             overflow-y: auto;
             z-index: 1001;
+            margin-bottom: 60px;
         }
 
         .cardHeader {
@@ -414,6 +426,20 @@
             border-radius: 6px;
         }
 
+        .cardHeader select {
+            padding: 5px;
+            border: 2px solid var(--green1);
+            border-radius: 6px;
+            background: var(--white);
+            color: var(--black1);
+            font-size: 14px;
+        }
+
+        .cardHeader select:focus {
+            outline: none;
+            border-color: var(--green5);
+        }
+
         .column-titles {
             display: flex;
             justify-content: space-between;
@@ -433,7 +459,7 @@
             line-height: 40px;
         }
 
-        .pengajuan .row {
+        .pengajuan .row, .riwayat .row {
             height: 69px;
             flex-shrink: 0;
             display: flex;
@@ -449,11 +475,11 @@
             z-index: 1001;
         }
 
-        .pengajuan .row:hover {
+        .pengajuan .row:hover, .riwayat .row:hover {
             background: var(--green9);
         }
 
-        .pengajuan .row span {
+        .pengajuan .row span, .riwayat .row span {
             flex: 1;
             text-align: center;
             padding: 0;
@@ -483,6 +509,30 @@
             color: var(--black1);
         }
 
+        .pengajuan .row .btn {
+            background-color: var(--green1);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .pengajuan .row .btn:hover {
+            background-color: var(--green5);
+        }
+
+        .download-btn {
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: var(--green1);
+            margin-left: 10px;
+        }
+
+        .download-btn:hover {
+            color: var(--green5);
+        }
+
         .overlay {
             display: none;
             position: fixed;
@@ -499,7 +549,7 @@
             display: block;
         }
 
-        .menu-card {
+        .menu-card, .menu-card-riwayat {
             position: fixed;
             top: 55%;
             right: 330px;
@@ -515,7 +565,7 @@
             display: none;
         }
 
-        .menu-card.active {
+        .menu-card.active, .menu-card-riwayat.active {
             display: flex;
         }
 
@@ -584,10 +634,10 @@
             .details {
                 grid-template-columns: 1fr;
             }
-            .pengajuan {
+            .pengajuan, .riwayat {
                 overflow-x: auto;
             }
-            .menu-card {
+            .menu-card, .menu-card-riwayat {
                 right: 10px;
             }
             .column-titles span {
@@ -626,7 +676,7 @@
             .user span {
                 display: none;
             }
-            .menu-card {
+            .menu-card, .menu-card-riwayat {
                 width: 250px;
                 right: 5px;
             }
@@ -677,7 +727,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="pengujian.php">
+                    <a href="../../prosesUji/pages/pengujian.php">
                         <span class="icon">
                             <img src="../../../assets/prosesuji.png" alt="prosesuji">
                         </span>
@@ -685,7 +735,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="riwayat.php">
+                    <a href="../../prosesUji/pages/riwayat.php">
                         <span class="icon">
                             <img src="../../../assets/riwayat.png" alt="riwayat">
                         </span>
@@ -769,7 +819,7 @@
                     include '../../../koneksi.php';
 
                     $sql = "SELECT pg.nama_pasien, dp.biaya AS jumlah_tagihan, p.status_pembayaran, 
-                                   p.tanggal_pembayaran, pg.tanggal_jadi
+                                   p.tanggal_pembayaran, pg.tanggal_jadi, p.id_pembayaran
                             FROM pengujian pg
                             JOIN detail_pembayaran dp ON pg.id_pengujian = dp.id_pengujian
                             JOIN pembayaran p ON dp.id_pembayaran = p.id_pembayaran
@@ -779,7 +829,7 @@
 
                     if (!$result) {
                         error_log("SQL Error: " . $connect->error);
-                        echo "<div class='row'><span colspan='5'>Error executing query: " . htmlspecialchars($connect->error) . "</span></div>";
+                        echo "<div class='row'><span colspan='6'>Error executing query: " . htmlspecialchars($connect->error) . "</span></div>";
                     } elseif ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
                             $nama_pasien = htmlspecialchars($row['nama_pasien']);
@@ -788,13 +838,11 @@
                             $tanggal_pembayaran = $status_pembayaran === 'Belum Bayar' 
                                 ? '-' 
                                 : ($row['tanggal_pembayaran'] ? date('Y/m/d', strtotime($row['tanggal_pembayaran'])) : '-');
-
-                            // Calculate Batas Pembayaran: 2nd of the month following tanggal_jadi
                             $batas_pembayaran = $row['tanggal_jadi'] 
                                 ? date('Y/m/d', strtotime(date('Y-m', strtotime($row['tanggal_jadi'])) . "-02 +1 month"))
                                 : '-';
-
                             $status_class = $status_pembayaran === 'Sudah Bayar' ? 'verified' : 'pending';
+                            $id_pembayaran = htmlspecialchars($row['id_pembayaran']);
                     ?>
                             <div class="row">
                                 <span><?php echo $nama_pasien; ?></span>
@@ -806,7 +854,83 @@
                     <?php
                         }
                     } else {
-                        echo "<div class='row'><span colspan='5'>Tidak ada data yang ditemukan.</span></div>";
+                        echo "<div class='row'><span colspan='6'>Tidak ada data yang ditemukan.</span></div>";
+                    }
+                    ?>
+                </div>
+
+                <div class="riwayat">
+                    <div class="cardHeader">
+                        <h2>Riwayat Pembayaran</h2>
+                        <div>
+                            <select id="filter-period" onchange="window.location.href='?filter=' + this.value">
+                                <option value="">Semua</option>
+                                <option value="2months" <?php echo isset($_GET['filter']) && $_GET['filter'] === '2months' ? 'selected' : ''; ?>>2 Bulan Terakhir</option>
+                                <option value="1month" <?php echo isset($_GET['filter']) && $_GET['filter'] === '1month' ? 'selected' : ''; ?>>1 Bulan Terakhir</option>
+                                <option value="1week" <?php echo isset($_GET['filter']) && $_GET['filter'] === '1week' ? 'selected' : ''; ?>>1 Minggu Terakhir</option>
+                                <option value="1day" <?php echo isset($_GET['filter']) && $_GET['filter'] === '1day' ? 'selected' : ''; ?>>1 Hari Terakhir</option>
+                            </select>
+                            <ion-icon class="download-btn" name="download-outline" onclick="toggleMenu('menu-card-riwayat')"></ion-icon>
+                        </div>
+                    </div>
+                    <?php
+                    $sql_riwayat = "SELECT pg.nama_pasien, pg.id_pengujian, dp.biaya AS jumlah_bayar, 
+                                           p.tanggal_pembayaran
+                                    FROM pengujian pg
+                                    JOIN detail_pembayaran dp ON pg.id_pengujian = dp.id_pengujian
+                                    JOIN pembayaran p ON dp.id_pembayaran = p.id_pembayaran
+                                    WHERE p.status_pembayaran = 'Sudah Bayar' AND p.tanggal_pembayaran IS NOT NULL";
+
+                    if (isset($_GET['filter'])) {
+                        $filter = $_GET['filter'];
+                        $today = date('Y-m-d');
+                        if ($filter === '2months') {
+                            $sql_riwayat .= " AND p.tanggal_pembayaran >= DATE_SUB('$today', INTERVAL 2 MONTH)";
+                        } elseif ($filter === '1month') {
+                            $sql_riwayat .= " AND p.tanggal_pembayaran >= DATE_SUB('$today', INTERVAL 1 MONTH)";
+                        } elseif ($filter === '1week') {
+                            $sql_riwayat .= " AND p.tanggal_pembayaran >= DATE_SUB('$today', INTERVAL 1 WEEK)";
+                        } elseif ($filter === '1day') {
+                            $sql_riwayat .= " AND p.tanggal_pembayaran >= DATE_SUB('$today', INTERVAL 1 DAY)";
+                        }
+                    }
+
+                    $sql_riwayat .= " ORDER BY p.tanggal_pembayaran DESC";
+
+                    $result_riwayat = $connect->query($sql_riwayat);
+
+                    if (!$result_riwayat) {
+                        error_log("SQL Error (Riwayat): " . $connect->error);
+                        echo "<div class='row'><span colspan='4'>Error executing query: " . htmlspecialchars($connect->error) . "</span></div>";
+                    } elseif ($result_riwayat->num_rows > 0) {
+                        while ($row = $result_riwayat->fetch_assoc()) {
+                            $nama_pasien = htmlspecialchars($row['nama_pasien']);
+                            $id_pengujian = htmlspecialchars($row['id_pengujian']);
+                            $jenis_pengujian = '';
+                            if (strpos($id_pengujian, 'JRM-') === 0) {
+                                $jenis_pengujian = 'Jaringan';
+                            } elseif (strpos($id_pengujian, 'SRM-') === 0) {
+                                $jenis_pengujian = 'Sitologi Ginekologi';
+                            } elseif (strpos($id_pengujian, 'SNRM-') === 0) {
+                                $jenis_pengujian = 'Sitologi Non Ginekologi';
+                            } else {
+                                $jenis_pengujian = 'Lainnya';
+                            }
+                            $jumlah_bayar = number_format($row['jumlah_bayar'], 0, ',', '.');
+                            $tanggal_pembayaran = $row['tanggal_pembayaran'] 
+                                ? date('Y/m/d', strtotime($row['tanggal_pembayaran'])) 
+                                : '-';
+                    ?>
+                            <div class="row">
+                                <span><?php echo $nama_pasien; ?></span>
+                                <span><?php echo $jenis_pengujian; ?></span>
+                                <span><?php echo $tanggal_pembayaran; ?></span>
+                                <span>Rp <?php echo $jumlah_bayar; ?></span>
+                            </div>
+                    <?php
+                        }
+                    } else {
+                        echo "<div class='row'><span colspan='4'>Tidak ada data riwayat pembayaran.</span></div>";
                     }
                     $connect->close();
                     ?>
@@ -814,7 +938,13 @@
             </div>
             <div class="overlay"></div>
             <div class="menu-card">
-                <div class="close-button" onclick="window.location='pengujian.php'">×</div>
+                <div class="close-button" onclick="toggleMenu('menu-card')">×</div>
+                <div class="menu-option" data-type="pdf">pdf</div>
+                <div class="menu-separator"></div>
+                <div class="menu-option" data-type="word">word</div>
+            </div>
+            <div class="menu-card-riwayat">
+                <div class="close-button" onclick="toggleMenu('menu-card-riwayat')">×</div>
                 <div class="menu-option" data-type="pdf">pdf</div>
                 <div class="menu-separator"></div>
                 <div class="menu-option" data-type="word">word</div>
@@ -834,7 +964,6 @@
 
         list.forEach((item) => item.addEventListener("mouseover", activeLink));
 
-        // Menu Toggle
         let toggle = document.querySelector(".toggle");
         let navigation = document.querySelector(".navigation");
         let main = document.querySelector(".main");
@@ -844,9 +973,8 @@
             main.classList.toggle("active");
         };
 
-        // Dynamic step status
         const steps = document.querySelectorAll('.step');
-        const currentStep = 0; // Adjust based on payment status logic (0 = Diajukan, 1 = Menunggu Konfirmasi, 2 = Selesai)
+        const currentStep = 0; 
         steps.forEach((step, index) => {
             if (index <= currentStep) {
                 step.classList.add('active');
@@ -854,6 +982,13 @@
                 step.classList.add('inactive');
             }
         });
+
+        function toggleMenu(menuId) {
+            const overlay = document.querySelector('.overlay');
+            const menu = document.querySelector(`.${menuId}`);
+            overlay.classList.toggle('active');
+            menu.classList.toggle('active');
+        }
     </script>
 
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>

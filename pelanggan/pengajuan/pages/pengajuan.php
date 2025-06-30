@@ -6,7 +6,25 @@ if (!isset($_SESSION['user'])) {
     exit();
 }
 
-$user = $_SESSION['user'];
+$user_id = $_SESSION['user'];
+include '../../../koneksi.php';
+
+$sql = "SELECT nama, foto FROM pengguna WHERE id_pengguna = ?";
+$stmt = $connect->prepare($sql);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+$stmt->close();
+$connect->close();
+
+if (!$user) {
+    $nama_pengguna = "Pengguna Tidak Ditemukan";
+    $foto_pengguna = "default.jpg"; 
+} else {
+    $nama_pengguna = $user['nama'];
+    $foto_pengguna = $user['foto'] ?: "default.jpg"; 
+}
 ?>
 
 <!DOCTYPE html>
@@ -757,7 +775,7 @@ $user = $_SESSION['user'];
                 </li>
 
                 <li class="signout">
-                    <a href="../../signout.php">
+                    <a href="../../../signout.php">
                         <span class="icon">
                             <ion-icon name="log-out-outline" style="color: black"></ion-icon>
                         </span>
@@ -774,9 +792,10 @@ $user = $_SESSION['user'];
                 </div>
                 <div class="user">
                     <ion-icon class="notification" name="notifications-outline"></ion-icon>
-                    <img src="assets/imgs/customer01.jpg" alt="User">
-                    <span>RS Indah Permata</span>
+                    <span><?php echo htmlspecialchars($nama_pengguna); ?></span>
+                    <img src="assets/imgs/<?php echo htmlspecialchars($foto_pengguna); ?>" alt="User">
                 </div>
+
             </div>
 
             <div class="search-bar">
@@ -945,7 +964,6 @@ $user = $_SESSION['user'];
             });
         });
 
-        // Form Submission with Conditional Redirect
         jumlahForm.addEventListener('submit', function(event) {
             event.preventDefault();
             const jumlah = jumlahForm.querySelector('#jumlah').value;
@@ -965,7 +983,6 @@ $user = $_SESSION['user'];
             }
         });
 
-        // Close cards and overlay on outside click
         document.addEventListener('click', function(event) {
             if (!menuCard.contains(event.target) && !tambahCard.contains(event.target) && !jumlahCard.contains(event.target)) {
                 menuCard.classList.remove('active');

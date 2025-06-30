@@ -1,4 +1,13 @@
 <?php
+session_start();
+
+if (!isset($_SESSION['user'])) {
+    header("location:../../../login.php?pesan=belum_login");
+    exit();
+}
+
+$user = $_SESSION['user'];
+
 include '../../../koneksi.php';
 
 error_log(print_r($_POST, true));

@@ -1,4 +1,12 @@
 <?php
+session_start();
+
+if (!isset($_SESSION['user'])) {
+    header("location:../../../login.php?pesan=belum_login");
+    exit();
+}
+
+$user = $_SESSION['user'];
 $jumlah = isset($_GET['jumlah']) ? intval($_GET['jumlah']) : 1;
 $halaman = isset($_GET['halaman']) ? intval($_GET['halaman']) : 1;
 $max = max(1, $jumlah);
@@ -718,7 +726,6 @@ $currentStep = $halaman - 1;
       updateNavigationButtons();
     };
 
-    // Initialize form pages
     for (let i = 0; i < totalSteps; i++) {
       formPagesContainer.appendChild(createFormPage(i));
     }

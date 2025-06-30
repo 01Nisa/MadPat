@@ -11,26 +11,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (mysqli_num_rows($query) > 0) {
         $user = mysqli_fetch_assoc($query);
         
-        $_SESSION['user'] = [
-            'id' => $user['id_pengguna'],
-            'nama' => $user['nama'], 
+        $_SESSION['user'] = $user['id_pengguna'];
+  
+        $_SESSION['user_data'] = [
+            'nama' => $user['nama'],
             'email' => $user['email']
-        ]; 
-        
+        ];
+
         if ($email == 'kurirmadpat123@gmail.com') {
-            $_SESSION['user']['role'] = 'kurir';
+            $_SESSION['user_data']['role'] = 'kurir';
             header("Location: kurir/beranda.php");
-        } 
-        elseif ($email == 'petugasmadpat123@gmail.com') {
-            $_SESSION['user']['role'] = 'petugas';
+        } elseif ($email == 'petugasmadpat123@gmail.com') {
+            $_SESSION['user_data']['role'] = 'petugas';
             header("Location: petugas/beranda.php");
-        }
-        elseif ($email == 'pemilikmadpat123@gmail.com') {
-            $_SESSION['user']['role'] = 'pemilik';
+        } elseif ($email == 'pemilikmadpat123@gmail.com') {
+            $_SESSION['user_data']['role'] = 'pemilik';
             header("Location: pemilik/beranda.php");
-        }
-        else {
-            $_SESSION['user']['role'] = 'pelanggan';
+        } else {
+            $_SESSION['user_data']['role'] = 'pelanggan';
             header("Location: pelanggan/beranda.php");
         }
         exit();

@@ -1,3 +1,32 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['user'])) {
+    header("location:../../../login.php?pesan=belum_login");
+    exit();
+}
+
+$user_id = $_SESSION['user'];
+include '../../../koneksi.php';
+
+$sql = "SELECT nama, foto FROM pengguna WHERE id_pengguna = ?";
+$stmt = $connect->prepare($sql);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+$stmt->close();
+$connect->close();
+
+if (!$user) {
+    $nama_pengguna = "Pengguna Tidak Ditemukan";
+    $foto_pengguna = "default.jpg"; 
+} else {
+    $nama_pengguna = $user['nama'];
+    $foto_pengguna = $user['foto'] ?: "default.jpg"; 
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -775,15 +804,14 @@
                 </div>
                 <div class="user">
                     <ion-icon class="notification" name="notifications-outline"></ion-icon>
-                    <img src="assets/imgs/customer01.jpg" alt="User">
-                    <span>RS Indah Permata</span>
+                    <span><?php echo htmlspecialchars($nama_pengguna); ?></span>
+                    <img src="assets/imgs/<?php echo htmlspecialchars($foto_pengguna); ?>" alt="User">
                 </div>
             </div>
             <div class="cardBox">
                 <?php
                     include '../../../koneksi.php';
 
-                    // Query to count each type of testing
                     $currentYear = date('Y');
                     $sqlCount = "SELECT 
                         SUM(CASE WHEN id_pengujian LIKE 'JRM-%' THEN 1 ELSE 0 END) as jaringan_count,
@@ -851,7 +879,7 @@
                 <div class="unduh-card"><img src="../../../assets/install.png" alt="Install Icon">Unduh Hasil Pengujian</div>
             </div>
 
-             <div class="details">
+            <div class="details">
                 <div class="pengajuan">
                     <div class="cardHeader">
                         <h2>Pengajuan Sampel</h2>
