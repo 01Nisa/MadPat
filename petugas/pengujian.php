@@ -1,18 +1,3 @@
-<?php
-include 'koneksi.php';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['setujui_id'])) {
-    $nama = intval($_POST['setujui_id']);
-    $sql = "UPDATE pengajuan SET status_pengajuan = 'Verifikasi' WHERE nama_pasien = $nama";
-
-    if ($koneksi->query($sql) === TRUE) {
-        echo "<script>document.addEventListener('DOMContentLoaded', function() { showSuccess(); });</script>";
-    } else {
-        echo "Gagal memperbarui status: " . $koneksi->error;
-    }
-}
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -23,12 +8,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['setujui_id'])) {
     <title>Penerimaan</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- ======= Styles ====== -->
     <style>
         /* =========== Google Fonts ============ */
 @import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap");
-
 
 /* =============== Globals ============== */
 * {
@@ -294,7 +277,7 @@ body {
 
 .cardBox .card {
   position: relative;
-  background: #147472;
+  background: var(--white);
   padding: 30px;
   border-radius: 20px;
   display: flex;
@@ -303,24 +286,30 @@ body {
   box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
 }
 
-
-
-.cardBox .card .cardName {
-  color: white;
-  font-size: 1.8rem;
+.cardBox .card .numbers {
+  position: relative;
+  font-weight: 500;
+  font-size: 2.5rem;
+  color: var(--green);
 }
 
-.cardBox .card .numbertext {
+.cardBox .card .cardName {
+  color: var(--black2);
+  font-size: 1.1rem;
+  margin-top: 5px;
+}
+
+.cardBox .card .iconBx {
   font-size: 3.5rem;
-  color: white;
+  color: var(--black2);
 }
 
 .cardBox .card:hover {
   background: var(--green);
 }
-
+.cardBox .card:hover .numbers,
 .cardBox .card:hover .cardName,
-.cardBox .card:hover .numbertext {
+.cardBox .card:hover .iconBx {
   color: var(--white);
 }
 
@@ -335,7 +324,7 @@ body {
   /* margin-top: 10px; */
 }
 
-.details .Approval {
+.details .recentOrders {
   position: relative;
   display: grid;
   min-height: 500px;
@@ -371,27 +360,27 @@ body {
 .details table thead td {
   font-weight: 600;
 }
-.details .Approval table tr {
+.details .recentOrders table tr {
   color: var(--black1);
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
-.details .Approval table tr:last-child {
+.details .recentOrders table tr:last-child {
   border-bottom: none;
 }
-.details .Approval table tbody tr:hover {
+.details .recentOrders table tbody tr:hover {
   background: var(--green);
   color: var(--white);
 }
-.details .Approval table tr td {
+.details .recentOrders table tr td {
   padding: 10px;
 }
-.details .Approval table tr td:last-child {
+.details .recentOrders table tr td:last-child {
   text-align: end;
 }
-.details .Approval table tr td:nth-child(2) {
+.details .recentOrders table tr td:nth-child(2) {
   text-align: end;
 }
-.details .Approval table tr td:nth-child(3) {
+.details .recentOrders table tr td:nth-child(3) {
   text-align: center;
 }
 .status.delivered {
@@ -471,45 +460,6 @@ body {
   color: var(--white);
 }
 
-/* Tombol icon utama */
-.icon-btn {
-  background-color: #fff;
-  border: 1.5px solid #ccc;
-  border-radius: 6px;
-  padding: 4px 6px;
-  margin: 0 2px;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Hover effect */
-.icon-btn:hover {
-  background-color: #f5f5f5;
-  transform: scale(1.05);
-}
-
-/* Ikon */
-.icon-btn .material-icons {
-  font-size: 20px;
-}
-
-/* Warna khusus per aksi */
-.icon-btn.accept .material-icons {
-  color: #28a745; /* Hijau */
-}
-.icon-btn.reject .material-icons {
-  color: red; /* Biru */
-}
-.icon-btn.view .material-icons {
-  color: #444; /* Abu kehitaman */
-}
-.icon-btn.download .material-icons {
-  color: #777; /* Abu medium */
-}
-
 /* ====================== Responsive Design ========================== */
 @media (max-width: 991px) {
   .navigation {
@@ -535,7 +485,7 @@ body {
   .details {
     grid-template-columns: 1fr;
   }
-  .Approval {
+  .recentOrders {
     overflow-x: auto;
   }
   .status.inProgress {
@@ -571,18 +521,6 @@ body {
     right: 0;
     left: initial;
   }
-}
-.swal2-popup.swal-custom {
-  border-radius: 12px;
-  padding: 2rem;
-}
-.swal2-title {
-  font-size: 1.1rem;
-  color: #67C3C0;
-}
-.swal2-icon.swal2-success {
-  border-color: #67C3C0;
-  color: #67C3C0;
 }
 
     </style>
@@ -668,21 +606,23 @@ body {
             <div class="cardBox">
                 <div class="card">
                     <div>
-                        <div class="cardName">Pengujian Jaringan</div>
+                        <div class="numbers">1,504</div>
+                        <div class="cardName">Daily Views</div>
                     </div>
 
-                    <div class="numbertext">
-                        12
+                    <div class="iconBx">
+                        <ion-icon name="eye-outline"></ion-icon>
                     </div>
                 </div>
 
                 <div class="card">
                     <div>
-                        <div class="cardName">Pengujian Sitologi Ginekologi</div>
+                        <div class="numbers">80</div>
+                        <div class="cardName">Sales</div>
                     </div>
 
-                    <div class="numbertext">
-                        11
+                    <div class="iconBx">
+                        <ion-icon name="cart-outline"></ion-icon>
                     </div>
                 </div>
 
@@ -690,24 +630,25 @@ body {
 
                 <div class="card">
                     <div>
-                        <div class="cardName">Pengujian Sitologi Non Ginekologi</div>
+                        <div class="numbers">$7,842</div>
+                        <div class="cardName">Earning</div>
                     </div>
-                    <div class="numbertext">
-                        2
+
+                    <div class="iconBx">
+                        <ion-icon name="cash-outline"></ion-icon>
                     </div>
                 </div>
             </div>
 
             <!-- ================ Order Details List ================= -->
-              <?php include 'koneksi.php'; ?>
             <div class="details">
-                <div class="Approval">
+                <div class="recentOrders">
                     <div class="cardHeader">
-                        <h2>Persetujuan Penerimaan Sampel</h2>
-                        
+                        <h2>Recent Orders</h2>
+                        <a href="#" class="btn">View All</a>
                     </div>
 
-                    <table class="approval request">
+                    <table>
                         <thead>
                             <tr>
                                 <td>Sampel Atas Nama</td>
@@ -719,36 +660,125 @@ body {
                         </thead>
 
                         <tbody>
-                          <?php
-                $query = "SELECT id_pengajuan, nama_pasien, tanggal_pengajuan, jenis_pengajuan  FROM pengajuan where status_pengajuan='menunggu verifikasi'";
-                $result = $koneksi->query($query);
+                            <tr>
+                                <td>Star Refrigerator</td>
+                                <td>$1200</td>
+                                <td></td>
+                                <td>
+                                    <button class="icon-btn view" aria-label="View Bagas Andikara Sample Test"><span class="material-icons">visibility</span></button>
+                                    <button class="icon-btn download" aria-label="Download Bagas Andikara Sample Test"><span class="material-icons">download</span></button> 
+                                </td>
+                                <td>
+                                    <button class="icon-btn reject" aria-label="Reject Bagas Andikara Sample Test"><span class="material-icons">close</span></button>
+                                    <button class="icon-btn accept" aria-label="Accept Bagas Andikara Sample Test"><span class="material-icons">check</span></button>
+                
+                                </td>
+                                </tr>
+        
+                            <tr>
+                              <td>Star Refrigerator</td>
+                                <td>$1200</td>
+                                <td></td>
+                                <td>
+                                    <button class="icon-btn view" aria-label="View Bagas Andikara Sample Test"><span class="material-icons">visibility</span></button>
+                                    <button class="icon-btn download" aria-label="Download Bagas Andikara Sample Test"><span class="material-icons">download</span></button> 
+                                </td>
+                                <td>
+                                    <button class="icon-btn reject" aria-label="Reject Bagas Andikara Sample Test"><span class="material-icons">close</span></button>
+                                    <button class="icon-btn accept" aria-label="Accept Bagas Andikara Sample Test"><span class="material-icons">check</span></button>
+                
+                                </td>
+                            </tr>
 
-                if ($result && $result->num_rows > 0) {
-                    while ($row = $result->fetch_assoc()) {
-                        echo "<tr>";
-                        echo "<td>" . htmlspecialchars($row['nama_pasien']) . "</td>";
-                        echo "<td>" . htmlspecialchars($row['tanggal_pengajuan']) . "</td>";
-                        echo "<td>" . htmlspecialchars($row['jenis_pengajuan']) . "</td>";
-                        echo "<td>
-                                <button class='icon-btn view' aria-label='View " . htmlspecialchars($row['id_pengajuan']) . " Sample Test'><span class='material-icons'>visibility</span></button>
-                                <button class='icon-btn download' aria-label='Download " . htmlspecialchars($row['id_pengajuan']) . " Sample Test'><span class='material-icons'>download</span></button>
-                              </td>";
-                        echo "<td>
-                                <button class='icon-btn reject' aria-label='Reject " . htmlspecialchars($row['nama_pasien']) . " Sample Test'><span class='material-icons'>close</span></button>
-                                <form method='POST' style='display:inline;'>
-                                  <input type='hidden' name='setujui_id' value='" . htmlspecialchars($row['id_pengajuan']) . "'>
-                                  <button type='submit' class='icon-btn accept' aria-label='Setujui'>
-                                      <span class='material-icons'>check</span>
-                                  </button>
-                              </form>
-                              </td>";
-                        echo "</tr>";
+                            <tr>
+                                <td>Star Refrigerator</td>
+                                <td>$1200</td>
+                                <td></td>
+                                <td>
+                                    <button class="icon-btn view" aria-label="View Bagas Andikara Sample Test"><span class="material-icons">visibility</span></button>
+                                    <button class="icon-btn download" aria-label="Download Bagas Andikara Sample Test"><span class="material-icons">download</span></button> 
+                                </td>
+                                <td>
+                                    <button class="icon-btn reject" aria-label="Reject Bagas Andikara Sample Test"><span class="material-icons">close</span></button>
+                                    <button class="icon-btn accept" aria-label="Accept Bagas Andikara Sample Test"><span class="material-icons">check</span></button>
+                
+                                </td>
+                            </tr>
 
-                    }
-                } else {
-                    echo "<tr><td colspan='5'>Tidak ada data.</td></tr>";
-                }
-                ?>      
+                            <tr>
+                               <td>Star Refrigerator</td>
+                                <td>$1200</td>
+                                <td></td>
+                                <td>
+                                    <button class="icon-btn view" aria-label="View Bagas Andikara Sample Test"><span class="material-icons">visibility</span></button>
+                                    <button class="icon-btn download" aria-label="Download Bagas Andikara Sample Test"><span class="material-icons">download</span></button> 
+                                </td>
+                                <td>
+                                    <button class="icon-btn reject" aria-label="Reject Bagas Andikara Sample Test"><span class="material-icons">close</span></button>
+                                    <button class="icon-btn accept" aria-label="Accept Bagas Andikara Sample Test"><span class="material-icons">check</span></button>
+                
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Star Refrigerator</td>
+                                <td>$1200</td>
+                                <td></td>
+                                <td>
+                                    <button class="icon-btn view" aria-label="View Bagas Andikara Sample Test"><span class="material-icons">visibility</span></button>
+                                    <button class="icon-btn download" aria-label="Download Bagas Andikara Sample Test"><span class="material-icons">download</span></button> 
+                                </td>
+                                <td>
+                                    <button class="icon-btn reject" aria-label="Reject Bagas Andikara Sample Test"><span class="material-icons">close</span></button>
+                                    <button class="icon-btn accept" aria-label="Accept Bagas Andikara Sample Test"><span class="material-icons">check</span></button>
+                
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Star Refrigerator</td>
+                                <td>$1200</td>
+                                <td></td>
+                                <td>
+                                    <button class="icon-btn view" aria-label="View Bagas Andikara Sample Test"><span class="material-icons">visibility</span></button>
+                                    <button class="icon-btn download" aria-label="Download Bagas Andikara Sample Test"><span class="material-icons">download</span></button> 
+                                </td>
+                                <td>
+                                    <button class="icon-btn reject" aria-label="Reject Bagas Andikara Sample Test"><span class="material-icons">close</span></button>
+                                    <button class="icon-btn accept" aria-label="Accept Bagas Andikara Sample Test"><span class="material-icons">check</span></button>
+                
+                                </td>
+                            </tr>
+
+                            <tr>
+                               <td>Star Refrigerator</td>
+                                <td>$1200</td>
+                                <td></td>
+                                <td>
+                                    <button class="icon-btn view" aria-label="View Bagas Andikara Sample Test"><span class="material-icons">visibility</span></button>
+                                    <button class="icon-btn download" aria-label="Download Bagas Andikara Sample Test"><span class="material-icons">download</span></button> 
+                                </td>
+                                <td>
+                                    <button class="icon-btn reject" aria-label="Reject Bagas Andikara Sample Test"><span class="material-icons">close</span></button>
+                                    <button class="icon-btn accept" aria-label="Accept Bagas Andikara Sample Test"><span class="material-icons">check</span></button>
+                
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Star Refrigerator</td>
+                                <td>$1200</td>
+                                <td></td>
+                                <td>
+                                    <button class="icon-btn view" aria-label="View Bagas Andikara Sample Test"><span class="material-icons">visibility</span></button>
+                                    <button class="icon-btn download" aria-label="Download Bagas Andikara Sample Test"><span class="material-icons">download</span></button> 
+                                </td>
+                                <td>
+                                    <button class="icon-btn reject" aria-label="Reject Bagas Andikara Sample Test"><span class="material-icons">close</span></button>
+                                    <button class="icon-btn accept" aria-label="Accept Bagas Andikara Sample Test"><span class="material-icons">check</span></button>
+                
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -784,18 +814,6 @@ toggle.onclick = function () {
   navigation.classList.toggle("active");
   main.classList.toggle("active");
 };
-
-function showSuccess() {
-    Swal.fire({
-      icon: 'success',
-      title: 'Berhasil menyetujui pengajuan',
-      showConfirmButton: false,
-      timer: 1500,
-      customClass: {
-        popup: 'swal-custom'
-      }
-    });
-  }
 
     </script>
 
