@@ -4,13 +4,14 @@ session_start();
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     include '../../../koneksi.php';
 
+    $id_pembayaran = $_POST['id_pembayaran'] ?? '';
     $nama_pengirim = $_POST['nama_pengirim'] ?? '';
     $tanggal_pembayaran = $_POST['tanggal_pembayaran'] ?? '';
     $waktu_pembayaran = $_POST['waktu_pembayaran'] ?? '';
     $jenis_pembayaran = $_POST['jenis_pembayaran'] ?? '';
     $total_bayar = str_replace(['.', ','], '', $_POST['total_bayar'] ?? '0');
 
-    $target_dir = "../../../uploads/";
+    $target_dir = "../../../Uploads/";
     $original_filename = basename($_FILES["bukti_pembayaran"]["name"] ?? '');
     $unique_filename = uniqid() . '_' . $original_filename;
     $target_file = $target_dir . $unique_filename;
@@ -21,12 +22,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         mkdir($target_dir, 0777, true);
     }
 
-    if (empty($nama_pengirim) || empty($tanggal_pembayaran) || empty($waktu_pembayaran) || empty($jenis_pembayaran) || empty($total_bayar)) {
+    if (empty($id_pembayaran) || empty($nama_pengirim) || empty($tanggal_pembayaran) || 
+        empty($waktu_pembayaran) || empty($jenis_pembayaran) || empty($total_bayar)) {
         $_SESSION['notifikasi'] = [
             'status' => 'error',
             'pesan' => 'Semua field harus diisi!'
         ];
-        header("Location: pembayaran.php");
+        header("Location: ../pages/pembayaran.php");
         exit();
     }
 
@@ -35,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             'status' => 'error',
             'pesan' => 'Harap pilih file bukti pembayaran.'
         ];
-        header("Location: pembayaran.php");
+        header("Location: ../pages/pembayaran.php");
         exit();
     }
 
@@ -45,7 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             'status' => 'error',
             'pesan' => 'File bukan gambar.'
         ];
-        header("Location: pembayaran.php");
+        header("Location: ../pages/pembayaran.php");
         exit();
     }
 
@@ -54,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             'status' => 'error',
             'pesan' => 'Maaf, file terlalu besar (maksimal 5MB).'
         ];
-        header("Location: pembayaran.php");
+        header("Location: ../pages/pembayaran.php");
         exit();
     }
 
@@ -64,19 +66,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             'status' => 'error',
             'pesan' => 'Maaf, hanya file JPG, JPEG, dan PNG yang diizinkan.'
         ];
-        header("Location: pembayaran.php");
+        header("Location: ../pages/pembayaran.php");
         exit();
     }
 
     if (move_uploaded_file($_FILES["bukti_pembayaran"]["tmp_name"], $target_file)) {
-        $relative_path = "uploads/" . $unique_filename;
-        
-        $sql = "INSERT INTO pembayaran (nama_pengirim, tanggal_pembayaran, waktu_pembayaran, jenis_pembayaran, total_bayar, bukti_pembayaran) 
-                VALUES (?, ?, ?, ?, ?, ?)";
+        $relative_path = "Uploads/" . $unique_filename;
+
+        $sql = "UPDATE pembayaran SET 
+                nama_pengirim = ?, 
+                tanggal_pembayaran = ?, 
+                waktu_pembayaran = ?, 
+                jenis_pembayaran = ?, 
+                total_bayar = ?, 
+                bukti_pembayaran = ?, 
+                status_pembayaran = 'Sudah Bayar'
+                WHERE id_pembayaran = ?";
         $stmt = $connect->prepare($sql);
         
         if ($stmt) {
-            $stmt->bind_param("ssssis", $nama_pengirim, $tanggal_pembayaran, $waktu_pembayaran, $jenis_pembayaran, $total_bayar, $relative_path);
+            $stmt->bind_param("ssssiss", 
+                $nama_pengirim, 
+                $tanggal_pembayaran, 
+                $waktu_pembayaran, 
+                $jenis_pembayaran, 
+                $total_bayar, 
+                $relative_path, 
+                $id_pembayaran
+            );
             
             if ($stmt->execute()) {
                 $_SESSION['notifikasi'] = [

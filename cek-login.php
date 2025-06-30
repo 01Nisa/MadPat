@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'id' => $user['id_pengguna'],
             'nama' => $user['nama'], 
             'email' => $user['email']
-        ];
+        ]; 
         
         if ($email == 'kurirmadpat123@gmail.com') {
             $_SESSION['user']['role'] = 'kurir';

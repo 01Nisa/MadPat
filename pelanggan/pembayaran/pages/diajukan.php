@@ -1,3 +1,29 @@
+<?php
+session_start();
+include '../../../koneksi.php';
+
+$sql = "SELECT p.id_pembayaran, p.total_bayar 
+        FROM detail_pembayaran dp 
+        JOIN pembayaran p ON dp.id_pembayaran = p.id_pembayaran 
+        WHERE p.status_pembayaran = 'Belum Bayar' 
+        LIMIT 1";
+$result = $connect->query($sql);
+$id_pembayaran = '';
+$total_bayar = '';
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $id_pembayaran = $row['id_pembayaran'];
+    $total_bayar = number_format($row['total_bayar'], 0, ',', '.');
+} else {
+    $_SESSION['notifikasi'] = [
+        'status' => 'error',
+        'pesan' => 'Tidak ada pembayaran yang belum dibayar.'
+    ];
+    header("Location: ../pages/pembayaran.php");
+    exit();
+}
+$connect->close();
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -105,6 +131,7 @@
       border-radius: 8px;
       background-color: white;
       transition: border-color 0.3s, background-color 0.3s;
+      color: #000;
     }
 
     input:hover,
@@ -116,6 +143,12 @@
       border-color: var(--green5);
       background-color: #fff;
       outline: none;
+    }
+
+    input[readonly] {
+      background-color: #f0f0f0;
+      cursor: not-allowed;
+      color: #000;
     }
 
     textarea {
@@ -196,13 +229,12 @@
     }
   </style>
   <script>
-    function formatRupiah(input) {
-      let value = input.value.replace(/[^0-9]/g, ''); 
-      if (value === '') value = '0';
-      let number = parseInt(value, 10);
-      if (number < 0) number = 0; 
-      input.value = number.toLocaleString('id-ID'); 
-    }
+    document.addEventListener("DOMContentLoaded", function() {
+      const totalBayarInput = document.getElementById('total_bayar');
+      if (totalBayarInput.value) {
+        formatRupiah(totalBayarInput);
+      }
+    });
   </script>
 </head>
 <body>
@@ -211,6 +243,10 @@
   <div class="form-container">
     <h2>Formulir Pembayaran Sampel</h2>
     <form id="formPembayaran" action="../process/proDiajukan.php" method="post" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="id_pembayaran">Nomor Pembayaran</label>
+        <input type="text" id="id_pembayaran" name="id_pembayaran" value="<?php echo htmlspecialchars($id_pembayaran); ?>" readonly required />
+      </div>
       <div class="form-group">
         <label for="nama_pengirim">Nama Pengirim</label>
         <input type="text" id="nama_pengirim" name="nama_pengirim" required />
@@ -231,15 +267,15 @@
         <div class="form-group">
           <label for="jenis_pembayaran">Jenis Pembayaran</label>
           <select name="jenis_pembayaran" required>
-            <option value="">Pilih Jenis Pembayaran</option>
+            <option void="">Pilih Jenis Pembayaran</option>
             <option value="TransferBank">Transfer Bank</option>
             <option value="E-Wallet">E-Wallet</option>
             <option value="Tunai">Tunai</option>
           </select>
         </div>
         <div class="form-group">
-          <label for="total_bayar">Total Pembayaran (Rp)</label>
-          <input type="text" id="total_bayar" name="total_bayar" oninput="formatRupiah(this)" required />
+          <label for="total_bayar">Total Pembayaran</label>
+          <input type="text" id="total_bayar" name="total_bayar" value="<?php echo htmlspecialchars($total_bayar); ?>" readonly required />
         </div>
       </div>
 

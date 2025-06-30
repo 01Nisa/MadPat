@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pembayaran</title>
+    <title>Beranda</title>
     <style>
         @import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=poppins");
 
@@ -16,20 +17,19 @@
         }
 
         :root {
-            --green1: rgba(20, 116, 114, 1);
-            --green2: rgba(3, 178, 176, 1);
-            --green3: rgba(186, 231, 228, 1);
-            --green4: rgba(12, 109, 108, 0.61);
-            --green5: rgba(3, 178, 176, 0.29);
-            --green6: rgba(240, 243, 243, 1);
-            --green7: rgba(228, 240, 240, 1);
-            --green8: rgba(136, 181, 181, 0.26);
-            --green9: rgba(136, 181, 181, 0.1);
-            --white: #fff;
-            --gray: #f5f5f5;
-            --black1: #222;
-            --black2: #999;
-            --black3: rgba(0, 0, 0, 0.4);
+          --green1: rgba(20, 116, 114, 1);
+          --green2: rgba(3, 178, 176, 1);
+          --green3: rgba(186, 231, 228, 1);
+          --green4: rgba(12, 109, 108, 0.61);
+          --green5: rgba(3, 178, 176, 0.29);
+          --green6: rgba(240, 243, 243, 1);
+          --green7: rgba(228, 240, 240, 1);
+          --green8: rgba(136, 181, 181, 0.26);
+          --white: #fff;
+          --gray: #f5f5f5;
+          --black1: #222;
+          --black2: #999;
+          --black3: rgba(0, 0, 0, 0.4);
         }
 
         body {
@@ -90,7 +90,6 @@
             text-decoration: none;
             color: var(--white);
         }
-
         .navigation ul li:hover a,
         .navigation ul li.hovered a {
             color: var(--green2);
@@ -156,8 +155,8 @@
             position: relative;
             display: block;
             font-family: 'Poppins', sans-serif;
-            font-size: 22px;
-            color: black;
+            font-size: 22px; 
+            color: black; 
             padding: 0 10px;
             height: 230px;
             line-height: 70px;
@@ -169,7 +168,7 @@
             position: relative;
             display: block;
             font-family: 'Poppins', sans-serif;
-            color: black;
+            color: black; 
             padding: 0 10px;
             height: 70px;
             line-height: 60px;
@@ -190,7 +189,6 @@
             box-shadow: 35px 35px 0 10px var(--white);
             pointer-events: none;
         }
-
         .navigation ul li:hover a::after,
         .navigation ul li.hovered a::after {
             content: "";
@@ -213,7 +211,6 @@
             background: var(--white);
             transition: 0.5s;
         }
-
         .main.active {
             width: calc(100% - 80px);
             left: 80px;
@@ -268,127 +265,13 @@
             margin-right: 10px;
         }
 
-        .cardBox {
-            position: relative;
-            padding-left: 1000px;
-            margin-top: 90px;
-            height: 150px;
-            overflow: hidden;
-        }
-
-        .cardBox .card {
-            position: absolute;
-            top: 0;
-            left: 6px;
-            width: 98%;
-            height: 80%;
-            background: rgba(171, 224, 223, 1);
-            padding: 30px;
-            border-radius: 20px;
-            z-index: 1;
-        }
-
-        .cardBox .card .proses {
-            position: relative;
-            font-weight: 400;
-            font-size: 20px;
-            margin-top: -10px;
-            color: var(--black1);
-        }
-
-        .cardBox .step-container {
-            display: flex;
-            align-items: center;
-            margin-right: 900px;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .cardBox .step {
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--green1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        .cardBox .step.active {
-            background-color: var(--green1);
-            border-color: var(--green1);
-        }
-
-        .cardBox .step.inactive {
-            background-color: transparent;
-        }
-
-        .cardBox .step span {
-            position: absolute;
-            bottom: -25px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 12px;
-            color: var(--black1);
-            white-space: nowrap;
-        }
-
-        .cardBox .step-line {
-            flex-grow: 1;
-            height: 2px;
-            background-color: var(--green1);
-            width: 100px;
-        }
-
-        .cardBox .pilihan {
-            position: relative;
-            display: flex;
-            gap: 20px;
-            z-index: 2;
-            margin-top: 30px;
-            text-align: right;
-        }
-
-        .detail-card, .ajukan-card {
-            width: 262px;
-            height: 66px;
-            flex-shrink: 0;
-            background: var(--green1);
-            color: var(--white);
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 18px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1001;
-            text-align: center;
-            text-decoration: none;
-            color: var(--white);
-        }
-
-        .detail-card:hover, .ajukan-card:hover {
-            background: var(--green6);
-        }
-
-        .detail-card img, .ajukan-card img {
-            width: 30px;
-            height: 35px;
-            margin-right: 10px;
-        }
-
-        .details {
-            padding: 10px;
-            z-index: 1001;
-        }
+       
 
         .pengajuan {
             background: var(--green7);
             padding: 20px;
             border-radius: 10px;
+            margin-bottom: 100px;
             max-height: 60vh;
             overflow-y: auto;
             z-index: 1001;
@@ -400,12 +283,10 @@
             align-items: center;
             margin-bottom: 20px;
         }
-
         .cardHeader h2 {
             font-weight: 600;
             color: var(--black1);
         }
-
         .cardHeader .btn {
             padding: 5px 10px;
             background: var(--green2);
@@ -430,7 +311,7 @@
             flex: 1;
             text-align: center;
             font-size: 16px;
-            line-height: 40px;
+            line-height: 40px; 
         }
 
         .pengajuan .row {
@@ -457,11 +338,11 @@
             flex: 1;
             text-align: center;
             padding: 0;
-            margin: 0 60px;
-            line-height: 30px;
+            margin: 0 60px; 
+            line-height: 30px; 
         }
 
-        .pengajuan .row .status_pembayaran {
+        .pengajuan .row .status_pengujian {
             width: 97px;
             height: 37px;
             padding: 2px 10px;
@@ -473,14 +354,40 @@
             bottom: 2px;
         }
 
-        .status_pembayaran.verified {
-            background: rgba(138, 242, 150, 1);
-            color: var(--black1);
+        .status_pengujian.verified {
+            background: rgba(255, 182, 126, 1);
+            color: var(--black);
         }
 
-        .status_pembayaran.pending {
-            background: rgba(255, 226, 110, 1);
-            color: var(--black1);
+        .status_pengujian.pending {
+            background: rgba(138, 242, 150, 1);
+            color: var(--black);
+        }
+
+        .result-btn {
+            width: 97px;
+            height: 37px;
+            border-radius: 15px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px; 
+            position: relative;
+            bottom: 2px; 
+        }
+
+        .result-btn.completed {
+            background-color: #4285f4; 
+            color: white;
+        }
+
+        .result-btn.in-progress {
+            background-color: #ccc; 
+            color: #666;
+            cursor: default;
+            pointer-events: none;
         }
 
         .overlay {
@@ -492,9 +399,8 @@
             height: 100%;
             background-color: var(--black3);
             background-blend-mode: overlay;
-            z-index: 1002;
+            z-index: 1002; 
         }
-
         .overlay.active {
             display: block;
         }
@@ -502,7 +408,7 @@
         .menu-card {
             position: fixed;
             top: 55%;
-            right: 330px;
+            right: 330px; 
             transform: translateY(-50%);
             width: 100px;
             height: 130px;
@@ -584,14 +490,11 @@
             .details {
                 grid-template-columns: 1fr;
             }
-            .pengajuan {
-                overflow-x: auto;
-            }
-            .menu-card {
-                right: 10px;
-            }
             .column-titles span {
                 font-size: 12px;
+            }
+            .pengajuan {
+                overflow-x: auto;
             }
         }
 
@@ -626,20 +529,13 @@
             .user span {
                 display: none;
             }
-            .menu-card {
-                width: 250px;
-                right: 5px;
-            }
-            .jumlah-card {
-                width: 250px;
-                left: 5px;
-            }
             .column-titles span {
                 font-size: 10px;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="navigation">
@@ -652,6 +548,7 @@
                         <span class="title-logo">MedPath</span>
                     </a>
                 </li>
+
                 <li>
                     <a href="../../beranda.php">
                         <span class="icon">
@@ -660,6 +557,7 @@
                         <span class="title">Beranda</span>
                     </a>
                 </li>
+
                 <li>
                     <a href="../../pengajuan/pages/pengajuan.php">
                         <span class="icon">
@@ -668,6 +566,7 @@
                         <span class="title">Pengajuan</span>
                     </a>
                 </li>
+
                 <li>
                     <a href="../../pengambilan/pages/pengambilan.php">
                         <span class="icon">
@@ -676,6 +575,7 @@
                         <span class="title">Pengambilan</span>
                     </a>
                 </li>
+
                 <li>
                     <a href="pengujian.php">
                         <span class="icon">
@@ -684,6 +584,7 @@
                         <span class="title">Proses Uji</span>
                     </a>
                 </li>
+
                 <li>
                     <a href="riwayat.php">
                         <span class="icon">
@@ -693,13 +594,14 @@
                     </a>
                 </li>
                 <li>
-                    <a href="pembayaran.php">
+                    <a href="../../pembayaran/pages/pembayaran.php">
                         <span class="icon">
                             <img src="../../../assets/money.png" alt="money">
                         </span>
                         <span class="title">Pembayaran</span>
                     </a>
                 </li>
+
                 <li>
                     <a href="../../pengaturan/pages/pengaturan.php">
                         <span class="icon">
@@ -708,6 +610,7 @@
                         <span class="title">Pengaturan</span>
                     </a>
                 </li>
+
                 <li class="signout">
                     <a href="../../signout.php">
                         <span class="icon">
@@ -718,6 +621,7 @@
                 </li>
             </ul>
         </div>
+
         <div class="main">
             <div class="topbar">
                 <div class="toggle">
@@ -729,30 +633,7 @@
                     <span>RS Indah Permata</span>
                 </div>
             </div>
-            <div class="cardBox">
-                <div class="card">
-                    <div>
-                        <div class="proses">Proses Pembayaran</div>
-                        <div class="step-container">
-                            <div class="step active" title="Diajukan"><span>Diajukan</span></div>
-                            <div class="step-line"></div>
-                            <div class="step inactive" title="Menunggu Konfirmasi"><span>Menunggu Konfirmasi</span></div>
-                            <div class="step-line"></div>
-                            <div class="step inactive" title="Selesai"><span>Selesai</span></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="pilihan">
-                    <a href="detail.php" class="detail-card">
-                        <img src="../../../assets/details.png" alt="Detail Icon">
-                        Detail Pembayaran
-                    </a>
-                    <a href="diajukan.php" class="ajukan-card">
-                        <img src="../../../assets/money-bag.png" alt="Ajukan Icon">
-                        Ajukan Pembayaran
-                    </a>
-                </div>
-            </div>
+            
             <div class="details">
                 <div class="pengajuan">
                     <div class="cardHeader">
@@ -760,65 +641,74 @@
                     </div>
                     <div class="column-titles">
                         <span>Sampel Atas Nama</span>
-                        <span>Jumlah Tagihan</span>
-                        <span>Status Pembayaran</span>
-                        <span>Batas Pembayaran</span>
-                        <span>Tanggal Pembayaran</span>
+                        <span>Tanggal Terima</span>
+                        <span>Jenis Pengujian Sampel</span>
+                        <span>Status Pengujian</span>
+                        <span>Tanggal Jadi</span>
+                        <span>Hasil Pengujian</span>
                     </div>
                     <?php
-                    include '../../../koneksi.php';
+                    include '../../../koneksi.php'; 
 
-                    $sql = "SELECT pg.nama_pasien, dp.biaya AS jumlah_tagihan, p.status_pembayaran, 
-                                   p.tanggal_pembayaran, pg.tanggal_jadi
-                            FROM pengujian pg
-                            JOIN detail_pembayaran dp ON pg.id_pengujian = dp.id_pengujian
-                            JOIN pembayaran p ON dp.id_pembayaran = p.id_pembayaran
-                            ORDER BY p.tanggal_pembayaran DESC";
+                    $currentYear = date('Y'); 
+                    $sql = "SELECT id_pengujian, nama_pasien, tanggal_terima, status_pengujian, tanggal_jadi
+                            FROM pengujian
+                            WHERE YEAR(tanggal_terima) = ? 
+                            ORDER BY tanggal_terima DESC LIMIT 8";
+                    $stmt = $connect->prepare($sql);
+                    $stmt->bind_param("i", $currentYear);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
 
-                    $result = $connect->query($sql);
-
-                    if (!$result) {
-                        error_log("SQL Error: " . $connect->error);
-                        echo "<div class='row'><span colspan='5'>Error executing query: " . htmlspecialchars($connect->error) . "</span></div>";
-                    } elseif ($result->num_rows > 0) {
+                    if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
-                            $nama_pasien = htmlspecialchars($row['nama_pasien']);
-                            $jumlah_tagihan = number_format($row['jumlah_tagihan'], 0, ',', '.');
-                            $status_pembayaran = htmlspecialchars($row['status_pembayaran']);
-                            $tanggal_pembayaran = $status_pembayaran === 'Belum Bayar' 
-                                ? '-' 
-                                : ($row['tanggal_pembayaran'] ? date('Y/m/d', strtotime($row['tanggal_pembayaran'])) : '-');
+                            $tanggal_terima = date('Y/m/d', strtotime($row['tanggal_terima'])); 
+                            $tanggal_jadi = date('Y/m/d', strtotime($row['tanggal_jadi'])); 
+                            $status_pengujian_class = ($row['status_pengujian'] == 'Selesai' || $row['status_pengujian'] == 'Diverifikasi') ? 'verified' : ($row['status_pengujian'] == 'Diproses' ? 'pending' : '');
 
-                            // Calculate Batas Pembayaran: 2nd of the month following tanggal_jadi
-                            $batas_pembayaran = $row['tanggal_jadi'] 
-                                ? date('Y/m/d', strtotime(date('Y-m', strtotime($row['tanggal_jadi'])) . "-02 +1 month"))
-                                : '-';
-
-                            $status_class = $status_pembayaran === 'Sudah Bayar' ? 'verified' : 'pending';
+                            $id_pengujian = $row['id_pengujian'];
+                            $jenis_pengujian = '';
+                            if (strpos($id_pengujian, 'JRM-') === 0) {
+                                $jenis_pengujian = 'Jaringan';
+                            } elseif (strpos($id_pengujian, 'SRM-') === 0) {
+                                $jenis_pengujian = 'Sitologi Ginekologi';
+                            } elseif (strpos($id_pengujian, 'SNRM-') === 0) {
+                                $jenis_pengujian = 'Sitologi Non Ginekologi';
+                            }
                     ?>
                             <div class="row">
-                                <span><?php echo $nama_pasien; ?></span>
-                                <span>Rp <?php echo $jumlah_tagihan; ?></span>
-                                <span class="status_pembayaran <?php echo $status_class; ?>"><?php echo $status_pembayaran; ?></span>
-                                <span><?php echo $batas_pembayaran; ?></span>
-                                <span><?php echo $tanggal_pembayaran; ?></span>
+                                <span><?php echo htmlspecialchars($row['nama_pasien']); ?></span>
+                                <span><?php echo $tanggal_terima; ?></span>
+                                <span><?php echo htmlspecialchars($jenis_pengujian); ?></span>
+                                <span class="status_pengujian <?php echo $status_pengujian_class; ?>"><?php echo htmlspecialchars($row['status_pengujian']); ?></span>
+                                <span><?php echo $tanggal_jadi; ?></span>
+                                <span>
+                                    <button class="result-btn <?php echo ($row['status_pengujian'] == 'Selesai' || $row['status_pengujian'] == 'Diverifikasi') ? 'completed' : 'in-progress'; ?>" 
+                                            data-id="<?php echo urlencode($id_pengujian); ?>">Lihat
+                                        <ion-icon name="<?php echo ($row['status_pengujian'] == 'Selesai' || $row['status_pengujian'] == 'Diverifikasi') ? 'eye-outline' : 'eye-off-outline'; ?>"></ion-icon>
+                                    </button> 
+                                </span>
                             </div>
                     <?php
                         }
                     } else {
-                        echo "<div class='row'><span colspan='5'>Tidak ada data yang ditemukan.</span></div>";
+                        echo "<div class='row'><span colspan='6'>Tidak ada data yang ditemukan.</span></div>";
                     }
+                    $stmt->close();
                     $connect->close();
                     ?>
                 </div>
             </div>
+        
             <div class="overlay"></div>
+
             <div class="menu-card">
-                <div class="close-button" onclick="window.location='pengujian.php'">×</div>
+               <div class="close-button" onclick="window.location='pengujian.php'">×</div>
                 <div class="menu-option" data-type="pdf">pdf</div>
                 <div class="menu-separator"></div>
                 <div class="menu-option" data-type="word">word</div>
             </div>
+
         </div>
     </div>
 
@@ -834,7 +724,6 @@
 
         list.forEach((item) => item.addEventListener("mouseover", activeLink));
 
-        // Menu Toggle
         let toggle = document.querySelector(".toggle");
         let navigation = document.querySelector(".navigation");
         let main = document.querySelector(".main");
@@ -844,19 +733,17 @@
             main.classList.toggle("active");
         };
 
-        // Dynamic step status
-        const steps = document.querySelectorAll('.step');
-        const currentStep = 0; // Adjust based on payment status logic (0 = Diajukan, 1 = Menunggu Konfirmasi, 2 = Selesai)
-        steps.forEach((step, index) => {
-            if (index <= currentStep) {
-                step.classList.add('active');
-            } else {
-                step.classList.add('inactive');
-            }
+        const resultButtons = document.querySelectorAll('.result-btn.completed');
+        resultButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                window.location.href = `lihatHasil.php?id=${id}`;
+            });
         });
     </script>
 
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 </body>
+
 </html>
