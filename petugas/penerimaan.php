@@ -22,8 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['setujui_id'])) {
 
     if ($result_select && $result_select->num_rows > 0) {
         $data = $result_select->fetch_assoc();
-
-      
         $id_pengujian = $data['id_pengajuan']; 
         $nama_pasien = $data['nama_pasien'];
         $usia = $data['usia'];
@@ -47,9 +45,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['setujui_id'])) {
             $tanggal_jadi = NULL; // fallback kalau jenis tidak dikenali
         }
 
+        // Ambil ID terakhir
+          $sql_max = "SELECT MAX(id_pengambilan) AS max_id FROM pengambilan";
+          $result_max = $connect->query($sql_max);
+          $max_id = 'PA-000'; // default
+
+          if ($result_max && $row = $result_max->fetch_assoc()) {
+              $max_id = $row['max_id'] ?: 'PA-000';
+          }
+
+          // Ambil angka dari format PA-XXX
+          $nomor_terakhir = (int) substr($max_id, 3);
+
+          // Tambahkan 1
+          $nomor_baru = $nomor_terakhir + 1;
+
+          // Format jadi tiga digit, misal 001, 012, 123
+          $id_pengambilan_baru = 'PA-' . str_pad($nomor_baru, 3, '0', STR_PAD_LEFT);
+
+
+
         // Insert ke tabel pengujian
-        $sql_insert = "INSERT INTO pengujian (id_pengujian, nama_pasien, usia, alamat, nomor_pemeriksaan, tanggal_terima, tanggal_jadi, status_pengujian) 
-                      VALUES ('$id_pengujian', '$nama_pasien', '$usia', '$alamat', '$nomor_pemeriksaan', '$tanggal_terima', '$tanggal_jadi', '$status_pengujian')";
+        $sql_insert = "INSERT INTO pengambilan (id_pengambilan, id_pengajuan, status_pengambilan) 
+               VALUES ('$id_pengambilan_baru', '$id_pengajuan', 'Menunggu Verifikasi')";
+
 
         if ($connect->query($sql_insert) === TRUE) {
             // Update status pengajuan
@@ -65,9 +84,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['setujui_id'])) {
         }
     }
 }
-
-
-
 
 ?>
 
@@ -347,8 +363,73 @@ body {
   }
 
 
+.pengujian {
+            background: var(--green7);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px;
+            max-height: 60vh;
+            overflow-y: auto;
+            z-index: 1001;
+        }
+    .pengujian .row {
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background: var(--white);
+            margin-bottom: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+            z-index: 1001;
+        }
 
+        .pengujian .row:hover {
+            background: var(--green6);
+        }
 
+        .pengujian .row span {
+            flex: 1;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+        .status_pengujian {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            display: inline-block;
+        }
+
+        .status_pengujian.selesai {
+            background: rgba(138, 242, 150, 1);
+            color: var(--black);
+        }
+
+        .status_pengujian.pending {
+            background: rgba(255, 226, 110, 1);
+            color: var(--black);
+        }
+
+.column-titles {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            color: var(--black1);
+            margin-bottom: 20px;
+            padding: 0 20px;
+        }
+
+        .column-titles span {
+            flex: 1;
+            text-align: center;
+            font-size: 16px;
+        }
 /* ======================= Cards ====================== */
 .cardBox {
   position: relative;
@@ -776,8 +857,7 @@ if (isset($_GET['tolak'])) {
             <div class="details">
                 <div class="Approval">
                     <div class="cardHeader">
-                        <h2>Persetujuan Penerimaan Sampel</h2>
-                        
+                        <h2>Persetujuan Penerimaan Sampel</h2> 
                     </div>
 
                     <table class="approval request">
@@ -846,11 +926,81 @@ if (isset($_GET['tolak'])) {
                         </tbody>
                     </table>
                 </div>
+                </div>
 
                 <!-- ================= New Customers ================ -->
-                
-                        
-                            
+                <div class="details">
+                  <div class="pengujian">
+                      <div class="cardHeader">
+                          <h2>Pengujian Sampel</h2>
+                      </div>
+                      <div class="column-titles">
+                          <span>No Laboratorium</span>
+                          <span>Tanggal Terima</span>
+                          <span>Sampel atas nama</span>
+                          <span>Umur</span>
+                          <span>Tindakan</span>
+                      </div>
+
+                      <?php
+                      include '../koneksi.php';
+
+                      $currentYear = date('Y'); 
+                      $sql = "SELECT id_pengujian, nama_pasien, tanggal_terima, status_pengujian, tanggal_jadi
+                              FROM pengujian
+                              WHERE YEAR(tanggal_terima) = ? 
+                              ORDER BY tanggal_terima DESC";
+                      $stmt = $connect->prepare($sql);
+                      $stmt->bind_param("i", $currentYear);
+                      $stmt->execute();
+                      $result = $stmt->get_result();
+
+                      if ($result->num_rows > 0) {
+                          while ($row = $result->fetch_assoc()) {
+                              $tanggal = date('Y/m/d', strtotime($row['tanggal_terima']));
+                              $tanggaljadi = date('Y/m/d', strtotime($row['tanggal_jadi']));
+                              $status_pengujian_class = ($row['status_pengujian'] == 'Selesai' || $row['status_pengujian'] == 'selesai') ? 'selesai' : ($row['status_pengujian'] == 'Diproses' ? 'pending' : '');
+                              $id_pengujian = $row['id_pengujian'];
+
+                              $jenis_pengujian = '';
+                              if (strpos($id_pengujian, 'JRM-') === 0) {
+                                  $jenis_pengujian = 'Jaringan';
+                              } elseif (strpos($id_pengujian, 'SRM-') === 0) {
+                                  $jenis_pengujian = 'Sitologi Ginekologi';
+                              } elseif (strpos($id_pengujian, 'SNRM-') === 0) {
+                                  $jenis_pengujian = 'Sitologi Non Ginekologi';
+                              }
+                      ?>
+                              <div class="row" data-href="tampil.php?id=<?php echo urlencode($id_pengujian); ?>">
+                                  <span><?php echo htmlspecialchars($row['nama_pasien']); ?></span>
+                                  <span><?php echo $tanggal; ?></span>
+                                  <span><?php echo htmlspecialchars($jenis_pengujian); ?></span>
+                                  <span class="status_pengujian <?php echo $status_pengujian_class; ?>"><?php echo htmlspecialchars($row['status_pengujian']); ?></span>
+                              
+                                  <span>
+                                      <!-- Tombol Update -->
+                                      <button onclick="updateData('<?php echo $id_pengujian; ?>')" title="Update">
+                                          <span class="material-icons">edit</span>
+                                      </button>
+
+                                      <!-- Tombol Hapus -->
+                                      <button onclick="hapusData('<?php echo $id_pengujian; ?>')" title="Hapus">
+                                          <span class="material-icons">delete</span>
+                                      </button>
+                                  </span>
+                              </div>
+                      <?php
+                          }
+                      } else {
+                          echo "<div class='row' style='text-align:center; color:var(--black1);'><span colspan='7'>Tidak ada data yang ditemukan.</span></div>";
+                      }
+
+                      $connect->close();
+                      ?>
+                  </div> <!-- penutup div.pengujian -->
+              </div> <!-- penutup div.details -->
+
+          
             </div>
         </div>
     </div>
