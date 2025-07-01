@@ -6,8 +6,31 @@ if (!isset($_SESSION['user'])) {
     exit();
 }
 
-$user = $_SESSION['user'];
+$user_id = $_SESSION['user'];
+include '../../../koneksi.php';
+
+$sql = "SELECT nama, foto FROM pengguna WHERE id_pengguna = ?";
+$stmt = $connect->prepare($sql);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+$stmt->close();
+$connect->close();
+
+if (!$user) {
+    $nama_pengguna = "Pengguna Tidak Ditemukan";
+    $foto_pengguna = "profil.jpg";
+} else {
+    $nama_pengguna = $user['nama'];
+    $foto_pengguna = $user['foto'] ?: "profil.jpg";
+}
+
+$image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../../$foto_pengguna"))
+    ? "../../../$foto_pengguna"
+    : "../../../assets/imgs/profil.jpg";
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -763,7 +786,7 @@ $user = $_SESSION['user'];
                         <span class="icon">
                             <ion-icon name="log-out-outline" style="color: black"></ion-icon>
                         </span>
-                        <span class="title">Sign Out</span>
+                        <span class="title">Keluar</span>
                     </a>
                 </li>
             </ul>
@@ -775,8 +798,8 @@ $user = $_SESSION['user'];
                 </div>
                 <div class="user">
                     <ion-icon class="notification" name="notifications-outline"></ion-icon>
-                    <img src="assets/imgs/customer01.jpg" alt="User">
-                    <span>RS Indah Permata</span>
+                    <span><?php echo htmlspecialchars($nama_pengguna); ?></span>
+                    <img src="<?php echo htmlspecialchars($image_path); ?>" alt="User">
                 </div>
             </div>
             <div class="cardBox">

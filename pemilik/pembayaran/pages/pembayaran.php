@@ -50,20 +50,19 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
         }
 
         :root {
-            --green1: rgba(20, 116, 114, 1);
-            --green2: rgba(3, 178, 176, 1);
-            --green3: rgba(186, 231, 228, 1);
-            --green4: rgba(12, 109, 108, 0.61);
-            --green5: rgba(3, 178, 176, 0.29);
-            --green6: rgba(240, 243, 243, 1);
-            --green7: rgba(228, 240, 240, 1);
-            --green8: rgba(136, 181, 181, 0.26);
-            --green9: rgba(136, 181, 181, 0.51);
-            --white: #fff;
-            --gray: #f5f5f5;
-            --black1: #222;
-            --black2: #999;
-            --black3: rgba(0, 0, 0, 0.4);
+          --green1: rgba(20, 116, 114, 1);
+          --green2: rgba(3, 178, 176, 1);
+          --green3: rgba(186, 231, 228, 1);
+          --green4: rgba(12, 109, 108, 0.61);
+          --green5: rgba(3, 178, 176, 0.29);
+          --green6: rgba(240, 243, 243, 1);
+          --green7: rgba(228, 240, 240, 1);
+          --green8: rgba(136, 181, 181, 0.26);
+          --white: #fff;
+          --gray: #f5f5f5;
+          --black1: #222;
+          --black2: #999;
+          --black3: rgba(0, 0, 0, 0.4);
         }
 
         body {
@@ -112,7 +111,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
         }
 
         .navigation ul li:nth-child(1) {
-            margin-bottom: -30px;
+            margin-bottom: 80px;
             pointer-events: none;
         }
 
@@ -124,7 +123,6 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             text-decoration: none;
             color: var(--white);
         }
-
         .navigation ul li:hover a,
         .navigation ul li.hovered a {
             color: var(--green2);
@@ -141,7 +139,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
 
         .navigation ul li.signout {
             position: absolute;
-            bottom: -150px;
+            top: 770px;
             width: 100%;
         }
 
@@ -190,8 +188,8 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             position: relative;
             display: block;
             font-family: 'Poppins', sans-serif;
-            font-size: 22px;
-            color: black;
+            font-size: 22px; 
+            color: black; 
             padding: 0 10px;
             height: 230px;
             line-height: 70px;
@@ -203,7 +201,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             position: relative;
             display: block;
             font-family: 'Poppins', sans-serif;
-            color: black;
+            color: black; 
             padding: 0 10px;
             height: 70px;
             line-height: 60px;
@@ -224,7 +222,6 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             box-shadow: 35px 35px 0 10px var(--white);
             pointer-events: none;
         }
-
         .navigation ul li:hover a::after,
         .navigation ul li.hovered a::after {
             content: "";
@@ -247,7 +244,6 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             background: var(--white);
             transition: 0.5s;
         }
-
         .main.active {
             width: calc(100% - 80px);
             left: 80px;
@@ -302,6 +298,55 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             margin-right: 10px;
         }
 
+        .cardBox {
+            position: relative;
+            width: 100%;
+            padding: 20px;
+            margin-top: 90px;
+            display: grid;
+            grid-template-columns: repeat(3, 0.7fr);
+            grid-gap: 30px;
+        }
+
+        .cardBox .card {
+            position: relative;
+            background: var(--green1);
+            padding: 30px;
+            border-radius: 20px;
+            display: flex;
+            justify-content: space-between;
+            cursor: pointer;
+            box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .cardBox .card .jenisPengujian {
+            position: relative;
+            font-weight: 500;
+            font-size: 30px;
+            color: var(--white);
+        }
+
+        .cardBox .card .cardName {
+            color: var(--black2);
+            font-size: 1.1rem;
+            margin-top: 5px;
+        }
+
+        .cardBox .card .jumlah {
+            font-size: 3.5rem;
+            padding-left: 20px;
+            color: var(--white);
+        }
+
+        .cardBox .card:hover {
+            background: var(--white);
+        }
+        .cardBox .card:hover .jenisPengujian,
+        .cardBox .card:hover .cardName,
+        .cardBox .card:hover .jumlah {
+            color: var(--green1);
+        }
+
         .search-bar {
             display: flex;
             align-items: center;
@@ -315,10 +360,10 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
         .search-bar input {
             width: 853px;
             height: 66px;
-            margin-top: 100px;
+            margin-top: 20px;
             flex-shrink: 0;
             border-radius: 10px;
-            padding: 5px 50px 5px 20px;
+            padding: 5px 50px 5px 20px; 
             font-size: 16px;
             outline: none;
             border: 0px solid var(--black2);
@@ -327,28 +372,28 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
 
         .search-bar .search-icon {
             position: absolute;
-            left: 790px;
+            left: 790px; 
             top: 30%;
             transform: translateY(-50%);
             width: 27px;
             height: 27px;
             flex-shrink: 0;
             aspect-ratio: 1/1;
-            margin-top: 85px;
+            margin-top: 30px;
         }
 
         .filter-card {
-            width: 90px;
-            height: 66px;
-            flex-shrink: 0;
-            margin-top: 100px;
-            background: var(--green7);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 1001;
+          width: 90px;
+          height: 66px;
+          flex-shrink: 0;
+          margin-top: 20px;
+          background: var(--green7);
+          border-radius: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          z-index: 1001;
         }
 
         .filter-card ion-icon {
@@ -356,8 +401,8 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             color: var(--black1);
         }
 
-        .tambah-card {
-            width: 280px;
+        .unduh-card {
+            width: 397px;
             height: 66px;
             flex-shrink: 0;
             background: var(--green1);
@@ -371,16 +416,16 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             align-items: center;
             justify-content: center;
             margin-left: auto;
-            margin-top: 100px;
+            margin-top: 20px;
             z-index: 1001;
         }
 
-        .tambah-card:hover {
+        .unduh-card:hover {
             background: var(--green6);
         }
 
-        .tambah-card img {
-            margin-left: -10px;
+        .unduh-card img {
+            margin-left: -80px;
             margin-right: 20px;
             width: 30px;
             height: 30px;
@@ -394,7 +439,8 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
         .pengajuan {
             background: var(--green7);
             padding: 20px;
-            border-radius: 15px;
+            border-radius: 10px;
+            margin-bottom: 100px;
             max-height: 60vh;
             overflow-y: auto;
             z-index: 1001;
@@ -406,13 +452,10 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             align-items: center;
             margin-bottom: 20px;
         }
-
         .cardHeader h2 {
-            margin-top: 10px;
             font-weight: 600;
             color: var(--black1);
         }
-
         .cardHeader .btn {
             padding: 5px 10px;
             background: var(--green2);
@@ -421,21 +464,23 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             border-radius: 6px;
         }
 
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 12px;
-            z-index: 1001;
+        .column-titles {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: var(--black1);
+            margin-bottom: 10px;
+            padding: 0 30px;
+            height: 40px;
+            border-radius: 10px;
         }
 
-        .table table {
-            width: 100%;
-        }
-
-        .table th {
-            color: var(--black);
-            padding: 10px;
+        .column-titles span {
+            flex: 1;
             text-align: center;
+            font-size: 16px;
+            line-height: 40px; 
         }
 
         .pengajuan .row {
@@ -444,9 +489,10 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 30px;
+            padding: 10px 30px;
+            gap: 20px;
             background: var(--white);
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             border-radius: 15px;
             cursor: pointer;
             transition: background 0.3s;
@@ -459,27 +505,58 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
 
         .pengajuan .row span {
             flex: 1;
-            margin-left: 90px;
-            margin-right: 100px;
             text-align: center;
+            padding: 0;
+            margin: 0 60px; 
+            line-height: 30px; 
         }
 
-        .pengajuan .row .status_pengajuan {
-            padding: 10px 10px;
+        .pengajuan .row .status_pengujian {
+            width: 97px;
+            height: 37px;
+            padding: 2px 10px;
             border-radius: 15px;
             font-size: 14px;
-            margin-right: 60px;
-            margin-left: 60px;
+            margin-right: 50px;
+            margin-left: 50px;
+            position: relative;
+            bottom: 2px;
         }
 
-        .status_pengajuan.verified {
+        .status_pengujian.verified {
+            background: rgba(255, 182, 126, 1);
+            color: var(--black);
+        }
+
+        .status_pengujian.pending {
             background: rgba(138, 242, 150, 1);
             color: var(--black);
         }
 
-        .status_pengajuan.pending {
-            background: rgba(255, 226, 110, 1);
-            color: var(--black);
+        .result-btn {
+            width: 97px;
+            height: 37px;
+            border-radius: 15px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px; 
+            position: relative;
+            bottom: 2px; 
+        }
+
+        .result-btn.completed {
+            background-color: #4285f4; 
+            color: white;
+        }
+
+        .result-btn.in-progress {
+            background-color: #ccc; 
+            color: #666;
+            cursor: default;
+            pointer-events: none;
         }
 
         .overlay {
@@ -491,23 +568,21 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             height: 100%;
             background-color: var(--black3);
             background-blend-mode: overlay;
-            z-index: 1002;
+            z-index: 1002; 
         }
-
         .overlay.active {
             display: block;
         }
 
         .menu-card {
             position: fixed;
-            top: 40%;
-            right: 90px;
+            top: 55%;
+            right: 330px; 
             transform: translateY(-50%);
-            width: 310px;
-            height: 186px;
+            width: 100px;
+            height: 130px;
             background: var(--white);
             padding: 20px;
-            box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
             border-radius: 10px;
             z-index: 1003;
             flex-direction: column;
@@ -525,6 +600,8 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             color: var(--black1);
             text-align: left;
             padding: 10px 0;
+            margin-top: 2px;
+            margin-bottom: 2px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -539,10 +616,6 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             color: var(--black1);
         }
 
-        .menu-option .plus-icon {
-            font-size: 1.2rem;
-        }
-
         .menu-separator {
             width: 100%;
             height: 1px;
@@ -550,69 +623,19 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             margin: 5px 0;
         }
 
-        .jumlah-card {
-            position: fixed;
-            top: 45%;
-            right: 450px;
-            transform: translateY(-50%);
-            width: 235px;
-            height: 125px;
-            background: var(--white);
-            padding: 20px;
-            box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
-            border-radius: 10px;
-            z-index: 1003;
-            flex-direction: column;
-            justify-content: space-around;
-            align-items: left;
-            display: none;
-        }
-
-        .jumlah-card.active {
-            display: flex;
-        }
-
-        .jumlah-card h2 {
-            font-size: 16px;
-            color: var(--black1);
-            margin-left: -10px;
-            margin-top: 3px;
-            margin-bottom: 5px;
-        }
-
-        .jumlah-card .form-group {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .jumlah-card input {
-            width: 214px;
-            height: 25px;
-            padding: 5px 10px;
-            border: 2px solid var(--green1);
-            border-radius: 5px;
-            font-size: 16px;
-            text-align: left;
-        }
-
-        .jumlah-card .btn-submit {
-            width: 48px;
-            height: 27px;
-            padding: 5px 10px;
-            margin: 10px 0 60px 150px;
-            background: var(--green8);
-            color: var(--black);
-            border: none;
-            border-radius: 5px;
+        .close-button {
+            position: absolute;
+            top: 4px;
+            right: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--green1);
             cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
+            transition: color 0.3s;
         }
 
-        .jumlah-card .btn-submit:hover {
-            color: var(--white);
-            background: var(--green1);
+        .close-button:hover {
+            color: var(--green5);
         }
 
         @media (max-width: 991px) {
@@ -636,6 +659,9 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             .details {
                 grid-template-columns: 1fr;
             }
+            .column-titles span {
+                font-size: 12px;
+            }
             .pengajuan {
                 overflow-x: auto;
             }
@@ -643,19 +669,8 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
                 flex-direction: column;
                 gap: 10px;
             }
-            .search-bar input,
-            .filter-card,
-            .tambah-card {
+            .search-bar input, .filter-card, .unduh-card {
                 width: 100%;
-            }
-            .tambah-card {
-                margin-left: 0;
-            }
-            .menu-card {
-                right: 10px;
-            }
-            .jumlah-card {
-                left: 10px;
             }
         }
 
@@ -693,13 +708,8 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             .search-bar {
                 margin: 10px;
             }
-            .menu-card {
-                width: 250px;
-                right: 5px;
-            }
-            .jumlah-card {
-                width: 250px;
-                left: 5px;
+            .column-titles span {
+                font-size: 10px;
             }
         }
     </style>
@@ -728,41 +738,6 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
                 </li>
 
                 <li>
-                    <a href="pengajuan.php">
-                        <span class="icon">
-                            <img src="../../../assets/pengajuan.png" alt="pengajuan">
-                        </span>
-                        <span class="title">Pengajuan</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="../../pengambilan/pages/pengambilan.php">
-                        <span class="icon">
-                            <img src="../../../assets/pengambilan.png" alt="pengambilan">
-                        </span>
-                        <span class="title">Pengambilan</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="../../prosesUji/pages/pengujian.php">
-                        <span class="icon">
-                            <img src="../../../assets/prosesuji.png" alt="prosesuji">
-                        </span>
-                        <span class="title">Proses Uji</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="../../prosesUji/pages/riwayat.php">
-                        <span class="icon">
-                            <img src="../../../assets/riwayat.png" alt="riwayat">
-                        </span>
-                        <span class="title">Riwayat Uji</span>
-                    </a>
-                </li>
-                <li>
                     <a href="../../pembayaran/pages/pembayaran.php">
                         <span class="icon">
                             <img src="../../../assets/money.png" alt="money">
@@ -785,7 +760,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
                         <span class="icon">
                             <ion-icon name="log-out-outline" style="color: black"></ion-icon>
                         </span>
-                        <span class="title">Keluar</span>
+                        <span class="title">Sign Out</span>
                     </a>
                 </li>
             </ul>
@@ -802,7 +777,57 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
                     <img src="<?php echo htmlspecialchars($image_path); ?>" alt="User">
                 </div>
             </div>
+            <div class="cardBox">
+                <?php
+                    include '../../../koneksi.php';
 
+                    $currentYear = date('Y');
+                    $sqlCount = "SELECT 
+                        SUM(CASE WHEN id_pengujian LIKE 'JRM-%' THEN 1 ELSE 0 END) as jaringan_count,
+                        SUM(CASE WHEN id_pengujian LIKE 'SRM-%' THEN 1 ELSE 0 END) as sitologi_ginekologi_count,
+                        SUM(CASE WHEN id_pengujian LIKE 'SNRM-%' THEN 1 ELSE 0 END) as sitologi_non_ginekologi_count
+                        FROM pengujian
+                        WHERE YEAR(tanggal_terima) = ?";
+                    $stmtCount = $connect->prepare($sqlCount);
+                    $stmtCount->bind_param("i", $currentYear);
+                    $stmtCount->execute();
+                    $resultCount = $stmtCount->get_result();
+                    $counts = $resultCount->fetch_assoc();
+
+                    $jaringanCount = $counts['jaringan_count'];
+                    $sitologiGinekologiCount = $counts['sitologi_ginekologi_count'];
+                    $sitologiNonGinekologiCount = $counts['sitologi_non_ginekologi_count'];
+
+                    $stmtCount->close();
+                ?>
+                <div class="card">
+                    <div>
+                        <div class="jenisPengujian">Pengujian Jaringan</div>
+                    </div>
+                    <div class="jumlah">
+                        <?php echo $jaringanCount; ?>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div>
+                        <div class="jenisPengujian">Pengujian Sitologi Ginekologi</div>
+                    </div>
+                    <div class="jumlah">
+                        <?php echo $sitologiGinekologiCount; ?>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div>
+                        <div class="jenisPengujian">Pengujian Sitologi Non Ginekologi</div>
+                    </div>
+                    <div class="jumlah">
+                        <?php echo $sitologiNonGinekologiCount; ?>
+                    </div>
+                </div>
+            </div>
+                
             <div class="search-bar">
                 <input type="text" id="searchInput" placeholder="Search pengajuan">
                 <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="27" height="27" viewBox="0 0 27 27" fill="none">
@@ -817,34 +842,33 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
                 </svg>
                 <div class="filter-card">
                     <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34" fill="none">
-                        <path d="M31.3438 11.1562H2.65625C2.23356 11.1562 1.82818 10.9883 1.5293 10.6895C1.23041 10.3906 1.0625 9.98519 1.0625 9.5625C1.0625 9.13981 1.23041 8.73443 1.5293 8.43555C1.82818 8.13666 2.23356 7.96875 2.65625 7.96875H31.3438C31.7664 7.96875 32.1718 8.13666 32.4707 8.43555C32.7696 8.73443 32.9375 9.13981 32.9375 9.5625C32.9375 9.98519 32.7696 10.3906 32.4707 10.6895C32.1718 10.9883 31.7664 11.1562 31.3438 11.1562ZM26.0312 18.5938H7.96875C7.54606 18.5938 7.14068 18.4258 6.8418 18.127C6.54291 17.8281 6.375 17.4227 6.375 17C6.375 16.5773 6.54291 16.1719 6.8418 15.873C7.14068 15.5742 7.54606 15.4062 7.96875 15.4062H26.0312C26.4539 15.4062 26.8593 15.5742 27.1582 15.873C27.4571 16.1719 27.625 16.5773 27.625 17C27.625 17.4227 27.4571 17.8281 27.1582 18.127C26.8593 18.4258 26.4539 18.5938 26.0312 18.5938ZM19.6562 26.0312H14.3438C13.9211 26.0312 13.5157 25.8633 13.2168 25.5645C12.9179 25.2656 12.75 24.8602 12.75 24.4375C12.75 24.0148 12.9179 23.6094 13.2168 23.3105C13.5157 23.0117 13.9211 22.8438 14.3438 22.8438H19.6562C20.0789 22.8438 20.4843 23.0117 20.7832 23.3105C21.0821 23.6094 21.25 24.0148 21.25 24.4375C21.25 24.8602 21.0821 25.2656 20.7832 25.5645C20.4843 25.8633 20.0789 26.0312 19.6562 26.0312Z" fill="black"/>
+                      <path d="M31.3438 11.1562H2.65625C2.23356 11.1562 1.82818 10.9883 1.5293 10.6895C1.23041 10.3906 1.0625 9.98519 1.0625 9.5625C1.0625 9.13981 1.23041 8.73443 1.5293 8.43555C1.82818 8.13666 2.23356 7.96875 2.65625 7.96875H31.3438C31.7664 7.96875 32.1718 8.13666 32.4707 8.43555C32.7696 8.73443 32.9375 9.13981 32.9375 9.5625C32.9375 9.98519 32.7696 10.3906 32.4707 10.6895C32.1718 10.9883 31.7664 11.1562 31.3438 11.1562ZM26.0312 18.5938H7.96875C7.54606 18.5938 7.14068 18.4258 6.8418 18.127C6.54291 17.8281 6.375 17.4227 6.375 17C6.375 16.5773 6.54291 16.1719 6.8418 15.873C7.14068 15.5742 7.54606 15.4062 7.96875 15.4062H26.0312C26.4539 15.4062 26.8593 15.5742 27.1582 15.873C27.4571 16.1719 27.625 16.5773 27.625 17C27.625 17.4227 27.4571 17.8281 27.1582 18.127C26.8593 18.4258 26.4539 18.5938 26.0312 18.5938ZM19.6562 26.0312H14.3438C13.9211 26.0312 13.5157 25.8633 13.2168 25.5645C12.9179 25.2656 12.75 24.8602 12.75 24.4375C12.75 24.0148 12.9179 23.6094 13.2168 23.3105C13.5157 23.0117 13.9211 22.8438 14.3438 22.8438H19.6562C20.0789 22.8438 20.4843 23.0117 20.7832 23.3105C21.0821 23.6094 21.25 24.0148 21.25 24.4375C21.25 24.8602 21.0821 25.2656 20.7832 25.5645C20.4843 25.8633 20.0789 26.0312 19.6562 26.0312Z" fill="black"/>
                     </svg>
                 </div>
-                <div class="tambah-card"><img src="../../../assets/plus.png" alt="Detail Icon">Tambah Pengajuan</div>
+                <div class="unduh-card"><img src="../../../assets/install.png" alt="Install Icon">Unduh Hasil Pengujian</div>
             </div>
+
             <div class="details">
                 <div class="pengajuan">
                     <div class="cardHeader">
                         <h2>Pengajuan Sampel</h2>
                     </div>
-                    <div class="table">
-                        <table>
-                            <tr>
-                                <th>Sampel Atas Nama</th>
-                                <th>Tanggal Pengajuan</th>
-                                <th>Jenis Pengajuan</th>
-                                <th>Status Pengajuan</th>
-                            </tr>
-                        </table>
+                    <div class="column-titles">
+                        <span>Sampel Atas Nama</span>
+                        <span>Tanggal Terima</span>
+                        <span>Jenis Pengujian Sampel</span>
+                        <span>Status Pengujian</span>
+                        <span>Tanggal Jadi</span>
+                        <span>Hasil Pengujian</span>
                     </div>
                     <?php
-                    include '../../../koneksi.php';
+                    include '../../../koneksi.php'; 
 
-                    $currentYear = date('Y');
-                    $sql = "SELECT id_pengajuan, nama_pasien, tanggal_pengajuan, status_pengajuan 
-                            FROM pengajuan 
-                            WHERE YEAR(tanggal_pengajuan) = ? 
-                            ORDER BY tanggal_pengajuan DESC";
+                    $currentYear = date('Y'); 
+                    $sql = "SELECT id_pengujian, nama_pasien, tanggal_terima, status_pengujian, tanggal_jadi
+                            FROM pengujian
+                            WHERE YEAR(tanggal_terima) = ? 
+                            ORDER BY tanggal_terima DESC LIMIT 8";
                     $stmt = $connect->prepare($sql);
                     $stmt->bind_param("i", $currentYear);
                     $stmt->execute();
@@ -852,55 +876,53 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
 
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
-                            $tanggal = date('Y/m/d', strtotime($row['tanggal_pengajuan']));
-                            $status_pengajuan_class = ($row['status_pengajuan'] == 'Verifikasi' || $row['status_pengajuan'] == 'Diverifikasi') ? 'verified' : ($row['status_pengajuan'] == 'Menunggu Verifikasi' ? 'pending' : '');
-                            $id_pengajuan = $row['id_pengajuan'];
+                            $tanggal_terima = date('Y/m/d', strtotime($row['tanggal_terima'])); 
+                            $tanggal_jadi = date('Y/m/d', strtotime($row['tanggal_jadi'])); 
+                            $status_pengujian_class = ($row['status_pengujian'] == 'Selesai' || $row['status_pengujian'] == 'Diverifikasi') ? 'verified' : ($row['status_pengujian'] == 'Diproses' ? 'pending' : '');
+
+                            $id_pengujian = $row['id_pengujian'];
                             $jenis_pengujian = '';
-                            if (strpos($id_pengajuan, 'JRM-') === 0) {
+                            if (strpos($id_pengujian, 'JRM-') === 0) {
                                 $jenis_pengujian = 'Jaringan';
-                            } elseif (strpos($id_pengajuan, 'SRM-') === 0) {
+                            } elseif (strpos($id_pengujian, 'SRM-') === 0) {
                                 $jenis_pengujian = 'Sitologi Ginekologi';
-                            } elseif (strpos($id_pengajuan, 'SNRM-') === 0) {
+                            } elseif (strpos($id_pengujian, 'SNRM-') === 0) {
                                 $jenis_pengujian = 'Sitologi Non Ginekologi';
                             }
                     ?>
-                            <div class="row" data-href="tampil.php?id=<?php echo urlencode($id_pengajuan); ?>">
+                            <div class="row">
                                 <span><?php echo htmlspecialchars($row['nama_pasien']); ?></span>
-                                <span><?php echo $tanggal; ?></span>
+                                <span><?php echo $tanggal_terima; ?></span>
                                 <span><?php echo htmlspecialchars($jenis_pengujian); ?></span>
-                                <span class="status_pengajuan <?php echo $status_pengajuan_class; ?>"><?php echo htmlspecialchars($row['status_pengajuan']); ?></span>
+                                <span class="status_pengujian <?php echo $status_pengujian_class; ?>"><?php echo htmlspecialchars($row['status_pengujian']); ?></span>
+                                <span><?php echo $tanggal_jadi; ?></span>
+                                <span>
+                                    <button class="result-btn <?php echo ($row['status_pengujian'] == 'Selesai' || $row['status_pengujian'] == 'Diverifikasi') ? 'completed' : 'in-progress'; ?>" 
+                                            data-id="<?php echo urlencode($id_pengujian); ?>">Lihat
+                                        <ion-icon name="<?php echo ($row['status_pengujian'] == 'Selesai' || $row['status_pengujian'] == 'Diverifikasi') ? 'eye-outline' : 'eye-off-outline'; ?>"></ion-icon>
+                                    </button> 
+                                </span>
                             </div>
                     <?php
                         }
                     } else {
-                        echo "<div class='row'><span colspan='4'>Tidak ada data yang ditemukan.</span></div>";
+                        echo "<div class='row'><span colspan='6'>Tidak ada data yang ditemukan.</span></div>";
                     }
                     $stmt->close();
                     $connect->close();
                     ?>
                 </div>
             </div>
-
+        
             <div class="overlay"></div>
 
             <div class="menu-card">
-                <div class="menu-option" data-type="jaringan">Jaringan <ion-icon class="plus-icon" name="add-outline"></ion-icon></div>
+               <div class="close-button" onclick="window.location='pengujian.php'">×</div>
+                <div class="menu-option" data-type="pdf">pdf</div>
                 <div class="menu-separator"></div>
-                <div class="menu-option" data-type="Sitologi Ginekologi">Sitologi Ginekologi <ion-icon class="plus-icon" name="add-outline"></ion-icon></div>
-                <div class="menu-separator"></div>
-                <div class="menu-option" data-type="Sitologi Non Ginekologi">Sitologi Non Ginekologi <ion-icon class="plus-icon" name="add-outline"></ion-icon></div>
+                <div class="menu-option" data-type="word">word</div>
             </div>
 
-            <div class="jumlah-card">
-                <h2>Jumlah</h2>
-                <form id="jumlahForm" action="" method="get">
-                    <div class="form-group">
-                        <input type="number" id="jumlah" name="jumlah" min="1" value="1" required />
-                    </div>
-                    <button type="submit" class="btn-submit">Oke</button>
-                    <input type="hidden" id="type" name="type">
-                </form>
-            </div>
         </div>
     </div>
 
@@ -935,65 +957,12 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             });
         });
 
-        const rows = document.querySelectorAll('.row');
-        rows.forEach(row => {
-            row.addEventListener('click', function() {
-                const id = this.getAttribute('data-href').split('id=')[1];
-                window.location.href = `tampil.php?id=${id}`;
+        const resultButtons = document.querySelectorAll('.result-btn.completed');
+        resultButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                window.location.href = `lihatHasil.php?id=${id}`;
             });
-        });
-
-        const tambahCard = document.querySelector('.tambah-card');
-        const menuCard = document.querySelector('.menu-card');
-        const jumlahCard = document.querySelector('.jumlah-card');
-        const menuOptions = document.querySelectorAll('.menu-option');
-        const jumlahForm = document.getElementById('jumlahForm');
-        const typeInput = document.getElementById('type');
-        const overlay = document.querySelector('.overlay');
-
-        tambahCard.addEventListener('click', function() {
-            menuCard.classList.add('active');
-            overlay.classList.add('active');
-            menuOptions.forEach(option => option.classList.remove('selected'));
-            typeInput.value = '';
-        });
-
-        menuOptions.forEach(option => {
-            option.addEventListener('click', function() {
-                const type = this.getAttribute('data-type');
-                menuOptions.forEach(opt => opt.classList.remove('selected'));
-                this.classList.add('selected');
-                typeInput.value = type;
-                jumlahCard.classList.add('active');
-                jumlahForm.querySelector('#jumlah').focus();
-            });
-        });
-
-        jumlahForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            const jumlah = jumlahForm.querySelector('#jumlah').value;
-            const type = typeInput.value;
-            let redirectUrl = '';
-
-            if (type === 'jaringan') {
-                redirectUrl = `formJaringan.php?jumlah=${jumlah}`;
-            } else if (type === 'Sitologi Ginekologi') {
-                redirectUrl = `formSitologiGinekologi.php?jumlah=${jumlah}`;
-            } else if (type === 'Sitologi Non Ginekologi') {
-                redirectUrl = `formSitologiNonGinekologi.php?jumlah=${jumlah}`;
-            }
-
-            if (redirectUrl) {
-                window.location.href = redirectUrl;
-            }
-        });
-
-        document.addEventListener('click', function(event) {
-            if (!menuCard.contains(event.target) && !tambahCard.contains(event.target) && !jumlahCard.contains(event.target)) {
-                menuCard.classList.remove('active');
-                jumlahCard.classList.remove('active');
-                overlay.classList.remove('active');
-            }
         });
     </script>
 
