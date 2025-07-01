@@ -1,4 +1,5 @@
 <?php
+
 include 'koneksi.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['tolak_id'])) {
@@ -22,55 +23,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['setujui_id'])) {
 
     if ($result_select && $result_select->num_rows > 0) {
         $data = $result_select->fetch_assoc();
-        $id_pengujian = $data['id_pengajuan']; 
+        $id_pengujian = $data['id_pengajuan'];
         $nama_pasien = $data['nama_pasien'];
         $usia = $data['usia'];
         $alamat = $data['alamat'];
         $nomor_pemeriksaan = $data['nomor_pemeriksaan'];
-        $tanggal_terima = date('Y-m-d'); // hari ini
+        $tanggal_terima = date('Y-m-d');
         $status_pengujian = 'Diproses';
 
         // Tentukan tanggal_jadi berdasarkan jenis pengujian
-        $jenis_pengajuan = '';
         if (strpos($id_pengujian, 'JRM-') === 0) {
-            $jenis_pengajuan = 'Jaringan';
             $tanggal_jadi = date('Y-m-d', strtotime($tanggal_terima . ' +5 days'));
         } elseif (strpos($id_pengujian, 'SRM-') === 0) {
-            $jenis_pengajuan = 'Sitologi Ginekologi';
             $tanggal_jadi = date('Y-m-d', strtotime($tanggal_terima . ' +7 days'));
         } elseif (strpos($id_pengujian, 'SNRM-') === 0) {
-            $jenis_pengajuan = 'Sitologi Non Ginekologi';
             $tanggal_jadi = date('Y-m-d', strtotime($tanggal_terima . ' +8 days'));
         } else {
-            $tanggal_jadi = NULL; // fallback kalau jenis tidak dikenali
+            $tanggal_jadi = NULL;
         }
 
-        // Ambil ID terakhir
-          $sql_max = "SELECT MAX(id_pengambilan) AS max_id FROM pengambilan";
-          $result_max = $connect->query($sql_max);
-          $max_id = 'PA-000'; // default
+        // Generate ID Pengambilan
+        $sql_max = "SELECT MAX(id_pengambilan) AS max_id FROM pengambilan";
+        $result_max = $connect->query($sql_max);
+        $max_id = 'PA-000';
 
-          if ($result_max && $row = $result_max->fetch_assoc()) {
-              $max_id = $row['max_id'] ?: 'PA-000';
-          }
+        if ($result_max && $row = $result_max->fetch_assoc()) {
+            $max_id = $row['max_id'] ?: 'PA-000';
+        }
 
-          // Ambil angka dari format PA-XXX
-          $nomor_terakhir = (int) substr($max_id, 3);
+        $nomor_terakhir = (int) substr($max_id, 3);
+        $nomor_baru = $nomor_terakhir + 1;
+        $id_pengambilan_baru = 'PA-' . str_pad($nomor_baru, 3, '0', STR_PAD_LEFT);
 
-          // Tambahkan 1
-          $nomor_baru = $nomor_terakhir + 1;
+        // INSERT ke tabel pengambilan (optional: sesuaikan kolom dengan struktur database Anda)
+        $sql_pengambilan = "INSERT INTO pengambilan (id_pengambilan, tanggal_pengambilan, status_pengambilan)
+                            VALUES ('$id_pengambilan_baru', '$tanggal_terima', 'Selesai')";
+        $connect->query($sql_pengambilan); // dieksekusi tapi tidak dicek errornya (boleh ditambahkan)
 
-          // Format jadi tiga digit, misal 001, 012, 123
-          $id_pengambilan_baru = 'PA-' . str_pad($nomor_baru, 3, '0', STR_PAD_LEFT);
+        // INSERT ke tabel pengujian
+        $sql_pengujian = "INSERT INTO pengujian (id_pengujian, id_pengambilan, nama_pasien, usia, tanggal_terima, status_pengujian)
+                          VALUES ('$id_pengujian', '$id_pengambilan_baru', '$nama_pasien', '$usia', '$tanggal_terima', '$status_pengujian')";
 
-
-
-        // Insert ke tabel pengujian
-        $sql_insert = "INSERT INTO pengambilan (id_pengambilan, id_pengajuan, status_pengambilan) 
-               VALUES ('$id_pengambilan_baru', '$id_pengajuan', 'Menunggu Verifikasi')";
-
-
-        if ($connect->query($sql_insert) === TRUE) {
+        if ($connect->query($sql_pengujian) === TRUE) {
             // Update status pengajuan
             $sql_update = "UPDATE pengajuan SET status_pengajuan = 'Verifikasi' WHERE id_pengajuan = '$id_pengajuan'";
             if ($connect->query($sql_update) === TRUE) {
@@ -84,6 +78,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['setujui_id'])) {
         }
     }
 }
+?>
+
 
 ?>
 
@@ -935,6 +931,7 @@ if (isset($_GET['tolak'])) {
                           <h2>Pengujian Sampel</h2>
                       </div>
                       <div class="column-titles">
+                          <span>Id Pengambilan</span>
                           <span>No Laboratorium</span>
                           <span>Tanggal Terima</span>
                           <span>Sampel atas nama</span>
@@ -946,10 +943,12 @@ if (isset($_GET['tolak'])) {
                       include '../koneksi.php';
 
                       $currentYear = date('Y'); 
-                      $sql = "SELECT id_pengujian, nama_pasien, tanggal_terima, status_pengujian, tanggal_jadi
-                              FROM pengujian
-                              WHERE YEAR(tanggal_terima) = ? 
-                              ORDER BY tanggal_terima DESC";
+                      $sql = "SELECT a.id_pengambilan, u.id_pengujian, u.nama_pasien, u.tanggal_terima, u.usia
+                              FROM pengambilan a
+                              JOIN pengujian u ON a.id_pengambilan = u.id_pengambilan
+                              WHERE YEAR(u.tanggal_terima) = ?
+                              ORDER BY u.tanggal_terima DESC
+                              ";
                       $stmt = $connect->prepare($sql);
                       $stmt->bind_param("i", $currentYear);
                       $stmt->execute();
@@ -958,24 +957,18 @@ if (isset($_GET['tolak'])) {
                       if ($result->num_rows > 0) {
                           while ($row = $result->fetch_assoc()) {
                               $tanggal = date('Y/m/d', strtotime($row['tanggal_terima']));
-                              $tanggaljadi = date('Y/m/d', strtotime($row['tanggal_jadi']));
-                              $status_pengujian_class = ($row['status_pengujian'] == 'Selesai' || $row['status_pengujian'] == 'selesai') ? 'selesai' : ($row['status_pengujian'] == 'Diproses' ? 'pending' : '');
-                              $id_pengujian = $row['id_pengujian'];
+                              $id_pengambilan = $row['id_pengambilan'];
 
-                              $jenis_pengujian = '';
-                              if (strpos($id_pengujian, 'JRM-') === 0) {
-                                  $jenis_pengujian = 'Jaringan';
-                              } elseif (strpos($id_pengujian, 'SRM-') === 0) {
-                                  $jenis_pengujian = 'Sitologi Ginekologi';
-                              } elseif (strpos($id_pengujian, 'SNRM-') === 0) {
-                                  $jenis_pengujian = 'Sitologi Non Ginekologi';
-                              }
+                
                       ?>
-                              <div class="row" data-href="tampil.php?id=<?php echo urlencode($id_pengujian); ?>">
+                              <div class="row" data-href="tampil.php?id=<?php echo urlencode($id_pengambilan); ?>">
+                                  <span><?php echo htmlspecialchars($row['id_pengambilan']); ?></span>
+                                  <span><?php echo htmlspecialchars($row['id_pengujian']); ?></span>
                                   <span><?php echo htmlspecialchars($row['nama_pasien']); ?></span>
                                   <span><?php echo $tanggal; ?></span>
-                                  <span><?php echo htmlspecialchars($jenis_pengujian); ?></span>
-                                  <span class="status_pengujian <?php echo $status_pengujian_class; ?>"><?php echo htmlspecialchars($row['status_pengujian']); ?></span>
+                                   <span><?php echo htmlspecialchars($row['usia']); ?></span>
+                                  <span><?php echo $tanggal; ?></span>
+                                  
                               
                                   <span>
                                       <!-- Tombol Update -->
