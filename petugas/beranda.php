@@ -1,22 +1,59 @@
 <?php
-include 'koneksi.php';
 
 // 1. Semua pengajuan
 $sql1 = "SELECT COUNT(*) as total FROM pengajuan";
-$result1 = $koneksi->query($sql1);
+$result1 = $connect->query($sql1);
 $jumlahPengajuan = ($result1 && $row1 = $result1->fetch_assoc()) ? $row1['total'] : 0;
 
 // 2. Pengujian Diproses
 $sql2 = "SELECT COUNT(*) as total FROM pengujian WHERE status_pengujian = 'Diproses'";
-$result2 = $koneksi->query($sql2);
+$result2 = $connect->query($sql2);
 $jumlahDiproses = ($result2 && $row2 = $result2->fetch_assoc()) ? $row2['total'] : 0;
 
 // 3. Pengujian Selesai
 $sql3 = "SELECT COUNT(*) as total FROM pengujian WHERE status_pengujian = 'Selesai'";
-$result3 = $koneksi->query($sql3);
+$result3 = $connect->query($sql3);
 $jumlahSelesai = ($result3 && $row3 = $result3->fetch_assoc()) ? $row3['total'] : 0;
 
+//total pembayaran
+$sql4 = "SELECT SUM(total_bayar) AS total FROM pembayaran";
+$result4 = $connect->query($sql4);
+$totalPembayaran = 0;
+
+if ($result4 && $row4 = $result4->fetch_assoc()) {
+    $totalPembayaran = $row4['total'];
+}
+
+// PAGINATION PENGUJIAN
+$page_pengujian = isset($_GET['page_pengujian']) ? (int)$_GET['page_pengujian'] : 1;
+$limit_pengujian = 10;
+$offset_pengujian = ($page_pengujian - 1) * $limit_pengujian;
+
+// Hitung total data pengujian
+$totalPengujianQuery = "SELECT COUNT(*) as total FROM pengujian";
+$totalPengujianResult = $connect->query($totalPengujianQuery);
+$totalPengujianRows = $totalPengujianResult->fetch_assoc()['total'];
+$totalPagesPengujian = ceil($totalPengujianRows / $limit_pengujian);
+
+// Ambil data pengujian untuk halaman saat ini
+$query = "SELECT id_pengujian, nama_pasien, tanggal_terima, status_pengujian, tanggal_jadi FROM pengujian LIMIT $limit_pengujian OFFSET $offset_pengujian";
+$result = $connect->query($query);
+
+
+while ($row = $result->fetch_assoc()) {
+    $id_pengujian = $row['id_pengujian'];
+         $jenis_pengujian = '';
+    if (strpos($id_pengujian, 'JRM-') === 0) {
+        $jenis_pengujian = 'Jaringan';
+    } elseif (strpos($id_pengujian, 'SRM-') === 0) {
+        $jenis_pengujian = 'Sitologi Ginekologi';
+    } elseif (strpos($id_pengujian, 'SNRM-') === 0) {
+        $jenis_pengujian = 'Sitologi Non Ginekologi';
+    }
+  }
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -51,10 +88,22 @@ $jumlahSelesai = ($result3 && $row3 = $result3->fetch_assoc()) ? $row3['total'] 
       }
 
       :root {
-        --green:#009688;
-        --white: #fff;
-        --gray: #f5f5f5;
+          --green1: rgba(20, 116, 114, 1);
+          --green2: rgba(3, 178, 176, 1);
+          --green3: rgba(186, 231, 228, 1);
+          --green4: rgba(12, 109, 108, 0.61);
+          --green5: rgba(3, 178, 176, 0.29);
+          --green6: rgba(240, 243, 243, 1);
+          --green7: rgba(228, 240, 240, 1);
+          --green8: rgba(136, 181, 181, 0.26);
+          --green9: rgba(136, 181, 181, 0.51);
+          --white: #fff;
+          --gray: #f5f5f5;
+          --black1: #222;
+          --black2: #999;
+          --black3: rgba(0, 0, 0, 0.4);
       }
+
 
       body {
         min-height: 100vh;
@@ -357,7 +406,7 @@ $jumlahSelesai = ($result3 && $row3 = $result3->fetch_assoc()) ? $row3['total'] 
       .cardBox .card:hover .numbers,
       .cardBox .card:hover .cardName,
       .cardBox .card:hover .iconBx {
-        color: var(--white);
+        color: var(--green4);
       }
 
       /* Main content */
@@ -414,7 +463,7 @@ $jumlahSelesai = ($result3 && $row3 = $result3->fetch_assoc()) ? $row3['total'] 
         border-bottom: none;
       }
       .details .pengajuan table tbody tr:hover {
-        background: var(--green);
+        background: var(--green1);
         color: var(--white);
       }
       .details .pengajuan table tr td {
@@ -429,7 +478,7 @@ $jumlahSelesai = ($result3 && $row3 = $result3->fetch_assoc()) ? $row3['total'] 
       .details .pengajuan table tr td:nth-child(3) {
         text-align: center;
       }
-      .status.menunggu {
+      .status.diproses {
         padding: 2px 4px;
         background: #FFB67E;
         color: var(--white);
@@ -438,7 +487,7 @@ $jumlahSelesai = ($result3 && $row3 = $result3->fetch_assoc()) ? $row3['total'] 
         font-weight: 500;
       }
 
-      .status.terverifikasi {
+      .status.selesai {
         padding: 2px 4px;
         background: #8DDAB3;
         color: var(--white);
@@ -502,6 +551,12 @@ $jumlahSelesai = ($result3 && $row3 = $result3->fetch_assoc()) ? $row3['total'] 
         width: 100%;
         overflow: hidden;
       }
+
+      .penerimaan a {
+        text-decoration: none;
+        color: black;
+      }
+
       table.approval-request {
           width: 100%;
           border-collapse: separate;
@@ -617,6 +672,8 @@ $jumlahSelesai = ($result3 && $row3 = $result3->fetch_assoc()) ? $row3['total'] 
         .legend-sitologi-ginekologi { background-color: #5b9595; }
         .legend-sitologi-non-ginekologi { background-color: #accfcf; }
 
+      
+
 
 
       /* ====================== Responsive Design ========================== */
@@ -693,7 +750,7 @@ $jumlahSelesai = ($result3 && $row3 = $result3->fetch_assoc()) ? $row3['total'] 
                 <li>
                     <a href="#">
                          <span class="icon">
-                            <img src="assets/microscope.png" alt="logo">
+                            <img src="../assets/microscope.png" alt="logo">
                         </span>
                         <span class="title-logo">MedPath</span>
                     </a>
@@ -702,7 +759,7 @@ $jumlahSelesai = ($result3 && $row3 = $result3->fetch_assoc()) ? $row3['total'] 
                 <li>
                     <a href="beranda.php">
                         <span class="icon">
-                            <img src="assets/dashboard.png" alt="dashboard">
+                            <img src="../assets/dashboard.png" alt="dashboard">
                         </span>
                         <span class="title">Beranda</span>
                     </a>
@@ -711,7 +768,7 @@ $jumlahSelesai = ($result3 && $row3 = $result3->fetch_assoc()) ? $row3['total'] 
                 <li>
                     <a href="pengujian.php">
                         <span class="icon">
-                            <img src="assets/sample.png" alt="sample">
+                            <img src="../assets/sample.png" alt="sample">
                         </span>
                         <span class="title">Pengujian</span>
                     </a>
@@ -720,7 +777,7 @@ $jumlahSelesai = ($result3 && $row3 = $result3->fetch_assoc()) ? $row3['total'] 
                 <li>
                     <a href="#">
                         <span class="icon">
-                            <img src="assets/setting.png" alt="setting">
+                            <img src="../assets/setting.png" alt="setting">
                         </span>
                         <span class="title">Pengaturan</span>
                     </a>
@@ -798,22 +855,21 @@ $jumlahSelesai = ($result3 && $row3 = $result3->fetch_assoc()) ? $row3['total'] 
                   </div>
                     <div>
                       <div class="cardName">Pembayaran Selesai</div>
-                      <div class="numbers">$7,842</div>
+                      <div class="numbers">Rp <?php echo number_format($totalPembayaran, 0, ',', '.'); ?></div>
                     </div>
 
                 </div>
             </div>
 
-            <!-- ================ Order Details List ================= -->
+            <!-- ================ Pengujian ================= -->
             
             <?php include 'koneksi.php'; ?>
-<div class="details">
-    <div class="pengajuan">
-        <div class="cardHeader">
-            <h2>Pengujian Sampel</h2>
-            <a href="#" class="btn">View All</a>
-        </div>
-
+              <div class="details">
+                  <div class="pengajuan">
+                      <div class="cardHeader">
+                          <h2>Pengujian Sampel</h2>
+                          <a href="#" class="btn">View All</a>
+                      </div>
         <table>
             <thead>
                 <tr>
@@ -826,38 +882,61 @@ $jumlahSelesai = ($result3 && $row3 = $result3->fetch_assoc()) ? $row3['total'] 
             </thead>
             <tbody>
                 <?php
-                $query = "SELECT nama_pasien, tanggal_pengajuan, jenis_pengajuan, status_pengajuan  FROM pengajuan";
-                $result = $koneksi->query($query);
+                $query = "SELECT id_pengujian, nama_pasien, tanggal_terima, status_pengujian, tanggal_jadi  FROM pengujian";
+                $result = $connect->query($query);
+                  if ($result && $result->num_rows > 0) {
+                      while ($row = $result->fetch_assoc()) {
+                          $statusClass = strtolower($row['status_pengujian']);
+                          $id_pengujian = $row['id_pengujian'];
 
-                if ($result && $result->num_rows > 0) {
-                    while ($row = $result->fetch_assoc()) {
-                        $statusClass = strtolower($row['status_pengajuan']); // contoh: "Selesai" → selesai
-                        echo "<tr>";
-                        echo "<td>" . htmlspecialchars($row['nama_pasien']) . "</td>";
-                        echo "<td>" . htmlspecialchars($row['tanggal_pengajuan']) . "</td>";
-                        echo "<td>" . htmlspecialchars($row['jenis_pengajuan']) . "</td>";
-                        echo "<td><span class='status $statusClass'>" . htmlspecialchars($row['status_pengajuan']) . "</span></td>";
-                        echo "<td>" . htmlspecialchars($row['tanggal_pengajuan']) . "</td>";
-                        echo "</tr>";
-                    }
-                } else {
+                          // Menentukan jenis pengujian berdasarkan prefix ID
+                          $jenis_pengujian = '';
+                          if (strpos($id_pengujian, 'JRM-') === 0) {
+                              $jenis_pengujian = 'Jaringan';
+                          } elseif (strpos($id_pengujian, 'SRM-') === 0) {
+                              $jenis_pengujian = 'Sitologi Ginekologi';
+                          } elseif (strpos($id_pengujian, 'SNRM-') === 0) {
+                              $jenis_pengujian = 'Sitologi Non Ginekologi';
+                          }
+
+                          echo "<tr>";
+                          echo "<td>" . htmlspecialchars($row['nama_pasien']) . "</td>";
+                          echo "<td>" . htmlspecialchars($row['tanggal_terima']) . "</td>";
+                          echo "<td>" . htmlspecialchars($jenis_pengujian) . "</td>";
+                          echo "<td><span class='status $statusClass'>" . htmlspecialchars($row['status_pengujian']) . "</span></td>";
+                          echo "<td>" . htmlspecialchars($row['tanggal_jadi']) . "</td>";
+                          echo "</tr>";
+                      }
+                  } else {
                     echo "<tr><td colspan='5'>Tidak ada data.</td></tr>";
                 }
                 ?>
-            </tbody>
+            </tbody>  
         </table>
+              <div style="margin-top: 15px; text-align: center;">
+          <?php
+          for ($i = 1; $i <= $totalPagesPengujian; $i++) {
+              if ($i == $page_pengujian) {
+                  echo "<strong style='margin: 0 5px;'>$i</strong>";
+              } else {
+                  echo "<a href='beranda.php?page_pengujian=$i' style='margin: 0 5px;'>$i</a>";
+              }
+          }
+          ?>
+          </div>
+
     </div>
 </div>
                    
 
 
-                <!-- ================= New Customers ================ -->
+                <!-- ================= Pengajuan ================ -->
                 
                         
        <div class="sidebar">
   
        <div class="penerimaan">
-        <h3>Persetujuan Penerimaan Pengujian Sampel</h3>
+        <h3><a href="penerimaan.php">Persetujuan Penerimaan Pengujian Sampel</a></h3>
         <table class="approval-request" role="table" aria-describedby="permintaan-persetujuan-desc">
           <thead>
             <tr>
@@ -866,66 +945,73 @@ $jumlahSelesai = ($result3 && $row3 = $result3->fetch_assoc()) ? $row3['total'] 
               <th scope="col" style="text-align:right;">Aksi</th>
             </tr>
           </thead>
+    
+
           <tbody>
-            <tr tabindex="0">
-              <td>
-                <div class="name-col">Bagas Andikara</div>
-                <div class="type-col">Jaringan</div>
-              </td>
-              <td class="date-col">2025/03/19</td>
-              <td class="approval-icons">
-                <button class="icon-btn reject" aria-label="Reject Bagas Andikara Sample Test"><span class="material-icons">close</span></button>
-                <button class="icon-btn accept" aria-label="Accept Bagas Andikara Sample Test"><span class="material-icons">check</span></button>
-                <button class="icon-btn view" aria-label="View Bagas Andikara Sample Test"><span class="material-icons">visibility</span></button>
-              </td>
-            </tr>
-            <tr tabindex="0">
-              <td>
-                <div class="name-col">Bagas Andikara</div>
-                <div class="type-col">Jaringan</div>
-              </td>
-              <td class="date-col">2025/03/19</td>
-              <td class="approval-icons">
-                <button class="icon-btn reject" aria-label="Reject Bagas Andikara Sample Test"><span class="material-icons">close</span></button>
-                <button class="icon-btn accept" aria-label="Accept Bagas Andikara Sample Test"><span class="material-icons">check</span></button>
-                <button class="icon-btn view" aria-label="View Bagas Andikara Sample Test"><span class="material-icons">visibility</span></button>
-              </td>
-            </tr>
-            <tr tabindex="0">
-              <td>
-                <div class="name-col">Bagas Andikara</div>
-                <div class="type-col">Jaringan</div>
-              </td>
-              <td class="date-col">2025/03/19</td>
-              <td class="approval-icons">
-                <button class="icon-btn reject" aria-label="Reject Bagas Andikara Sample Test"><span class="material-icons">close</span></button>
-                <button class="icon-btn accept" aria-label="Accept Bagas Andikara Sample Test"><span class="material-icons">check</span></button>
-                <button class="icon-btn view" aria-label="View Bagas Andikara Sample Test"><span class="material-icons">visibility</span></button>
-              </td>
-            </tr>
-            
+            <?php
+                $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+                $limit = 3;
+                $offset = ($page - 1) * $limit;
+
+                $totalQuery = "SELECT COUNT(*) as total FROM pengajuan WHERE status_pengajuan = 'menunggu verifikasi'";
+                $totalResult = $connect->query($totalQuery);
+                $totalRows = $totalResult->fetch_assoc()['total'];
+                $totalPages = ceil($totalRows / $limit);
+
+                $query = "SELECT id_pengajuan, nama_pasien, tanggal_pengajuan FROM pengajuan WHERE status_pengajuan= 'menunggu verifikasi' LIMIT $limit OFFSET $offset";
+                $result5 = $connect->query($query);
+
+               if ($result5 && $result5->num_rows > 0) {
+                    while ($row = $result5->fetch_assoc()) {
+                        echo "<tr>";
+                        echo "<td>" . htmlspecialchars($row['nama_pasien']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['tanggal_pengajuan']) . "</td>";
+                        echo "<td>
+                                <button class='icon-btn reject' aria-label='Reject " . htmlspecialchars($row['nama_pasien']) . " Sample Test'><span class='material-icons'>close</span></button>
+                                <button class='icon-btn accept' aria-label='Accept " . htmlspecialchars($row['nama_pasien']) . " Sample Test'><span class='material-icons'>check</span></button>
+                              </td>";
+                        echo "</tr>";
+
+                    }
+                } else {
+                    echo "<tr><td colspan='5'>Tidak ada data.</td></tr>";
+                }
+                ?>    
               </tbody>
               </table>
+
+                  <!-- Pagination -->
+                  <div style="margin-top: 10px; text-align: center;">
+                  <?php
+                  for ($i = 1; $i <= $totalPages; $i++) {
+                      if ($i == $page) {
+                          echo "<strong style='margin: 0 5px;'>$i</strong>";
+                      } else {
+                          echo "<a href='beranda.php?page=$i' style='margin: 0 5px;'>$i</a>";
+                      }
+                  }
+                  ?>
+                  </div>
               
             </div> 
             <br>
             <br>
             <div class="statistik">
-    <div class="chart-header">
-          <div><strong>Statistik Jenis<br />Pengujian Sampel</strong></div>
-          <div class="chart-extra" aria-label="Statistics Date Range">
-            <span>Hari ini</span>
-            <span class="material-icons" aria-hidden="true" style="font-size: 18px;">filter_list</span>
-          </div>
-        </div>
-        <canvas id="donutChart" role="img" aria-label="Donut chart statistik jenis pengujian sampel" width="320" height="320"></canvas>
-        <div class="chart-legend" aria-hidden="true">
-          <div class="legend-item"><span class="legend-color legend-jaringan"></span>Jaringan (5)</div>
-          <div class="legend-item"><span class="legend-color legend-sitologi-ginekologi"></span>Sitologi Ginekologi (2)</div>
-          <div class="legend-item"><span class="legend-color legend-sitologi-non-ginekologi"></span>Sitologi Non Ginekologi (3)</div>
-        </div>
-   </div>   
-</div>
+              <div class="chart-header">
+                    <div><strong>Statistik Jenis<br />Pengujian Sampel</strong></div>
+                    <div class="chart-extra" aria-label="Statistics Date Range">
+                      <span>Hari ini</span>
+                      <span class="material-icons" aria-hidden="true" style="font-size: 18px;">filter_list</span>
+                    </div>
+                  </div>
+                  <canvas id="donutChart" role="img" aria-label="Donut chart statistik jenis pengujian sampel" width="320" height="320"></canvas>
+                  <div class="chart-legend" aria-hidden="true">
+                    <div class="legend-item"><span class="legend-color legend-jaringan"></span>Jaringan (5)</div>
+                    <div class="legend-item"><span class="legend-color legend-sitologi-ginekologi"></span>Sitologi Ginekologi (2)</div>
+                    <div class="legend-item"><span class="legend-color legend-sitologi-non-ginekologi"></span>Sitologi Non Ginekologi (3)</div>
+                  </div>
+              </div>   
+            </div>
 
 
 
@@ -972,9 +1058,9 @@ const ctx = document.getElementById('donutChart').getContext('2d');
       datasets: [{
         data: [5, 2, 3],
         backgroundColor: [
-          '#4CAF50', // Jaringan
-          '#FFC107', // Sitologi Ginekologi
-          '#03A9F4'  // Sitologi Non Ginekologi
+          '#1d7171', // Jaringan
+          '#5b9595', // Sitologi Ginekologi
+          '##accfcf'  // Sitologi Non Ginekologi
         ]
       }]
     },
