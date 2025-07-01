@@ -1,16 +1,74 @@
 <?php
 include 'koneksi.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['setujui_id'])) {
-    $nama = intval($_POST['setujui_id']);
-    $sql = "UPDATE pengajuan SET status_pengajuan = 'Verifikasi' WHERE nama_pasien = $nama";
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['tolak_id'])) {
+    $id_pengajuan = $_POST['tolak_id'];
+    $sql = "UPDATE pengajuan SET status_pengajuan = 'Ditolak' WHERE id_pengajuan = '$id_pengajuan'";
 
-    if ($koneksi->query($sql) === TRUE) {
-        echo "<script>document.addEventListener('DOMContentLoaded', function() { showSuccess(); });</script>";
+    if ($connect->query($sql) === TRUE) {
+        header("Location: " . $_SERVER['PHP_SELF'] . "?tolak=1");
+        exit();
     } else {
-        echo "Gagal memperbarui status: " . $koneksi->error;
+        echo "Gagal memperbarui status: " . $connect->error;
     }
 }
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['setujui_id'])) {
+    $id_pengajuan = $_POST['setujui_id'];
+
+    // Ambil data dari pengajuan
+    $query_select = "SELECT * FROM pengajuan WHERE id_pengajuan = '$id_pengajuan'";
+    $result_select = $connect->query($query_select);
+
+    if ($result_select && $result_select->num_rows > 0) {
+        $data = $result_select->fetch_assoc();
+
+      
+        $id_pengujian = $data['id_pengajuan']; 
+        $nama_pasien = $data['nama_pasien'];
+        $usia = $data['usia'];
+        $alamat = $data['alamat'];
+        $nomor_pemeriksaan = $data['nomor_pemeriksaan'];
+        $tanggal_terima = date('Y-m-d'); // hari ini
+        $status_pengujian = 'Diproses';
+
+        // Tentukan tanggal_jadi berdasarkan jenis pengujian
+        $jenis_pengajuan = '';
+        if (strpos($id_pengujian, 'JRM-') === 0) {
+            $jenis_pengajuan = 'Jaringan';
+            $tanggal_jadi = date('Y-m-d', strtotime($tanggal_terima . ' +5 days'));
+        } elseif (strpos($id_pengujian, 'SRM-') === 0) {
+            $jenis_pengajuan = 'Sitologi Ginekologi';
+            $tanggal_jadi = date('Y-m-d', strtotime($tanggal_terima . ' +7 days'));
+        } elseif (strpos($id_pengujian, 'SNRM-') === 0) {
+            $jenis_pengajuan = 'Sitologi Non Ginekologi';
+            $tanggal_jadi = date('Y-m-d', strtotime($tanggal_terima . ' +8 days'));
+        } else {
+            $tanggal_jadi = NULL; // fallback kalau jenis tidak dikenali
+        }
+
+        // Insert ke tabel pengujian
+        $sql_insert = "INSERT INTO pengujian (id_pengujian, nama_pasien, usia, alamat, nomor_pemeriksaan, tanggal_terima, tanggal_jadi, status_pengujian) 
+                      VALUES ('$id_pengujian', '$nama_pasien', '$usia', '$alamat', '$nomor_pemeriksaan', '$tanggal_terima', '$tanggal_jadi', '$status_pengujian')";
+
+        if ($connect->query($sql_insert) === TRUE) {
+            // Update status pengajuan
+            $sql_update = "UPDATE pengajuan SET status_pengajuan = 'Verifikasi' WHERE id_pengajuan = '$id_pengajuan'";
+            if ($connect->query($sql_update) === TRUE) {
+                header("Location: " . $_SERVER['PHP_SELF'] . "?success=1");
+                exit();
+            } else {
+                echo "Gagal update status pengajuan.";
+            }
+        } else {
+            echo "Gagal insert ke pengujian: " . $connect->error;
+        }
+    }
+}
+
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -39,11 +97,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['setujui_id'])) {
 }
 
 :root {
-  --green:#009688;
-  --white: #fff;
-  --gray: #f5f5f5;
-  --black1: #222;
-  --black2: #999;
+          --green1: rgba(20, 116, 114, 1);
+          --green2: rgba(3, 178, 176, 1);
+          --green3: rgba(186, 231, 228, 1);
+          --green4: rgba(12, 109, 108, 0.61);
+          --green5: rgba(3, 178, 176, 0.29);
+          --green6: rgba(240, 243, 243, 1);
+          --green7: rgba(228, 240, 240, 1);
+          --green8: rgba(136, 181, 181, 0.26);
+          --green9: rgba(136, 181, 181, 0.51);
+          --white: #fff;
+          --gray: #f5f5f5;
+          --black1: #222;
+          --black2: #999;
+          --black3: rgba(0, 0, 0, 0.4);
 }
 
 body {
@@ -316,12 +383,12 @@ body {
 }
 
 .cardBox .card:hover {
-  background: var(--green);
+  background: var(--green3);
 }
 
 .cardBox .card:hover .cardName,
 .cardBox .card:hover .numbertext {
-  color: var(--white);
+  color:var(--black1);
 }
 
 /* ================== Order Details List ============== */
@@ -375,16 +442,20 @@ body {
   color: var(--black1);
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
+
 .details .Approval table tr:last-child {
   border-bottom: none;
 }
 .details .Approval table tbody tr:hover {
-  background: var(--green);
-  color: var(--white);
+  background: var(--green3);
+  color: var(--black1);
 }
 .details .Approval table tr td {
   padding: 10px;
+  vertical-align: top;
 }
+
+
 .details .Approval table tr td:last-child {
   text-align: end;
 }
@@ -505,6 +576,11 @@ body {
 }
 .icon-btn.view .material-icons {
   color: #444; /* Abu kehitaman */
+  text-decoration: none;
+}
+.icon-btn,
+.icon-btn span {
+  text-decoration: none;
 }
 .icon-btn.download .material-icons {
   color: #777; /* Abu medium */
@@ -587,6 +663,16 @@ body {
 
     </style>
 </head>
+<?php
+if (isset($_GET['success'])) {
+    echo "<script>document.addEventListener('DOMContentLoaded', function() { showSuccess(); });</script>";
+}
+
+if (isset($_GET['tolak'])) {
+    echo "<script>document.addEventListener('DOMContentLoaded', function() { showReject(); });</script>";
+}
+?>
+
 
 <body>
     <!-- =============== Navigation ================ -->
@@ -596,25 +682,25 @@ body {
                 <li>
                     <a href="#">
                          <span class="icon">
-                            <img src="assets/microscope.png" alt="logo">
+                            <img src="../assets/microscope.png" alt="logo">
                         </span>
                         <span class="title-logo">MedPath</span>
                     </a>
                 </li>
 
                 <li>
-                    <a href="#">
+                    <a href="beranda.php">
                         <span class="icon">
-                            <img src="assets/dashboard.png" alt="dashboard">
+                            <img src="../assets/dashboard.png" alt="dashboard">
                         </span>
                         <span class="title">Beranda</span>
                     </a>
                 </li>
 
                 <li>
-                    <a href="#">
+                    <a href="pengujian.php">
                         <span class="icon">
-                            <img src="assets/sample.png" alt="sample">
+                            <img src="../assets/sample.png" alt="sample">
                         </span>
                         <span class="title">Pengujian</span>
                     </a>
@@ -622,16 +708,7 @@ body {
                 <li>
                     <a href="#">
                         <span class="icon">
-                            <img src="assets/money.png" alt="money">
-                        </span>
-                        <span class="title">Pembayaran</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="#">
-                        <span class="icon">
-                            <img src="assets/setting.png" alt="setting">
+                            <img src="../assets/setting.png" alt="setting">
                         </span>
                         <span class="title">Pengaturan</span>
                     </a>
@@ -670,7 +747,6 @@ body {
                     <div>
                         <div class="cardName">Pengujian Jaringan</div>
                     </div>
-
                     <div class="numbertext">
                         12
                     </div>
@@ -685,9 +761,6 @@ body {
                         11
                     </div>
                 </div>
-
-                
-
                 <div class="card">
                     <div>
                         <div class="cardName">Pengujian Sitologi Non Ginekologi</div>
@@ -720,34 +793,55 @@ body {
 
                         <tbody>
                           <?php
-                $query = "SELECT id_pengajuan, nama_pasien, tanggal_pengajuan, jenis_pengajuan  FROM pengajuan where status_pengajuan='menunggu verifikasi'";
-                $result = $koneksi->query($query);
+              $query = "SELECT id_pengajuan, nama_pasien, tanggal_pengajuan FROM pengajuan WHERE status_pengajuan='menunggu verifikasi'";
+              $result = $connect->query($query);
 
-                if ($result && $result->num_rows > 0) {
-                    while ($row = $result->fetch_assoc()) {
-                        echo "<tr>";
-                        echo "<td>" . htmlspecialchars($row['nama_pasien']) . "</td>";
-                        echo "<td>" . htmlspecialchars($row['tanggal_pengajuan']) . "</td>";
-                        echo "<td>" . htmlspecialchars($row['jenis_pengajuan']) . "</td>";
-                        echo "<td>
-                                <button class='icon-btn view' aria-label='View " . htmlspecialchars($row['id_pengajuan']) . " Sample Test'><span class='material-icons'>visibility</span></button>
-                                <button class='icon-btn download' aria-label='Download " . htmlspecialchars($row['id_pengajuan']) . " Sample Test'><span class='material-icons'>download</span></button>
-                              </td>";
-                        echo "<td>
-                                <button class='icon-btn reject' aria-label='Reject " . htmlspecialchars($row['nama_pasien']) . " Sample Test'><span class='material-icons'>close</span></button>
-                                <form method='POST' style='display:inline;'>
-                                  <input type='hidden' name='setujui_id' value='" . htmlspecialchars($row['id_pengajuan']) . "'>
-                                  <button type='submit' class='icon-btn accept' aria-label='Setujui'>
-                                      <span class='material-icons'>check</span>
-                                  </button>
+              if ($result && $result->num_rows > 0) {
+                  while ($row = $result->fetch_assoc()) {
+                      $jenis_pengajuan = '';
+                      $link_detail = '#';
+                      $id = $row['id_pengajuan'];
+
+                      if (strpos($id, 'JRM-') === 0) {
+                          $jenis_pengajuan = 'Jaringan';
+                          $link_detail = 'PengajuanJRM.php?id=' . $id;
+                      } elseif (strpos($id, 'SRM-') === 0) {
+                          $jenis_pengajuan = 'Sitologi Ginekologi';
+                          $link_detail = 'PengajuanSRM.php?id=' . $id;
+                      } elseif (strpos($id, 'SNRM-') === 0) {
+                          $jenis_pengajuan = 'Sitologi Non Ginekologi';
+                          $link_detail = 'PengajuanSNRM.php?id=' . $id;
+                      }
+
+                      echo "<tr>";
+                      echo "<td>" . htmlspecialchars($row['nama_pasien']) . "</td>";
+                      echo "<td>" . htmlspecialchars($row['tanggal_pengajuan']) . "</td>";
+                      echo "<td>" . $jenis_pengajuan . "</td>";
+                      echo "<td>
+                            <a href='$link_detail' class='icon-btn view'>
+                              <span class='material-icons'>visibility</span>
+                            </a>
+                            <a href='download_pengajuan.php?id=" . $row['id_pengajuan'] . "' class='icon-btn download'>
+                              <span class='material-icons'>download</span>
+                            </a>
+                          </td>";
+
+                      echo "<td>
+                              <button class='icon-btn reject' onclick='konfirmasiTolak(\"" . $row['id_pengajuan'] . "\")'>
+                                <span class='material-icons'>close</span>
+                              </button>
+                              <form id='formTolak_" . $row['id_pengajuan'] . "' method='POST' style='display:none;'>
+                                <input type='hidden' name='tolak_id' value='" . htmlspecialchars($row['id_pengajuan']) . "'>
                               </form>
-                              </td>";
-                        echo "</tr>";
+                              <form method='POST' style='display:inline;'>
+                                <input type='hidden' name='setujui_id' value='" . htmlspecialchars($row['id_pengajuan']) . "'>
+                                <button type='submit' class='icon-btn accept'><span class='material-icons'>check</span></button>
+                              </form>
+                            </td>";
+                      echo "</tr>";
+                  }
+              }
 
-                    }
-                } else {
-                    echo "<tr><td colspan='5'>Tidak ada data.</td></tr>";
-                }
                 ?>      
                         </tbody>
                     </table>
@@ -796,6 +890,39 @@ function showSuccess() {
       }
     });
   }
+
+  function konfirmasiTolak(id) {
+  Swal.fire({
+    title: 'Tolak Pengajuan?',
+    text: "Anda yakin ingin menolak pengajuan ini?",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Ya',
+    cancelButtonText: 'Batal',
+    customClass: {
+      popup: 'swal-custom'
+    }
+  }).then((result) => {
+    if (result.isConfirmed) {
+      document.getElementById('formTolak_' + id).submit();
+    }
+  });
+}
+
+function showReject() {
+    Swal.fire({
+      icon: 'success',
+      title: 'Pengajuan berhasil ditolak',
+      showConfirmButton: false,
+      timer: 1500,
+      customClass: {
+        popup: 'swal-custom'
+      }
+    });
+}
+
 
     </script>
 
