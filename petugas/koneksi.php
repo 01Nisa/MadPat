@@ -5,11 +5,11 @@
     $password = "";
     $database = "medpath";
 
-    $koneksi = new mysqli($hostname, $username, $password, $database);
+    $connect = new mysqli($hostname, $username, $password, $database);
 
-    if($koneksi->connect_error)
+    if($connect->connect_error)
     {
-        die('Maaf koneksi gagal: '. $koneksi->connect_error);
+        die('Maaf koneksi gagal: '. $connect->connect_error);
     }
 
 ?>
