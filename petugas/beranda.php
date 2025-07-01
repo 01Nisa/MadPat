@@ -1,5 +1,6 @@
-<?php
 
+<?php
+include 'koneksi.php';
 // 1. Semua pengajuan
 $sql1 = "SELECT COUNT(*) as total FROM pengajuan";
 $result1 = $connect->query($sql1);
@@ -63,23 +64,13 @@ while ($row = $result->fetch_assoc()) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Beranda</title>
-
-    <!-- Google Material Icons -->
       <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-
-    <!-- Chart.js CDN -->
       <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
       <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
       <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 
-
-    <!-- ======= Styles ====== -->
-
     <style>
-        /* =========== Google Fonts ============ */
       @import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap");
-
-      /* =============== Globals ============== */
       * {
         font-family: "Ubuntu", sans-serif;
         margin: 0;
@@ -104,7 +95,6 @@ while ($row = $result->fetch_assoc()) {
           --black3: rgba(0, 0, 0, 0.4);
       }
 
-
       body {
         min-height: 100vh;
         overflow-x: hidden;
@@ -115,169 +105,170 @@ while ($row = $result->fetch_assoc()) {
         width: 100%;
       }
 
-      /* =============== Navigation ================ */
-      .navigation {
-        position: fixed;
-        width: 230px;
-        height: 100%;
-        background: #67C3C0;
-        border-left: 10px solid #67C3C0;
-        transition: 0.5s;
-        overflow: hidden;
-      }
+     .navigation {
+            position: fixed;
+            width: 230px;
+            height: 100%;
+            background: var(--green2);
+            border-left: 10px solid var(--green2);
+            transition: 0.5s;
+            overflow: hidden;
+            z-index: 1000;
+        }
+
       .navigation.active {
-        width: 80px;
+          width: 80px;
       }
 
-      .navigation ul {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-      }
+        .navigation ul {
+            position: absolute;
+            top: 0px;
+            left: 0;
+            width: 100%;
+        }
 
-      .navigation ul li {
-        position: relative;
-        width: 100%;
-        list-style: none;
-        border-top-left-radius: 20px;
-        border-bottom-left-radius: 20px;
-      }
+        .navigation ul li {
+            position: relative;
+            width: 100%;
+            list-style: none;
+            border-top-left-radius: 20px;
+            border-bottom-left-radius: 20px;
+        }
 
-      .navigation ul li:hover,
-      .navigation ul li.hovered {
-        background-color: var(--white);
-      }
+        .navigation ul li:hover,
+        .navigation ul li.hovered {
+            background-color: var(--white);
+        }
 
-      .navigation ul li:nth-child(1) {
-        margin-bottom: 40px;
-        pointer-events: none;
-      }
+        .navigation ul li:nth-child(1) {
+            margin-bottom: -30px;
+            pointer-events: none;
+        }
 
-      .navigation ul li a {
-        position: relative;
-        display: block;
-        width: 100%;
-        display: flex;
-        text-decoration: none;
-        color: var(--white);
-      }
-      .navigation ul li:hover a,
-      .navigation ul li.hovered a {
-        color: var(--green);
-      }
+        .navigation ul li a {
+            position: relative;
+            display: block;
+            width: 100%;
+            display: flex;
+            text-decoration: none;
+            color: var(--white);
+        }
 
-      .navigation ul li a .icon {
-        position: relative;
-        display: block;
-        min-width: 60px;
-        height: 60px;
-        line-height: 75px;
-        text-align: center;
-      }
+        .navigation ul li:hover a,
+        .navigation ul li.hovered a {
+            color: var(--green2);
+        }
 
-      .navigation ul li.signout {
-        position: absolute;
-        bottom: -150px;
-        width: 100%;
-      }
+        .navigation ul li a .icon {
+            position: relative;
+            display: block;
+            min-width: 60px;
+            height: 60px;
+            line-height: 75px;
+            text-align: center;
+        }
 
-      .navigation ul li.signout:hover,
-      .navigation ul li.signout.hovered {
-        background-color: var(--white);
-      }
+        .navigation ul li.signout {
+            position: absolute;
+            bottom: -300px;
+            width: 100%;
+        }
 
-      .navigation ul li.signout a {
-        position: relative;
-        display: block;
-        width: 100%;
-        display: flex;
-        text-decoration: none;
-        color: var(--white);
-      }
+        .navigation ul li.signout:hover,
+        .navigation ul li.signout.hovered {
+            background-color: var(--white);
+        }
 
-      .navigation ul li.signout:hover a {
-        color: var(--green);
-      }
+        .navigation ul li.signout a {
+            position: relative;
+            display: block;
+            width: 100%;
+            display: flex;
+            text-decoration: none;
+            color: var(--white);
+        }
 
-      .navigation ul li.signout a .icon {
-        position: relative;
-        display: block;
-        min-width: 60px;
-        height: 60px;
-        line-height: 75px;
-        text-align: center;
-      }
+        .navigation ul li.signout:hover a {
+            color: var(--green2);
+        }
 
-      .navigation ul li.signout a .icon ion-icon {
-        font-size: 1.75rem;
-      }
+        .navigation ul li.signout a .icon {
+            position: relative;
+            display: block;
+            min-width: 60px;
+            height: 60px;
+            line-height: 75px;
+            text-align: center;
+        }
 
-      .navigation ul li.signout a .title {
-        font-size: 16px;
-        color: black;
-        white-space: nowrap;
-      }
+        .navigation ul li.signout a .icon ion-icon {
+            font-size: 1.75rem;
+        }
 
-      .navigation ul li a .icon ion-icon {
-        font-size: 1.75rem;
-      }
+        .navigation ul li.signout a .title {
+            font-size: 16px;
+            color: black;
+            white-space: nowrap;
+        }
 
-      .navigation ul li a .title-logo {
-        position: relative;
-        display: block;
-        font: Poppins;
-        font-size: 22px; 
-        color: black; 
-        padding: 0 10px;
-        height: 230px;
-        line-height: 70px;
-        text-align: start;
-        white-space: nowrap;
-      }
+        .navigation ul li a .icon ion-icon {
+            font-size: 1.75rem;
+        }
+
+        .navigation ul li a .title-logo {
+            position: relative;
+            display: block;
+            font-family: 'Poppins', sans-serif;
+            font-size: 22px;
+            color: black;
+            padding: 0 10px;
+            height: 230px;
+            line-height: 70px;
+            text-align: start;
+            white-space: nowrap;
+        }
+
+        .navigation ul li a .title {
+            position: relative;
+            display: block;
+            font-family: 'Poppins', sans-serif;
+            color: black;
+            padding: 0 10px;
+            height: 70px;
+            line-height: 60px;
+            text-align: start;
+            white-space: nowrap;
+        }
+
+        .navigation ul li:hover a::before,
+        .navigation ul li.hovered a::before {
+            content: "";
+            position: absolute;
+            right: 0;
+            top: -50px;
+            width: 50px;
+            height: 50px;
+            background-color: transparent;
+            border-radius: 50%;
+            box-shadow: 35px 35px 0 10px var(--white);
+            pointer-events: none;
+        }
+
+        .navigation ul li:hover a::after,
+        .navigation ul li.hovered a::after {
+            content: "";
+            position: absolute;
+            right: 0;
+            bottom: -50px;
+            width: 50px;
+            height: 50px;
+            background-color: transparent;
+            border-radius: 50%;
+            box-shadow: 35px -35px 0 10px var(--white);
+            pointer-events: none;
+        }
 
 
-      .navigation ul li a .title {
-        position: relative;
-        display: block;
-        font: Poppins;
-        color: black; 
-        padding: 0 10px;
-        height: 70px;
-        line-height: 60px;
-        text-align: start;
-        white-space: nowrap;
-      }
-
-      /* --------- curve outside ---------- */
-      .navigation ul li:hover a::before,
-      .navigation ul li.hovered a::before {
-        content: "";
-        position: absolute;
-        right: 0;
-        top: -50px;
-        width: 50px;
-        height: 50px;
-        background-color: transparent;
-        border-radius: 50%;
-        box-shadow: 35px 35px 0 10px var(--white);
-        pointer-events: none;
-      }
-      .navigation ul li:hover a::after,
-      .navigation ul li.hovered a::after {
-        content: "";
-        position: absolute;
-        right: 0;
-        bottom: -50px;
-        width: 50px;
-        height: 50px;
-        background-color: transparent;
-        border-radius: 50%;
-        box-shadow: 35px -35px 0 10px var(--white);
-        pointer-events: none;
-      }
-
-      /* welcome text */
       .welcome{
       margin-left: 50px;
       margin-top: 80px;
@@ -295,7 +286,7 @@ while ($row = $result->fetch_assoc()) {
           margin-top: 15px;
           font-style: italic;
       }
-      /* ===================== Main ===================== */
+      
       .main {
         position: absolute;
         width: calc(100% - 150px);
@@ -313,31 +304,59 @@ while ($row = $result->fetch_assoc()) {
       }
 
       .topbar {
-        width: 100%;
-        height: 60px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0 10px;
-      }
+            width: 100%;
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 1001;
+        }
 
-      .toggle {
-        position: relative;
-        width: 60px;
-        height: 60px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 2.5rem;
-        cursor: pointer;
-      }
+        .toggle {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            cursor: pointer;
+            color: var(--black1);
+            left: -30px;
+            z-index: 1002;
+        }
+
+        .user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user span {
+            font-size: 16px;
+            color: var(--black1);
+        }
+
+        .notification {
+            font-size: 1.5rem;
+            color: var(--black1);
+            cursor: pointer;
+            margin-right: 10px;
+        }
 
       .header-right {
           display: flex;
           align-items: center;
           gap: 24px;
           position: sticky;
-
         }
         .header-right .material-icons {
           font-size: 28px;
@@ -358,7 +377,7 @@ while ($row = $result->fetch_assoc()) {
           object-fit: cover;
           border: 1.5px solid var(--primary-teal-bg);
         }
-      /* ======================= Cards ====================== */
+    
       .cardBox {
         position: relative;
         width: 100%;
@@ -409,7 +428,6 @@ while ($row = $result->fetch_assoc()) {
         color: var(--green4);
       }
 
-      /* Main content */
       .details {
         position: relative;
         width: 100%;
@@ -422,7 +440,6 @@ while ($row = $result->fetch_assoc()) {
       .details .pengajuan {
         position: relative;
         display: grid;
-        min-height: 500px;
         background: var(--white);
         padding: 20px;
         box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
@@ -541,9 +558,6 @@ while ($row = $result->fetch_assoc()) {
         box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
       }
 
-
-
-      /* approval */
       .penerimaan {
         border-radius: 10px;
         background-color: var(--gray);
@@ -624,7 +638,6 @@ while ($row = $result->fetch_assoc()) {
           font-size: 18px;
         }
 
-        /* chart */
         .chart-container {
           background-color: var(--surface-bg);
           border-radius: var(--surface-radius);
@@ -674,9 +687,6 @@ while ($row = $result->fetch_assoc()) {
 
       
 
-
-
-      /* ====================== Responsive Design ========================== */
       @media (max-width: 991px) {
         .navigation {
           left: -300px;
@@ -743,7 +753,6 @@ while ($row = $result->fetch_assoc()) {
 </head>
 
 <body>
-    <!-- =============== Navigation ================ -->
     <div class="container">
         <div class="navigation">
             <ul>
@@ -775,7 +784,7 @@ while ($row = $result->fetch_assoc()) {
                 </li>
 
                 <li>
-                    <a href="#">
+                    <a href="pengaturan.php">
                         <span class="icon">
                             <img src="../assets/setting.png" alt="setting">
                         </span>
@@ -794,7 +803,6 @@ while ($row = $result->fetch_assoc()) {
             </ul>
         </div>
 
-        <!-- ========================= Main ==================== -->
          <div class="main-content">
         <div class="main">
             <div class="topbar">
@@ -811,13 +819,10 @@ while ($row = $result->fetch_assoc()) {
                 </div>
               </div>
 
-              <!-- welcome text -->
             <div class="welcome">
               <h1>Selamat Datang <span>Suci Puji</span></h1>
             </div>
 
-
-            <!-- ======================= Cards ================== -->
             <div class="cardBox">
                 <div class="card">
                   <div class="iconBx">
@@ -861,14 +866,12 @@ while ($row = $result->fetch_assoc()) {
                 </div>
             </div>
 
-            <!-- ================ Pengujian ================= -->
             
             <?php include 'koneksi.php'; ?>
               <div class="details">
                   <div class="pengajuan">
                       <div class="cardHeader">
                           <h2>Pengujian Sampel</h2>
-                          <a href="#" class="btn">View All</a>
                       </div>
         <table>
             <thead>
@@ -882,14 +885,12 @@ while ($row = $result->fetch_assoc()) {
             </thead>
             <tbody>
                 <?php
-                $query = "SELECT id_pengujian, nama_pasien, tanggal_terima, status_pengujian, tanggal_jadi  FROM pengujian";
+                $query = "SELECT id_pengujian, nama_pasien, tanggal_terima, status_pengujian, tanggal_jadi FROM pengujian";
                 $result = $connect->query($query);
                   if ($result && $result->num_rows > 0) {
                       while ($row = $result->fetch_assoc()) {
                           $statusClass = strtolower($row['status_pengujian']);
                           $id_pengujian = $row['id_pengujian'];
-
-                          // Menentukan jenis pengujian berdasarkan prefix ID
                           $jenis_pengujian = '';
                           if (strpos($id_pengujian, 'JRM-') === 0) {
                               $jenis_pengujian = 'Jaringan';
@@ -928,10 +929,6 @@ while ($row = $result->fetch_assoc()) {
     </div>
 </div>
                    
-
-
-                <!-- ================= Pengajuan ================ -->
-                
                         
        <div class="sidebar">
   
@@ -979,8 +976,6 @@ while ($row = $result->fetch_assoc()) {
                 ?>    
               </tbody>
               </table>
-
-                  <!-- Pagination -->
                   <div style="margin-top: 10px; text-align: center;">
                   <?php
                   for ($i = 1; $i <= $totalPages; $i++) {
@@ -1006,22 +1001,41 @@ while ($row = $result->fetch_assoc()) {
                   </div>
                   <canvas id="donutChart" role="img" aria-label="Donut chart statistik jenis pengujian sampel" width="320" height="320"></canvas>
                   <div class="chart-legend" aria-hidden="true">
-                    <div class="legend-item"><span class="legend-color legend-jaringan"></span>Jaringan (5)</div>
-                    <div class="legend-item"><span class="legend-color legend-sitologi-ginekologi"></span>Sitologi Ginekologi (2)</div>
-                    <div class="legend-item"><span class="legend-color legend-sitologi-non-ginekologi"></span>Sitologi Non Ginekologi (3)</div>
+                    <div class="legend-item"><span class="legend-color legend-jaringan"></span>Jaringan</div>
+                    <div class="legend-item"><span class="legend-color legend-sitologi-ginekologi"></span>Sitologi Ginekologi</div>
+                    <div class="legend-item"><span class="legend-color legend-sitologi-non-ginekologi"></span>Sitologi Non Ginekologi</div>
                   </div>
               </div>   
             </div>
+            <?php
+                include 'koneksi.php';
 
+                $jumlah_jaringan = 0;
+                $jumlah_ginekologi = 0;
+                $jumlah_non_ginekologi = 0;
 
+                $sql = "SELECT id_pengujian FROM pengujian";
+                $result = $connect->query($sql);
 
+                if ($result && $result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        $id = $row['id_pengujian'];
+                        if (strpos($id, 'JRM-') === 0) {
+                            $jumlah_jaringan++;
+                        } elseif (strpos($id, 'SRM-') === 0) {
+                            $jumlah_ginekologi++;
+                        } elseif (strpos($id, 'SNRM-') === 0) {
+                            $jumlah_non_ginekologi++;
+                        }
+                    }
+                }
 
-
+                  echo "<script>
+                    const donutData = [$jumlah_jaringan, $jumlah_ginekologi, $jumlah_non_ginekologi];
+                  </script>";
+                  ?>
     </div>
-
-    <!-- =========== Scripts =========  -->
     <script>
-        // add hovered class to selected list item
 let list = document.querySelectorAll(".navigation li");
 
 function activeLink() {
@@ -1033,7 +1047,6 @@ function activeLink() {
 
 list.forEach((item) => item.addEventListener("mouseover", activeLink));
 
-// Menu Toggle
 let toggle = document.querySelector(".toggle");
 let navigation = document.querySelector(".navigation");
 let main = document.querySelector(".main");
@@ -1050,17 +1063,17 @@ document.querySelectorAll('.has-submenu > a').forEach(menu => {
   });
 });
 
-const ctx = document.getElementById('donutChart').getContext('2d');
+  const ctx = document.getElementById('donutChart').getContext('2d');
   new Chart(ctx, {
     type: 'doughnut',
     data: {
       labels: ['Jaringan', 'Sitologi Ginekologi', 'Sitologi Non Ginekologi'],
       datasets: [{
-        data: [5, 2, 3],
+        data: donutData, 
         backgroundColor: [
-          '#1d7171', // Jaringan
-          '#5b9595', // Sitologi Ginekologi
-          '##accfcf'  // Sitologi Non Ginekologi
+          '#1d7171',
+          '#5b9595',
+          '#accfcf'
         ]
       }]
     },
@@ -1068,7 +1081,7 @@ const ctx = document.getElementById('donutChart').getContext('2d');
       responsive: true,
       plugins: {
         legend: {
-          display: false // karena kamu pakai custom legend
+          display: false 
         }
       }
     }
@@ -1076,7 +1089,6 @@ const ctx = document.getElementById('donutChart').getContext('2d');
 
     </script>
 
-    <!-- ====== ionicons ======= -->
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 </body>
