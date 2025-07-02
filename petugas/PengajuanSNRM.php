@@ -1,5 +1,5 @@
 <?php 
-include 'koneksi.php';
+include '../koneksi.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['tolak_id'])) {
     $id_pengajuan = $_POST['tolak_id'];

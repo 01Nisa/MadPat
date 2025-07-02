@@ -194,7 +194,7 @@
     
     <div class="container" id="contentToPrint">
         <?php
-        include 'koneksi.php';
+        include '../koneksi.php';
         $test_id = $_GET['id'];
         
         // Determine examination type

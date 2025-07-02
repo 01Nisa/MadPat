@@ -1,5 +1,5 @@
 <?php
-include 'koneksi.php';
+include '../koneksi.php';
 
 // Ambil id_pengujian dari URL
 $id_pengujian = $_GET['id'] ?? 0;

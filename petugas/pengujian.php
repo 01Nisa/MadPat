@@ -1,5 +1,5 @@
 <?php
-include 'koneksi.php';
+include '../koneksi.php';
 
 $jaringan = 0;
 $ginekologi = 0;
@@ -20,7 +20,6 @@ while ($row = $result->fetch_assoc()) {
     }
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -71,7 +70,7 @@ while ($row = $result->fetch_assoc()) {
 
         .navigation {
             position: fixed;
-            width: 230px;
+            width: 226px;
             height: 100%;
             background: var(--green2);
             border-left: 10px solid var(--green2);
@@ -86,7 +85,7 @@ while ($row = $result->fetch_assoc()) {
 
         .navigation ul {
             position: absolute;
-            top: 0px;
+            top: 0;
             left: 0;
             width: 100%;
         }
@@ -105,15 +104,14 @@ while ($row = $result->fetch_assoc()) {
         }
 
         .navigation ul li:nth-child(1) {
-            margin-bottom: -30px;
+            margin-bottom: -40px;
             pointer-events: none;
         }
 
         .navigation ul li a {
             position: relative;
-            display: block;
-            width: 100%;
             display: flex;
+            width: 100%;
             text-decoration: none;
             color: var(--white);
         }
@@ -124,7 +122,6 @@ while ($row = $result->fetch_assoc()) {
         }
 
         .navigation ul li a .icon {
-            position: relative;
             display: block;
             min-width: 60px;
             height: 60px;
@@ -132,37 +129,24 @@ while ($row = $result->fetch_assoc()) {
             text-align: center;
         }
 
+        .navigation ul li a .icon img {
+            width: 24px;
+            height: 24px;
+            position: relative;
+            top: 20%;
+            transform: translateY(-50%);
+            left: 5px;
+        }
+
         .navigation ul li.signout {
             position: absolute;
-            bottom: -300px;
+            bottom: -150px;
             width: 100%;
         }
 
         .navigation ul li.signout:hover,
         .navigation ul li.signout.hovered {
             background-color: var(--white);
-        }
-
-        .navigation ul li.signout a {
-            position: relative;
-            display: block;
-            width: 100%;
-            display: flex;
-            text-decoration: none;
-            color: var(--white);
-        }
-
-        .navigation ul li.signout:hover a {
-            color: var(--green2);
-        }
-
-        .navigation ul li.signout a .icon {
-            position: relative;
-            display: block;
-            min-width: 60px;
-            height: 60px;
-            line-height: 75px;
-            text-align: center;
         }
 
         .navigation ul li.signout a .icon ion-icon {
@@ -175,13 +159,7 @@ while ($row = $result->fetch_assoc()) {
             white-space: nowrap;
         }
 
-        .navigation ul li a .icon ion-icon {
-            font-size: 1.75rem;
-        }
-
         .navigation ul li a .title-logo {
-            position: relative;
-            display: block;
             font-family: 'Poppins', sans-serif;
             font-size: 22px;
             color: black;
@@ -193,8 +171,6 @@ while ($row = $result->fetch_assoc()) {
         }
 
         .navigation ul li a .title {
-            position: relative;
-            display: block;
             font-family: 'Poppins', sans-serif;
             color: black;
             padding: 0 10px;
@@ -232,13 +208,10 @@ while ($row = $result->fetch_assoc()) {
             pointer-events: none;
         }
 
-
-
-
         .main {
             position: absolute;
-            width: calc(100% - 300px);
-            left: 250px;
+            width: calc(100% - 226px);
+            left: 226px;
             min-height: 100vh;
             background: var(--white);
             transition: 0.5s;
@@ -299,17 +272,17 @@ while ($row = $result->fetch_assoc()) {
         }
 
         .filter-card {
-          width: 90px;
-          height: 66px;
-          flex-shrink: 0;
-          margin-top: 100px;
-          background: var(--green7);
-          border-radius: 20px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          z-index: 1001;
+            width: 90px;
+            height: 66px;
+            flex-shrink: 0;
+            margin-top: 100px;
+            background: var(--green7);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1001;
         }
 
         .filter-card ion-icon {
@@ -443,7 +416,6 @@ while ($row = $result->fetch_assoc()) {
             color: var(--black);
         }
 
-        
         .overlay {
             display: none;
             position: fixed;
@@ -525,66 +497,62 @@ while ($row = $result->fetch_assoc()) {
         }
 
         button {
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: 10px;
-        color: #333;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            color: #333;
         }
 
-        /* Hover efek */
         button:hover {
-        color: #007BFF;
+            color: #007BFF;
         }
 
         button .material-icons {
-        font-size: 32px; 
-}
+            font-size: 32px;
+        }
 
-      
         .cardBox {
-  position: relative;
-  width: 100%;
-  padding: 20px;
-  display: grid;
-  grid-template-columns: repeat(3, 0.7fr);
-  grid-gap: 30px;
-}
+            position: relative;
+            width: 100%;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(3, 0.7fr);
+            grid-gap: 30px;
+        }
 
-.cardBox .card {
-  position: relative;
-  background: #147472;
-  padding: 30px;
-  border-radius: 20px;
-  display: flex;
-  justify-content: space-between;
-  cursor: pointer;
-  box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
-}
+        .cardBox .card {
+            position: relative;
+            background: #147472;
+            padding: 30px;
+            border-radius: 20px;
+            display: flex;
+            justify-content: space-between;
+            cursor: pointer;
+            box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
+        }
 
+        .cardBox .card .cardName {
+            color: white;
+            font-size: 1.8rem;
+        }
 
+        .cardBox .card .numbertext {
+            font-size: 3.5rem;
+            color: white;
+        }
 
-.cardBox .card .cardName {
-  color: white;
-  font-size: 1.8rem;
-}
+        .cardBox .card:hover {
+            background: var(--green);
+        }
 
-.cardBox .card .numbertext {
-  font-size: 3.5rem;
-  color: white;
-}
+        .cardBox .card:hover .cardName,
+        .cardBox .card:hover .numbertext {
+            color: var(--white);
+        }
 
-.cardBox .card:hover {
-  background: var(--green);
-}
-
-.cardBox .card:hover .cardName,
-.cardBox .card:hover .numbertext {
-  color: var(--white);
-}
-
-.tambah-card {
-            width: 280px;
+        .tambah-card {
+            width: 230px;
             height: 66px;
             flex-shrink: 0;
             background: var(--green1);
@@ -615,10 +583,10 @@ while ($row = $result->fetch_assoc()) {
 
         @media (max-width: 991px) {
             .navigation {
-                left: -300px;
+                left: -226px;
             }
             .navigation.active {
-                width: 300px;
+                width: 226px;
                 left: 0;
             }
             .main {
@@ -626,7 +594,7 @@ while ($row = $result->fetch_assoc()) {
                 left: 0;
             }
             .main.active {
-                left: 300px;
+                left: 226px;
             }
         }
 
@@ -641,7 +609,9 @@ while ($row = $result->fetch_assoc()) {
                 flex-direction: column;
                 gap: 10px;
             }
-            .search-bar input, .filter-card, .tambah-card {
+            .search-bar input,
+            .filter-card,
+            .tambah-card {
                 width: 100%;
             }
             .pengujian .row {
@@ -715,23 +685,20 @@ while ($row = $result->fetch_assoc()) {
                 confirmButtonColor: '#147472'
             });
         </script>
-        <?php endif; ?>
+    <?php endif; ?>
 
-    
-
-                <div class="container">
+    <div class="container">
         <div class="navigation">
             <ul>
                 <li>
                     <a href="#">
-                         <span class="icon">
+                        <span class="icon">
                             <img src="../assets/microscope.png" alt="logo">
                         </span>
                         <span class="title-logo">MedPath</span>
                     </a>
                 </li>
-
-                <li>
+                <li class="hovered">
                     <a href="beranda.php">
                         <span class="icon">
                             <img src="../assets/dashboard.png" alt="dashboard">
@@ -739,37 +706,49 @@ while ($row = $result->fetch_assoc()) {
                         <span class="title">Beranda</span>
                     </a>
                 </li>
-
                 <li>
-                    <a href="pengujian.php">
+                    <a href="penerimaan.php">
                         <span class="icon">
-                            <img src="../assets/sample.png" alt="sample">
+                            <img src="../assets/penerimaan.png" alt="penerimaan">
                         </span>
-                        <span class="title">Pengujian</span>
+                        <span class="title">Penerimaan</span>
                     </a>
                 </li>
-
+                <li>
+                    <a href="proses_uji.php">
+                        <span class="icon">
+                            <img src="../assets/prosesuji.png" alt="proses_uji">
+                        </span>
+                        <span class="title">Proses Uji</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="riwayat_uji.php">
+                        <span class="icon">
+                            <img src="../assets/riwayat.png" alt="riwayat_uji">
+                        </span>
+                        <span class="title">Riwayat Uji</span>
+                    </a>
+                </li>
                 <li>
                     <a href="pengaturan.php">
                         <span class="icon">
-                            <img src="../assets/setting.png" alt="setting">
+                            <img src="../assets/setting.png" alt="pengaturan">
                         </span>
                         <span class="title">Pengaturan</span>
                     </a>
                 </li>
-
-                <li class = "signout">
-                    <a href="#">
+                <li class="signout">
+                    <a href="../signout.php">
                         <span class="icon">
-                            <ion-icon name="log-out-outline" style = "color: black"></ion-icon>
+                            <ion-icon name="log-out-outline" style="color: black"></ion-icon>
                         </span>
-                        <span class="title">Sign Out</span>
+                        <span class="title">Keluar</span>
                     </a>
                 </li>
             </ul>
         </div>
-          
-                   
+
         <div class="main">
             <div class="topbar">
                 <div class="toggle">
@@ -782,8 +761,7 @@ while ($row = $result->fetch_assoc()) {
                 </div>
             </div>
 
-
-              <div class="cardBox">
+            <div class="cardBox">
                 <div class="card">
                     <div>
                         <div class="cardName">Pengujian Jaringan</div>
@@ -792,12 +770,10 @@ while ($row = $result->fetch_assoc()) {
                         <?php echo $jaringan; ?>
                     </div>
                 </div>
-
                 <div class="card">
                     <div>
                         <div class="cardName">Pengujian Sitologi Ginekologi</div>
                     </div>
-
                     <div class="numbertext">
                         <?php echo $ginekologi; ?>
                     </div>
@@ -812,7 +788,6 @@ while ($row = $result->fetch_assoc()) {
                 </div>
             </div>
 
-  
             <div class="search-bar">
                 <input type="text" id="searchInput" placeholder="Search pengujian">
                 <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="27" height="27" viewBox="0 0 27 27" fill="none">
@@ -827,7 +802,7 @@ while ($row = $result->fetch_assoc()) {
                 </svg>
                 <div class="filter-card">
                     <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34" fill="none">
-                      <path d="M31.3438 11.1562H2.65625C2.23356 11.1562 1.82818 10.9883 1.5293 10.6895C1.23041 10.3906 1.0625 9.98519 1.0625 9.5625C1.0625 9.13981 1.23041 8.73443 1.5293 8.43555C1.82818 8.13666 2.23356 7.96875 2.65625 7.96875H31.3438C31.7664 7.96875 32.1718 8.13666 32.4707 8.43555C32.7696 8.73443 32.9375 9.13981 32.9375 9.5625C32.9375 9.98519 32.7696 10.3906 32.4707 10.6895C32.1718 10.9883 31.7664 11.1562 31.3438 11.1562ZM26.0312 18.5938H7.96875C7.54606 18.5938 7.14068 18.4258 6.8418 18.127C6.54291 17.8281 6.375 17.4227 6.375 17C6.375 16.5773 6.54291 16.1719 6.8418 15.873C7.14068 15.5742 7.54606 15.4062 7.96875 15.4062H26.0312C26.4539 15.4062 26.8593 15.5742 27.1582 15.873C27.4571 16.1719 27.625 16.5773 27.625 17C27.625 17.4227 27.4571 17.8281 27.1582 18.127C26.8593 18.4258 26.4539 18.5938 26.0312 18.5938ZM19.6562 26.0312H14.3438C13.9211 26.0312 13.5157 25.8633 13.2168 25.5645C12.9179 25.2656 12.75 24.8602 12.75 24.4375C12.75 24.0148 12.9179 23.6094 13.2168 23.3105C13.5157 23.0117 13.9211 22.8438 14.3438 22.8438H19.6562C20.0789 22.8438 20.4843 23.0117 20.7832 23.3105C21.0821 23.6094 21.25 24.0148 21.25 24.4375C21.25 24.8602 21.0821 25.2656 20.7832 25.5645C20.4843 25.8633 20.0789 26.0312 19.6562 26.0312Z" fill="black"/>
+                        <path d="M31.3438 11.1562H2.65625C2.23356 11.1562 1.82818 10.9883 1.5293 10.6895C1.23041 10.3906 1.0625 9.98519 1.0625 9.5625C1.0625 9.13981 1.23041 8.73443 1.5293 8.43555C1.82818 8.13666 2.23356 7.96875 2.65625 7.96875H31.3438C31.7664 7.96875 32.1718 8.13666 32.4707 8.43555C32.7696 8.73443 32.9375 9.13981 32.9375 9.5625C32.9375 9.98519 32.7696 10.3906 32.4707 10.6895C32.1718 10.9883 31.7664 11.1562 31.3438 11.1562ZM26.0312 18.5938H7.96875C7.54606 18.5938 7.14068 18.4258 6.8418 18.127C6.54291 17.8281 6.375 17.4227 6.375 17C6.375 16.5773 6.54291 16.1719 6.8418 15.873C7.14068 15.5742 7.54606 15.4062 7.96875 15.4062H26.0312C26.4539 15.4062 26.8593 15.5742 27.1582 15.873C27.4571 16.1719 27.625 16.5773 27.625 17C27.625 17.4227 27.4571 17.8281 27.1582 18.127C26.8593 18.4258 26.4539 18.5938 26.0312 18.5938ZM19.6562 26.0312H14.3438C13.9211 26.0312 13.5157 25.8633 13.2168 25.5645C12.9179 25.2656 12.75 24.8602 12.75 24.4375C12.75 24.0148 12.9179 23.6094 13.2168 23.3105C13.5157 23.0117 13.9211 22.8438 14.3438 22.8438H19.6562C20.0789 22.8438 20.4843 23.0117 20.7832 23.3105C21.0821 23.6094 21.25 24.0148 21.25 24.4375C21.25 24.8602 21.0821 25.2656 20.7832 25.5645C20.4843 25.8633 20.0789 26.0312 19.6562 26.0312Z" fill="black"/>
                     </svg>
                 </div>
                 <div class="tambah-card"><img src="../assets/plus.png" alt="Detail Icon"> Unggah Hasil Uji</div>
@@ -850,10 +825,10 @@ while ($row = $result->fetch_assoc()) {
                     <?php
                     include '../koneksi.php';
 
-                   $currentYear = date('Y'); 
+                    $currentYear = date('Y');
                     $sql = "SELECT id_pengujian, nama_pasien, tanggal_terima, status_pengujian, tanggal_jadi
                             FROM pengujian
-                            WHERE YEAR(tanggal_terima) = ? 
+                            WHERE YEAR(tanggal_terima) = ?
                             ORDER BY tanggal_terima DESC";
                     $stmt = $connect->prepare($sql);
                     $stmt->bind_param("i", $currentYear);
@@ -890,38 +865,27 @@ while ($row = $result->fetch_assoc()) {
                                 <span class="status_pengujian <?php echo $status_pengujian_class; ?>"><?php echo htmlspecialchars($row['status_pengujian']); ?></span>
                                 <span><?php echo $tanggaljadi; ?></span>
                                 <span>
-                              
                                     <a href="<?php echo htmlspecialchars($link_lihat); ?>" class="icon-btn view" title="Lihat">
                                         <button type="button">
                                             <span class="material-icons">visibility</span>
                                         </button>
                                     </a>
-                              
                                     <a href="download_pengujian.php?id=<?php echo urlencode($id_pengujian); ?>" title="Unduh">
                                         <button type="button">
                                             <span class="material-icons">download</span>
                                         </button>
                                     </a>
                                 </span>
-
                                 <span>
-                          
-                                   <a href="<?php echo htmlspecialchars($link_edit); ?>" class="icon-btn edit" title="Edit">
+                                    <a href="<?php echo htmlspecialchars($link_edit); ?>" class="icon-btn edit" title="Edit">
                                         <button type="button">
                                             <span class="material-icons">edit</span>
                                         </button>
                                     </a>
-
-
-                                
                                     <button onclick="hapusData('<?php echo $id_pengujian; ?>')" title="Hapus">
                                         <span class="material-icons">delete</span>
                                     </button>
                                 </span>
-
-
-
-                                
                             </div>
                     <?php
                         }
@@ -932,7 +896,7 @@ while ($row = $result->fetch_assoc()) {
                     ?>
                 </div>
             </div>
-        
+
             <div class="overlay"></div>
 
             <div class="menu-card">
@@ -941,7 +905,6 @@ while ($row = $result->fetch_assoc()) {
                 <div class="menu-separator"></div>
                 <div class="menu-option" data-type="word">word</div>
             </div>
-
         </div>
     </div>
 
@@ -980,25 +943,22 @@ while ($row = $result->fetch_assoc()) {
             window.location.href = "tampil.php?id=" + id;
         }
 
-        
         function hapusData(id) {
-         Swal.fire({
-        title: 'Ingin menghapus data?',
-        text: "Data tidak dapat dikembalikan!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Hapus',
-        cancelButtonText: 'Batal'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            window.location.href = "hapus_pengujian.php?id=" + id;
+            Swal.fire({
+                title: 'Ingin menghapus data?',
+                text: "Data tidak dapat dikembalikan!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Hapus',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "hapus_pengujian.php?id=" + id;
+                }
+            });
         }
-    });
-}
-
-
     </script>
 
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>

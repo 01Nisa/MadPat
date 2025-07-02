@@ -22,7 +22,7 @@ if (!$connect) {
 
 header('Content-Type: application/json');
 
-$action = json_decode(file_get_contents('php://input'), true)['action'] ?? (isset($_POST['action']) ? $_POST['action'] : '');
+$action = json_decode(file_get_contents('php://input'), true)['action'] ?? '';
 
 if ($action === 'delete_photo') {
     $sql = "SELECT foto FROM pengguna WHERE id_pengguna = ?";
@@ -38,11 +38,11 @@ if ($action === 'delete_photo') {
     $user = $result->fetch_assoc();
     $stmt->close();
 
-    if ($user['foto'] && $user['foto'] !== 'profil.jpg' && file_exists("../../../{$user['foto']}")) {
-        if (!unlink("../../../{$user['foto']}")) {
-            error_log("proPengaturan.php - Failed to delete photo: ../../../{$user['foto']}");
+    if ($user['foto'] && $user['foto'] !== 'profil.jpg' && file_exists("../{$user['foto']}")) {
+        if (!unlink("../{$user['foto']}")) {
+            error_log("proPengaturan.php - Failed to delete photo: ../{$user['foto']}");
         } else {
-            error_log("proPengaturan.php - Deleted old photo: ../../../{$user['foto']}");
+            error_log("proPengaturan.php - Deleted old photo: ../{$user['foto']}");
         }
     }
 
@@ -99,13 +99,14 @@ if ($action === 'update_password') {
     $user = $result->fetch_assoc();
     $stmt->close();
 
-    if ($user['password'] !== $current_password) {
+    if (!password_verify($current_password, $user['password'])) {
         error_log("proPengaturan.php - Current password incorrect for user ID: $user_id");
         echo json_encode(['success' => false, 'error' => 'Kata sandi saat ini salah']);
         $connect->close();
         exit();
     }
 
+    $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
     $sql = "UPDATE pengguna SET password = ? WHERE id_pengguna = ?";
     $stmt = $connect->prepare($sql);
     if (!$stmt) {
@@ -114,7 +115,7 @@ if ($action === 'update_password') {
         $connect->close();
         exit();
     }
-    $stmt->bind_param("si", $new_password, $user_id);
+    $stmt->bind_param("si", $hashed_password, $user_id);
     if ($stmt->execute()) {
         error_log("proPengaturan.php - Password updated successfully for user ID: $user_id");
         echo json_encode(['success' => true]);
@@ -127,10 +128,11 @@ if ($action === 'update_password') {
     exit();
 }
 
-$nama_lengkap = $_POST['nama_lengkap'] ?? '';
-$alamat = $_POST['alamat'] ?? '';
-$email = $_POST['email'] ?? '';
-$nomortlp = $_POST['nomortlp'] ?? '';
+// Profile update
+$nama_lengkap = isset($_POST['nama_lengkap']) ? trim($_POST['nama_lengkap']) : '';
+$alamat = isset($_POST['alamat']) ? trim($_POST['alamat']) : '';
+$email = isset($_POST['email']) ? trim($_POST['email']) : '';
+$nomortlp = isset($_POST['nomortlp']) ? trim($_POST['nomortlp']) : '';
 
 error_log("proPengaturan.php - Form data - nama: $nama_lengkap, alamat: $alamat, email: $email, nomortlp: $nomortlp, photo_upload: " . (isset($_FILES['photo_upload']) ? $_FILES['photo_upload']['name'] : 'Not set'));
 
@@ -185,7 +187,7 @@ if ($email !== $current_user['email']) {
 
 $foto_path = $current_user['foto'] ?? 'profil.jpg';
 if (!empty($_FILES['photo_upload']['name'])) {
-    $target_dir = "../../../Uploads/";
+    $target_dir = "../Uploads/";
     if (!file_exists($target_dir)) {
         if (!mkdir($target_dir, 0777, true)) {
             error_log("proPengaturan.php - Failed to create directory: $target_dir");
@@ -227,11 +229,11 @@ if (!empty($_FILES['photo_upload']['name'])) {
 
     if (move_uploaded_file($_FILES["photo_upload"]["tmp_name"], $target_file)) {
         $foto_path = "Uploads/" . $unique_filename;
-        if ($current_user['foto'] && $current_user['foto'] !== 'profil.jpg' && file_exists("../../../{$current_user['foto']}")) {
-            if (!unlink("../../../{$current_user['foto']}")) {
-                error_log("proPengaturan.php - Failed to delete old photo: ../../../{$current_user['foto']}");
+        if ($current_user['foto'] && $current_user['foto'] !== 'profil.jpg' && file_exists("../{$current_user['foto']}")) {
+            if (!unlink("../{$current_user['foto']}")) {
+                error_log("proPengaturan.php - Failed to delete old photo: ../{$current_user['foto']}");
             } else {
-                error_log("proPengaturan.php - Deleted old photo: ../../../{$current_user['foto']}");
+                error_log("proPengaturan.php - Deleted old photo: ../{$current_user['foto']}");
             }
         }
         error_log("proPengaturan.php - Photo uploaded successfully: $foto_path");
@@ -251,9 +253,14 @@ if (!$stmt) {
     $connect->close();
     exit();
 }
+$nama_lengkap = $connect->real_escape_string($nama_lengkap);
+$alamat = $connect->real_escape_string($alamat);
+$email = $connect->real_escape_string($email);
+$nomortlp = $connect->real_escape_string($nomortlp);
+$foto_path = $connect->real_escape_string($foto_path);
 $stmt->bind_param("sssssi", $nama_lengkap, $alamat, $email, $nomortlp, $foto_path, $user_id);
 if ($stmt->execute()) {
-    $_SESSION['user_nama'] = $nama_lengkap; 
+    $_SESSION['user_nama'] = $nama_lengkap;
     error_log("proPengaturan.php - Profile updated successfully for user ID: $user_id, Foto: $foto_path");
     echo json_encode(['success' => true, 'foto' => $foto_path]);
 } else {

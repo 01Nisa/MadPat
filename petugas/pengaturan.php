@@ -5,12 +5,12 @@ error_log("pengaturan.php - Session user ID: " . ($_SESSION['user'] ?? 'Not set'
 
 if (!isset($_SESSION['user'])) {
     error_log("pengaturan.php - Redirecting to login: Session user not set");
-    header("location:../../../login.php?pesan=belum_login");
+    header("location: ../login.php?pesan=belum_login");
     exit();
 }
 
 $user_id = $_SESSION['user'];
-include 'koneksi.php';
+include '../koneksi.php';
 
 if (!$connect) {
     error_log("pengaturan.php - Database connection failed: " . mysqli_connect_error());
@@ -48,9 +48,9 @@ if (!$user) {
     $foto_pengguna = $user['foto'] ?? "profil.jpg";
 }
 
-$image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../../$foto_pengguna"))
-    ? "../../../$foto_pengguna"
-    : "../../../assets/imgs/profil.jpg";
+$image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../$foto_pengguna"))
+    ? "../$foto_pengguna"
+    : "../assets/imgs/profil.jpg";
 
 error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_exists($image_path) ? 'Yes' : 'No'));
 ?>
@@ -100,7 +100,7 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
 
         .navigation {
             position: fixed;
-            width: 230px;
+            width: 226px;
             height: 100%;
             background: var(--green2);
             border-left: 10px solid var(--green2);
@@ -109,13 +109,13 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
             z-index: 1000;
         }
 
-      .navigation.active {
-          width: 80px;
-      }
+        .navigation.active {
+            width: 80px;
+        }
 
         .navigation ul {
             position: absolute;
-            top: 0px;
+            top: 0;
             left: 0;
             width: 100%;
         }
@@ -134,15 +134,14 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
         }
 
         .navigation ul li:nth-child(1) {
-            margin-bottom: -30px;
+            margin-bottom: -40px;
             pointer-events: none;
         }
 
         .navigation ul li a {
             position: relative;
-            display: block;
-            width: 100%;
             display: flex;
+            width: 100%;
             text-decoration: none;
             color: var(--white);
         }
@@ -153,7 +152,6 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
         }
 
         .navigation ul li a .icon {
-            position: relative;
             display: block;
             min-width: 60px;
             height: 60px;
@@ -161,9 +159,18 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
             text-align: center;
         }
 
+        .navigation ul li a .icon img {
+            width: 24px;
+            height: 24px;
+            position: relative;
+            top: 20%;
+            transform: translateY(-50%);
+            left: 5px;
+        }
+
         .navigation ul li.signout {
             position: absolute;
-            bottom: -300px;
+            bottom: -150px;
             width: 100%;
         }
 
@@ -173,25 +180,14 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
         }
 
         .navigation ul li.signout a {
-            position: relative;
-            display: block;
-            width: 100%;
             display: flex;
+            width: 100%;
             text-decoration: none;
             color: var(--white);
         }
 
         .navigation ul li.signout:hover a {
             color: var(--green2);
-        }
-
-        .navigation ul li.signout a .icon {
-            position: relative;
-            display: block;
-            min-width: 60px;
-            height: 60px;
-            line-height: 75px;
-            text-align: center;
         }
 
         .navigation ul li.signout a .icon ion-icon {
@@ -204,13 +200,7 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
             white-space: nowrap;
         }
 
-        .navigation ul li a .icon ion-icon {
-            font-size: 1.75rem;
-        }
-
         .navigation ul li a .title-logo {
-            position: relative;
-            display: block;
             font-family: 'Poppins', sans-serif;
             font-size: 22px;
             color: black;
@@ -222,8 +212,6 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
         }
 
         .navigation ul li a .title {
-            position: relative;
-            display: block;
             font-family: 'Poppins', sans-serif;
             color: black;
             padding: 0 10px;
@@ -263,8 +251,8 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
 
         .main {
             position: absolute;
-            width: calc(100% - 300px);
-            left: 250px;
+            width: calc(100% - 226px);
+            left: 226px;
             min-height: 100vh;
             background: var(--white);
             transition: 0.5s;
@@ -326,9 +314,9 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
 
         .settings {
             padding: 20px;
-            margin: 70px 20px 20px;
+            margin: 30px 10px 10px;
             display: flex;
-            gap: 20px;
+            gap: 10px;
             max-height: 80vh;
             overflow-y: auto;
             z-index: 1001;
@@ -361,12 +349,12 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
 
         .settings .profile-photo-container {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
         .settings .profile-photo {
-            width: 150px;
-            height: 150px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
             object-fit: cover;
             border: 3px solid var(--green2);
@@ -410,13 +398,13 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
         }
 
         .settings .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 5px;
         }
 
         .settings .form-group label {
             display: block;
             color: var(--black2);
-            margin-bottom: 5px;
+            margin-bottom: 3px;
             font-size: 0.9rem;
             font-weight: 500;
         }
@@ -459,32 +447,71 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
             background: var(--green1);
         }
 
-        .alert {
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-            display: none;
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1007;
         }
 
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+        .message-box {
+            position: fixed;
+            background-color: #ffffff;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            text-align: center;
+            height: 200px;
+            width: 400px;
+            max-width: 400px;
+            left: 50%;
+            top: 30%;
+            transform: translate(-50%, -50%);
         }
 
-        .alert-error {
-            background-color: #f8d7da;
+        .message-box img {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 1rem;
+        }
+
+        .message-box p {
+            margin-bottom: 1rem;
+            font-size: 18px;
+            color: #147472;
+        }
+
+        .message-box.error p {
             color: #721c24;
-            border: 1px solid #f5c6cb;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #147472;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            color: #000000;
         }
 
         @media (max-width: 991px) {
             .navigation {
-                left: -300px;
+                left: -226px;
             }
             .navigation.active {
-                width: 300px;
+                width: 226px;
                 left: 0;
             }
             .main {
@@ -492,7 +519,7 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
                 left: 0;
             }
             .main.active {
-                left: 300px;
+                left: 226px;
             }
             .settings {
                 flex-direction: column;
@@ -525,6 +552,10 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
             .settings .photo-actions label {
                 width: 100%;
             }
+            .message-box {
+                width: 90%;
+                max-width: 350px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -537,7 +568,7 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
             .navigation {
                 width: 100%;
                 left: -100%;
-                z-index: 1000;
+                z-index: 1001;
             }
             .navigation.active {
                 width: 100%;
@@ -565,6 +596,10 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
             .settings .form-group button {
                 width: 100%;
             }
+            .message-box {
+                width: 90%;
+                max-width: 300px;
+            }
         }
     </style>
 </head>
@@ -575,13 +610,12 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
             <ul>
                 <li>
                     <a href="#">
-                         <span class="icon">
+                        <span class="icon">
                             <img src="../assets/microscope.png" alt="logo">
                         </span>
                         <span class="title-logo">MedPath</span>
                     </a>
                 </li>
-
                 <li>
                     <a href="beranda.php">
                         <span class="icon">
@@ -590,31 +624,44 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
                         <span class="title">Beranda</span>
                     </a>
                 </li>
-
+                <li>
+                    <a href="penerimaan.php">
+                        <span class="icon">
+                            <img src="../assets/penerimaan.png" alt="penerimaan">
+                        </span>
+                        <span class="title">Penerimaan</span>
+                    </a>
+                </li>
                 <li>
                     <a href="pengujian.php">
                         <span class="icon">
-                            <img src="../assets/sample.png" alt="sample">
+                            <img src="../assets/prosesuji.png" alt="proses_uji">
                         </span>
-                        <span class="title">Pengujian</span>
+                        <span class="title">Proses Uji</span>
                     </a>
                 </li>
-
                 <li>
-                    <a href="#">
+                    <a href="riwayat_uji.php">
                         <span class="icon">
-                            <img src="../assets/setting.png" alt="setting">
+                            <img src="../assets/riwayat.png" alt="riwayat_uji">
+                        </span>
+                        <span class="title">Riwayat Uji</span>
+                    </a>
+                </li>
+                <li class="hovered">
+                    <a href="pengaturan.php">
+                        <span class="icon">
+                            <img src="../assets/setting.png" alt="pengaturan">
                         </span>
                         <span class="title">Pengaturan</span>
                     </a>
                 </li>
-
-                <li class = "signout">
-                    <a href="#">
+                <li class="signout">
+                    <a href="../signout.php">
                         <span class="icon">
-                            <ion-icon name="log-out-outline" style = "color: black"></ion-icon>
+                            <ion-icon name="log-out-outline" style="color: black"></ion-icon>
                         </span>
-                        <span class="title">Sign Out</span>
+                        <span class="title">Keluar</span>
                     </a>
                 </li>
             </ul>
@@ -632,9 +679,15 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
                 </div>
             </div>
 
-            <div class="settings">
-                <div id="alert-message" class="alert" style="display: none;"></div>
+            <div class="overlay" id="messageOverlay" style="display: none;">
+                <div class="message-box">
+                    <span class="close-btn" onclick="hideAlert()">×</span>
+                    <img src="../assets/peringatan.png" alt="peringatan">
+                    <p id="messageText"></p>
+                </div>
+            </div>
 
+            <div class="settings">
                 <?php if (!$user): ?>
                     <p style="color: var(--black1);">Pengguna tidak ditemukan. Silakan periksa data pengguna di database.</p>
                 <?php else: ?>
@@ -649,7 +702,7 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
                                 <button type="button" class="delete-btn" id="delete-photo-btn">Hapus Foto</button>
                                 <input type="file" id="photo_upload" name="photo_upload" accept="image/*" style="display: none;">
                             </div>
-                            <form id="profile-form" action="../process/proPengaturan.php" method="POST" enctype="multipart/form-data">
+                            <form id="profile-form" action="proPengaturan.php" method="POST" enctype="multipart/form-data">
                                 <div class="form-group">
                                     <label for="nama_lengkap">Nama Lengkap</label>
                                     <input type="text" id="nama_lengkap" name="nama_lengkap" value="<?php echo htmlspecialchars($nama_pengguna); ?>" required>
@@ -725,6 +778,7 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
         const profilePhotoPreview = document.getElementById('profile-photo-preview');
         const deletePhotoBtn = document.getElementById('delete-photo-btn');
         const profileForm = document.getElementById('profile-form');
+        const securityForm = document.getElementById('security-form');
 
         photoUpload.addEventListener('change', function(e) {
             if (this.files && this.files[0]) {
@@ -738,7 +792,7 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
 
         deletePhotoBtn.addEventListener('click', function() {
             if (confirm('Apakah Anda yakin ingin menghapus foto profil?')) {
-                fetch('../process/proPengaturan.php', {
+                fetch('proPengaturan.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -751,8 +805,8 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
                 .then(data => {
                     console.log('Delete photo response:', data);
                     if (data.success) {
-                        profilePhotoPreview.src = '../../../assets/imgs/profil.jpg';
-                        document.querySelector('.user img').src = '../../../assets/imgs/profil.jpg';
+                        profilePhotoPreview.src = '../assets/imgs/profil.jpg';
+                        document.querySelector('.user img').src = '../assets/imgs/profil.jpg';
                         showAlert('Foto profil berhasil dihapus', 'success');
                     } else {
                         showAlert(data.error || 'Gagal menghapus foto profil', 'error');
@@ -767,10 +821,23 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
 
         profileForm.addEventListener('submit', function(e) {
             e.preventDefault();
+            const nama = document.getElementById('nama_lengkap').value.trim();
+            const alamat = document.getElementById('alamat').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const nomortlp = document.getElementById('nomortlp').value.trim();
+
+            if (!nama || !alamat || !email || !nomortlp) {
+                showAlert('Semua field harus diisi', 'error');
+                return;
+            }
+
+            if (!/^\S+@\S+\.\S+$/.test(email)) {
+                showAlert('Format email tidak valid', 'error');
+                return;
+            }
+
             const formData = new FormData(this);
             const saveBtn = document.getElementById('save-profile-btn');
-            const alertBox = document.getElementById('alert-message');
-
             saveBtn.disabled = true;
             saveBtn.textContent = 'Menyimpan...';
 
@@ -785,15 +852,12 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
                     showAlert('Profil berhasil diperbarui', 'success');
                     if (data.foto) {
                         const newPhotoPath = data.foto.startsWith('Uploads/') 
-                            ? '../../../' + data.foto 
-                            : '../../../assets/imgs/profil.jpg';
+                            ? '../' + data.foto 
+                            : '../assets/imgs/profil.jpg';
                         document.querySelector('.user img').src = newPhotoPath;
                         profilePhotoPreview.src = newPhotoPath;
                     }
-                    document.querySelector('.user span').textContent = document.getElementById('nama_lengkap').value;
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1000);
+                    document.querySelector('.user span').textContent = nama;
                 } else {
                     showAlert(data.error || 'Gagal memperbarui profil', 'error');
                 }
@@ -813,6 +877,11 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
             const newPassword = document.getElementById('new_password').value;
             const confirmPassword = document.getElementById('confirm_password').value;
 
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                showAlert('Semua field kata sandi harus diisi', 'error');
+                return;
+            }
+
             if (newPassword !== confirmPassword) {
                 showAlert('Kata sandi baru dan konfirmasi tidak cocok', 'error');
                 return;
@@ -827,7 +896,7 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
             btn.disabled = true;
             btn.textContent = 'Memperbarui...';
 
-            fetch('../process/proPengaturan.php', {
+            fetch('proPengaturan.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -843,7 +912,7 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
                 console.log('Password update response:', data);
                 if (data.success) {
                     showAlert('Kata sandi berhasil diperbarui', 'success');
-                    document.getElementById('security-form').reset();
+                    securityForm.reset();
                 } else {
                     showAlert(data.error || 'Gagal memperbarui kata sandi', 'error');
                 }
@@ -859,14 +928,23 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
         });
 
         function showAlert(message, type) {
-            const alertBox = document.getElementById('alert-message');
-            alertBox.textContent = message;
-            alertBox.className = 'alert alert-' + type;
-            alertBox.style.display = 'block';
+            console.log('Showing alert:', { message, type });
+            const overlay = document.getElementById('messageOverlay');
+            const messageText = document.getElementById('messageText');
+            const messageBox = overlay.querySelector('.message-box');
+            
+            messageText.textContent = message;
+            messageBox.className = 'message-box' + (type === 'error' ? ' error' : '');
+            overlay.style.display = 'flex';
 
             setTimeout(() => {
-                alertBox.style.display = 'none';
+                hideAlert();
             }, 5000);
+        }
+
+        function hideAlert() {
+            const overlay = document.getElementById('messageOverlay');
+            overlay.style.display = 'none';
         }
     </script>
 

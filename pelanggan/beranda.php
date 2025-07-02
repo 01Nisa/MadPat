@@ -79,7 +79,7 @@ body {
 }
 
 .navigation ul li:nth-child(1) {
-    margin-bottom: -30px;
+    margin-bottom: -130px;
     pointer-events: none;
 }
 
@@ -107,7 +107,7 @@ body {
 
 .navigation ul li.signout {
     position: absolute;
-    bottom: -150px;
+    bottom: -110px;
     width: 100%;
 }
 
@@ -625,7 +625,7 @@ body {
                         <span class="icon">
                             <ion-icon name="log-out-outline" style="color: black"></ion-icon>
                         </span>
-                        <span class="title">Sign Out</span>
+                        <span class="title">Keluar</span>
                     </a>
                 </li>
             </ul>

@@ -1,25 +1,75 @@
 <?php
+session_start();
 
-include 'koneksi.php';
+error_log("penerimaan.php - Session user ID: " . ($_SESSION['user'] ?? 'Not set'));
 
+if (!isset($_SESSION['user'])) {
+    error_log("penerimaan.php - Redirecting to login: Session user not set");
+    header("location:../login.php?pesan=belum_login");
+    exit();
+}
+
+$user_id = $_SESSION['user'];
+include '../koneksi.php';
+
+if (!$connect) {
+    error_log("penerimaan.php - Database connection failed: " . mysqli_connect_error());
+    die("Connection failed: " . mysqli_connect_error());
+}
+
+// Fetch user data
+$sql = "SELECT nama, foto FROM pengguna WHERE id_pengguna = ?";
+$stmt = $connect->prepare($sql);
+if (!$stmt) {
+    error_log("penerimaan.php - Prepare failed: " . $connect->error);
+    die("Prepare failed: " . $connect->error);
+}
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+$stmt->close();
+
+$nama_pengguna = $user['nama'] ?? 'Suci Puji';
+$foto_pengguna = $user['foto'] ?? "profil.jpg";
+$image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../$foto_pengguna"))
+    ? "../$foto_pengguna"
+    : "../assets/imgs/profil.jpg";
+
+// Handle reject action
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['tolak_id'])) {
     $id_pengajuan = $_POST['tolak_id'];
-    $sql = "UPDATE pengajuan SET status_pengajuan = 'Ditolak' WHERE id_pengajuan = '$id_pengajuan'";
-
-    if ($connect->query($sql) === TRUE) {
+    $sql = "UPDATE pengajuan SET status_pengajuan = 'Ditolak' WHERE id_pengajuan = ?";
+    $stmt = $connect->prepare($sql);
+    if (!$stmt) {
+        error_log("penerimaan.php - Prepare failed for reject: " . $connect->error);
+        die("Prepare failed: " . $connect->error);
+    }
+    $stmt->bind_param("s", $id_pengajuan);
+    if ($stmt->execute()) {
         header("Location: " . $_SERVER['PHP_SELF'] . "?tolak=1");
         exit();
     } else {
-        echo "Gagal memperbarui status: " . $connect->error;
+        error_log("penerimaan.php - Execute failed for reject: " . $stmt->error);
+        die("Gagal memperbarui status: " . $stmt->error);
     }
+    $stmt->close();
 }
 
+// Handle approve action
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['setujui_id'])) {
     $id_pengajuan = $_POST['setujui_id'];
 
-    // Ambil data dari pengajuan
-    $query_select = "SELECT * FROM pengajuan WHERE id_pengajuan = '$id_pengajuan'";
-    $result_select = $connect->query($query_select);
+    // Fetch pengajuan data
+    $query_select = "SELECT * FROM pengajuan WHERE id_pengajuan = ?";
+    $stmt_select = $connect->prepare($query_select);
+    if (!$stmt_select) {
+        error_log("penerimaan.php - Prepare failed for select: " . $connect->error);
+        die("Prepare failed: " . $connect->error);
+    }
+    $stmt_select->bind_param("s", $id_pengajuan);
+    $stmt_select->execute();
+    $result_select = $stmt_select->get_result();
 
     if ($result_select && $result_select->num_rows > 0) {
         $data = $result_select->fetch_assoc();
@@ -31,7 +81,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['setujui_id'])) {
         $tanggal_terima = date('Y-m-d');
         $status_pengujian = 'Diproses';
 
-        // Tentukan tanggal_jadi berdasarkan jenis pengujian
         if (strpos($id_pengujian, 'JRM-') === 0) {
             $tanggal_jadi = date('Y-m-d', strtotime($tanggal_terima . ' +5 days'));
         } elseif (strpos($id_pengujian, 'SRM-') === 0) {
@@ -55,738 +104,686 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['setujui_id'])) {
         $nomor_baru = $nomor_terakhir + 1;
         $id_pengambilan_baru = 'PA-' . str_pad($nomor_baru, 3, '0', STR_PAD_LEFT);
 
-        // INSERT ke tabel pengambilan (optional: sesuaikan kolom dengan struktur database Anda)
+        // Insert into pengambilan
         $sql_pengambilan = "INSERT INTO pengambilan (id_pengambilan, id_pengajuan, tanggal_pengambilan, status_pengambilan)
-                    VALUES ('$id_pengambilan_baru', '$id_pengujian', '$tanggal_terima', 'Selesai')";
+                            VALUES (?, ?, ?, 'Selesai')";
+        $stmt_pengambilan = $connect->prepare($sql_pengambilan);
+        if (!$stmt_pengambilan) {
+            error_log("penerimaan.php - Prepare failed for pengambilan: " . $connect->error);
+            die("Prepare failed: " . $connect->error);
+        }
+        $stmt_pengambilan->bind_param("sss", $id_pengambilan_baru, $id_pengujian, $tanggal_terima);
+        if (!$stmt_pengambilan->execute()) {
+            error_log("penerimaan.php - Execute failed for pengambilan: " . $stmt_pengambilan->error);
+            die("Gagal insert ke pengambilan: " . $stmt_pengambilan->error);
+        }
+        $stmt_pengambilan->close();
 
-        $connect->query($sql_pengambilan); // dieksekusi tapi tidak dicek errornya (boleh ditambahkan)
-
-        // INSERT ke tabel pengujian
-        $sql_pengujian = "INSERT INTO pengujian (id_pengujian, id_pengambilan, nama_pasien, usia, tanggal_terima, status_pengujian)
-                          VALUES ('$id_pengujian', '$id_pengambilan_baru', '$nama_pasien', '$usia', '$tanggal_terima', '$status_pengujian')";
-
-        if ($connect->query($sql_pengujian) === TRUE) {
+        // Insert into pengujian
+        $sql_pengujian = "INSERT INTO pengujian (id_pengujian, id_pengambilan, nama_pasien, usia, tanggal_terima, status_pengujian, tanggal_jadi)
+                          VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $stmt_pengujian = $connect->prepare($sql_pengujian);
+        if (!$stmt_pengujian) {
+            error_log("penerimaan.php - Prepare failed for pengujian: " . $connect->error);
+            die("Prepare failed: " . $connect->error);
+        }
+        $stmt_pengujian->bind_param("sssiss", $id_pengujian, $id_pengambilan_baru, $nama_pasien, $usia, $tanggal_terima, $status_pengujian, $tanggal_jadi);
+        if ($stmt_pengujian->execute()) {
             // Update status pengajuan
-            $sql_update = "UPDATE pengajuan SET status_pengajuan = 'Verifikasi' WHERE id_pengajuan = '$id_pengajuan'";
-            if ($connect->query($sql_update) === TRUE) {
+            $sql_update = "UPDATE pengajuan SET status_pengajuan = 'Verifikasi' WHERE id_pengajuan = ?";
+            $stmt_update = $connect->prepare($sql_update);
+            if (!$stmt_update) {
+                error_log("penerimaan.php - Prepare failed for update: " . $connect->error);
+                die("Prepare failed: " . $connect->error);
+            }
+            $stmt_update->bind_param("s", $id_pengajuan);
+            if ($stmt_update->execute()) {
                 header("Location: " . $_SERVER['PHP_SELF'] . "?success=1");
                 exit();
             } else {
-                echo "Gagal update status pengajuan.";
+                error_log("penerimaan.php - Execute failed for update: " . $stmt_update->error);
+                die("Gagal update status pengajuan: " . $stmt_update->error);
             }
+            $stmt_update->close();
         } else {
-            echo "Gagal insert ke pengujian: " . $connect->error;
+            error_log("penerimaan.php - Execute failed for pengujian: " . $stmt_pengujian->error);
+            die("Gagal insert ke pengujian: " . $stmt_pengujian->error);
         }
+        $stmt_pengujian->close();
     }
+    $stmt_select->close();
 }
 
-
+// Calculate statistics for cardBox
 $jaringan = 0;
 $ginekologi = 0;
 $non_ginekologi = 0;
 
-$sql = "SELECT id_pengajuan FROM pengajuan";
+$sql = "SELECT id_pengajuan FROM pengajuan WHERE status_pengajuan = 'Menunggu Verifikasi'";
 $result = $connect->query($sql);
 
-while ($row = $result->fetch_assoc()) {
-    $id_pengajuan = $row['id_pengajuan'];
-
-    if (strpos($id_pengajuan, 'JRM-') === 0) {
-        $jaringan++;
-    } elseif (strpos($id_pengajuan, 'SRM-') === 0) {
-        $ginekologi++;
-    } elseif (strpos($id_pengajuan, 'SNRM-') === 0) {
-        $non_ginekologi++;
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $id_pengajuan = $row['id_pengajuan'];
+        if (strpos($id_pengajuan, 'JRM-') === 0) {
+            $jaringan++;
+        } elseif (strpos($id_pengajuan, 'SRM-') === 0) {
+            $ginekologi++;
+        } elseif (strpos($id_pengajuan, 'SNRM-') === 0) {
+            $non_ginekologi++;
+        }
     }
 }
 ?>
 
-
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Penerimaan</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <title>Penerimaan - MedPath</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- ======= Styles ====== -->
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
     <style>
-        /* =========== Google Fonts ============ */
-@import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap");
-
-
-/* =============== Globals ============== */
-* {
-  font-family: "Ubuntu", sans-serif;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-:root {
-          --green1: rgba(20, 116, 114, 1);
-          --green2: rgba(3, 178, 176, 1);
-          --green3: rgba(186, 231, 228, 1);
-          --green4: rgba(12, 109, 108, 0.61);
-          --green5: rgba(3, 178, 176, 0.29);
-          --green6: rgba(240, 243, 243, 1);
-          --green7: rgba(228, 240, 240, 1);
-          --green8: rgba(136, 181, 181, 0.26);
-          --green9: rgba(136, 181, 181, 0.51);
-          --white: #fff;
-          --gray: #f5f5f5;
-          --black1: #222;
-          --black2: #999;
-          --black3: rgba(0, 0, 0, 0.4);
-}
-
-body {
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-.container {
-  position: relative;
-  width: 100%;
-}
-
-/* =============== Navigation ================ */
-.navigation {
-  position: fixed;
-  width: 230px;
-  height: 100%;
-  background: #67C3C0;
-  border-left: 10px solid #67C3C0;
-  transition: 0.5s;
-  overflow: hidden;
-}
-.navigation.active {
-  width: 80px;
-}
-
-.navigation ul {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-}
-
-.navigation ul li {
-  position: relative;
-  width: 100%;
-  list-style: none;
-  border-top-left-radius: 20px;
-  border-bottom-left-radius: 20px;
-}
-
-.navigation ul li:hover,
-.navigation ul li.hovered {
-  background-color: var(--white);
-}
-
-.navigation ul li:nth-child(1) {
-  margin-bottom: 40px;
-  pointer-events: none;
-}
-
-.navigation ul li a {
-  position: relative;
-  display: block;
-  width: 100%;
-  display: flex;
-  text-decoration: none;
-  color: var(--white);
-}
-.navigation ul li:hover a,
-.navigation ul li.hovered a {
-  color: var(--green);
-}
-
-.navigation ul li a .icon {
-  position: relative;
-  display: block;
-  min-width: 60px;
-  height: 60px;
-  line-height: 75px;
-  text-align: center;
-}
-
-.navigation ul li.signout {
-  position: absolute;
-  bottom: -300px;
-  width: 100%;
-}
-
-.navigation ul li.signout:hover,
-.navigation ul li.signout.hovered {
-  background-color: var(--white);
-}
-
-.navigation ul li.signout a {
-  position: relative;
-  display: block;
-  width: 100%;
-  display: flex;
-  text-decoration: none;
-  color: var(--white);
-}
-
-.navigation ul li.signout:hover a {
-  color: var(--green);
-}
-
-.navigation ul li.signout a .icon {
-  position: relative;
-  display: block;
-  min-width: 60px;
-  height: 60px;
-  line-height: 75px;
-  text-align: center;
-}
-
-.navigation ul li.signout a .icon ion-icon {
-  font-size: 1.75rem;
-}
-
-.navigation ul li.signout a .title {
-  font-size: 16px;
-  color: black;
-  white-space: nowrap;
-}
-
-.navigation ul li a .icon ion-icon {
-  font-size: 1.75rem;
-}
-
-.navigation ul li a .title-logo {
-  position: relative;
-  display: block;
-  font: Poppins;
-  font-size: 22px; 
-  color: black; 
-  padding: 0 10px;
-  height: 230px;
-  line-height: 70px;
-  text-align: start;
-  white-space: nowrap;
-}
-
-
-.navigation ul li a .title {
-  position: relative;
-  display: block;
-  font: Poppins;
-  color: black; 
-  padding: 0 10px;
-  height: 70px;
-  line-height: 60px;
-  text-align: start;
-  white-space: nowrap;
-}
-
-/* --------- curve outside ---------- */
-.navigation ul li:hover a::before,
-.navigation ul li.hovered a::before {
-  content: "";
-  position: absolute;
-  right: 0;
-  top: -50px;
-  width: 50px;
-  height: 50px;
-  background-color: transparent;
-  border-radius: 50%;
-  box-shadow: 35px 35px 0 10px var(--white);
-  pointer-events: none;
-}
-.navigation ul li:hover a::after,
-.navigation ul li.hovered a::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  bottom: -50px;
-  width: 50px;
-  height: 50px;
-  background-color: transparent;
-  border-radius: 50%;
-  box-shadow: 35px -35px 0 10px var(--white);
-  pointer-events: none;
-}
-
-
-
-/* ===================== Main ===================== */
-.main {
-  position: absolute;
-  width: calc(100% - 250px);
-  left: 250px;
-  min-height: 100vh;
-  background: var(--white);
-  transition: 0.5s;
-}
-.main.active {
-  width: calc(100% - 80px);
-  left: 80px;
-}
-
-.topbar {
-  width: 100%;
-  height: 60px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 10px;
-}
-
-.toggle {
-  position: relative;
-  width: 60px;
-  height: 60px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 2.5rem;
-  cursor: pointer;
-}
-
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-  }
-  .header-right .material-icons {
-    font-size: 28px;
-    color: var(--text-dark);
-    cursor: pointer;
-  }
-  .profile {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-weight: var(--font-semibold);
-    color: var(--text-dark);
-  }
-  .profile img {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 1.5px solid var(--primary-teal-bg);
-  }
-
-
-.pengujian {
-            background: var(--green7);
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px;
-            max-height: 60vh;
-            overflow-y: auto;
-            z-index: 1001;
+        * {
+            font-family: "Ubuntu", sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-    .pengujian .row {
+
+        :root {
+            --green1: rgba(20, 116, 114, 1);
+            --green2: rgba(3, 178, 176, 1);
+            --green3: rgba(186, 231, 228, 1);
+            --green4: rgba(12, 109, 108, 0.61);
+            --green5: rgba(3, 178, 176, 0.29);
+            --green6: rgba(240, 243, 243, 1);
+            --green7: rgba(228, 240, 240, 1);
+            --green8: rgba(136, 181, 181, 0.26);
+            --white: #fff;
+            --gray: #f5f5f5;
+            --black1: #222;
+            --black2: #999;
+            --black3: rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+        }
+
+        .navigation {
+            position: fixed;
+            width: 226px;
+            height: 100%;
+            background: var(--green2);
+            border-left: 10px solid var(--green2);
+            transition: 0.5s;
+            overflow: hidden;
+            z-index: 999;
+        }
+
+        .navigation.active {
+            width: 80px;
+        }
+
+        .navigation ul {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+        }
+
+        .navigation ul li {
+            position: relative;
+            width: 100%;
+            list-style: none;
+            border-top-left-radius: 20px;
+            border-bottom-left-radius: 20px;
+        }
+
+        .navigation ul li:hover,
+        .navigation ul li.hovered {
+            background-color: var(--white);
+        }
+
+        .navigation ul li:nth-child(1) {
+            margin-bottom: -40px;
+            pointer-events: none;
+        }
+
+        .navigation ul li a {
+            position: relative;
+            display: flex;
+            width: 100%;
+            text-decoration: none;
+            color: var(--white);
+        }
+
+        .navigation ul li:hover a,
+        .navigation ul li.hovered a {
+            color: var(--green2);
+        }
+
+        .navigation ul li a .icon {
+            display: block;
+            min-width: 60px;
+            height: 60px;
+            line-height: 75px;
+            text-align: center;
+        }
+
+        .navigation ul li a .icon img {
+            width: 24px;
+            height: 24px;
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 20px;
+        }
+
+        .navigation ul li.signout {
+            position: absolute;
+            bottom: -150px;
+            width: 100%;
+        }
+
+        .navigation ul li.signout:hover,
+        .navigation ul li.signout.hovered {
+            background-color: var(--white);
+        }
+
+        .navigation ul li.signout a .icon ion-icon {
+            font-size: 1.75rem;
+        }
+
+        .navigation ul li.signout a .title {
+            font-size: 16px;
+            color: black;
+            white-space: nowrap;
+        }
+
+        .navigation ul li a .title-logo {
+            font-family: 'Poppins', sans-serif;
+            font-size: 22px;
+            color: black;
+            padding: 0 10px;
+            height: 230px;
+            line-height: 70px;
+            text-align: start;
+            white-space: nowrap;
+        }
+
+        .navigation ul li a .title {
+            font-family: 'Poppins', sans-serif;
+            color: black;
+            padding: 0 10px;
+            height: 70px;
+            line-height: 60px;
+            text-align: start;
+            white-space: nowrap;
+        }
+
+        .navigation ul li:hover a::before,
+        .navigation ul li.hovered a::before {
+            content: "";
+            position: absolute;
+            right: 0;
+            top: -50px;
+            width: 50px;
+            height: 50px;
+            background-color: transparent;
+            border-radius: 50%;
+            box-shadow: 35px 35px 0 10px var(--white);
+            pointer-events: none;
+        }
+
+        .navigation ul li:hover a::after,
+        .navigation ul li.hovered a::after {
+            content: "";
+            position: absolute;
+            right: 0;
+            bottom: -50px;
+            width: 50px;
+            height: 50px;
+            background-color: transparent;
+            border-radius: 50%;
+            box-shadow: 35px -35px 0 10px var(--white);
+            pointer-events: none;
+        }
+
+        .main {
+            position: absolute;
+            width: calc(100% - 226px);
+            left: 226px;
+            min-height: 100vh;
+            background: var(--white);
+            transition: 0.5s;
+        }
+
+        .main.active {
+            width: calc(100% - 80px);
+            left: 80px;
+        }
+
+        .topbar {
+            width: 100%;
             height: 60px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 20px;
-            background: var(--white);
-            margin-bottom: 10px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: background 0.3s;
+            padding: 0 20px;
             z-index: 1001;
         }
 
-        .pengujian .row:hover {
-            background: var(--green6);
+        .toggle {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            cursor: pointer;
+            color: var(--black1);
+            left: -30px;
+            z-index: 1001;
         }
 
-        .pengujian .row span {
+        .user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user span {
+            font-size: 16px;
+            color: var(--black1);
+        }
+
+        .notification {
+            font-size: 1.5rem;
+            color: var(--black1);
+            cursor: pointer;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cardBox {
+            position: relative;
+            width: 100%;
+            padding: 20px;
+            margin-top: 90px;
+            display: grid;
+            grid-template-columns: repeat(3, 0.7fr);
+            grid-gap: 30px;
+        }
+
+        .cardBox .card {
+            position: relative;
+            background: var(--green1);
+            padding: 30px;
+            border-radius: 20px;
+            display: flex;
+            justify-content: space-between;
+            cursor: pointer;
+            box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .cardBox .card:hover {
+            background: var(--white);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .cardBox .card .cardName {
+            color: var(--white);
+            font-size: 1.8rem;
+        }
+
+        .cardBox .card .numbertext {
+            font-size: 3.5rem;
+            color: var(--white);
+        }
+
+        .cardBox .card:hover .cardName,
+        .cardBox .card:hover .numbertext {
+            color: var(--green1);
+        }
+
+        .details {
+            padding: 20px;
+            z-index: 1001;
+        }
+
+        .Approval, .pengujian {
+            background: var(--green7);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 100px;
+            max-height: 60vh;
+            overflow-y: auto;
+            z-index: 1001;
+        }
+
+        .cardHeader {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .cardHeader h2 {
+            font-weight: 600;
+            color: var(--black1);
+        }
+
+        .Approval .column-titles, .Approval .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px 5px;
+            padding: 10px 0;
+            height: 40px;
+            border-radius: 10px;
+            gap: 1px;
+        }
+
+        .Approval .column-titles span, .Approval .row span {
             flex: 1;
             text-align: center;
+            font-size: 14px;
+            line-height: 30px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            min-width: 100px;
+        }
+
+        .Approval .column-titles span:nth-child(1), .Approval .row span:nth-child(1) {
+            flex: 1.5;
+            min-width: 150px;
+        }
+
+        .Approval .column-titles span:nth-child(2), .Approval .row span:nth-child(2) {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .Approval .column-titles span:nth-child(3), .Approval .row span:nth-child(3) {
+            flex: 1.5;
+            min-width: 150px;
+        }
+
+        .Approval .column-titles span:nth-child(4), .Approval .row span:nth-child(4) {
+            flex: 1;
+            min-width: 100px;
+        }
+
+        .Approval .column-titles span:nth-child(5), .Approval .row span:nth-child(5) {
+            flex: 1.8;
+            min-width: 180px;
+        }
+
+        .Approval .column-titles span:nth-child(6), .Approval .row span:nth-child(6) {
+            flex: 1.5;
+            min-width: 150px;
+        }
+
+        .pengujian .column-titles, .pengujian .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px 5px;
+            padding: 10px 0;
+            height: 40px;
+            border-radius: 10px;
+            gap: 10px;
+        }
+
+        .pengujian .column-titles span, .pengujian .row span {
+            flex: 1;
+            text-align: center;
             font-size: 14px;
+            line-height: 30px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            min-width: 100px;
+        }
+
+        .pengujian .column-titles span:nth-child(1), .pengujian .row span:nth-child(1) {
+            min-width: 100px;
+        }
+
+        .pengujian .column-titles span:nth-child(2), .pengujian .row span:nth-child(2) {
+            min-width: 100px;
+        }
+
+        .pengujian .column-titles span:nth-child(3), .pengujian .row span:nth-child(3) {
+            min-width: 100px;
+        }
+
+        .pengujian .column-titles span:nth-child(4), .pengujian .row span:nth-child(4) {
+            min-width: 100px;
+        }
+
+        .pengujian .column-titles span:nth-child(5), .pengujian .row span:nth-child(5) {
+            min-width: 150px;
+        }
+
+        .pengujian .column-titles span:nth-child(6), .pengujian .row span:nth-child(6) {
+            min-width: 80px;
+        }
+
+        .pengujian .column-titles span:nth-child(7), .pengujian .row span:nth-child(7) {
+            min-width: 120px;
+        }
+
+        .Approval .row, .pengujian .row {
+            height: 69px;
+            flex-shrink: 0;
+            background: var(--white);
+            margin-bottom: 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .Approval .row:hover, .pengujian .row:hover {
+            background: var(--green6);
         }
 
         .status_pengujian {
-            padding: 5px 10px;
+            width: 100%;
+            height: 37px;
+            padding: 2px 10px;
             border-radius: 15px;
-            font-size: 12px;
-            display: inline-block;
+            font-size: 14px;
+            margin: 0 auto;
+            position: relative;
+            bottom: 2px;
+            text-align: center;
+            line-height: 37px;
         }
 
-        .status_pengujian.selesai {
-            background: rgba(138, 242, 150, 1);
-            color: var(--black);
+        .status_pengujian.verified {
+            background: rgba(255, 182, 126, 1);
+            color: var(--black1);
         }
 
         .status_pengujian.pending {
-            background: rgba(255, 226, 110, 1);
-            color: var(--black);
-        }
-
-.column-titles {
-            display: flex;
-            justify-content: space-between;
-            font-weight: 600;
+            background: rgba(138, 242, 150, 1);
             color: var(--black1);
-            margin-bottom: 20px;
-            padding: 0 20px;
         }
 
-        .column-titles span {
-            flex: 1;
-            text-align: center;
+        .status_pengujian.rejected {
+            background: rgba(255, 99, 71, 1);
+            color: var(--white);
+        }
+
+        .result-btn {
+            width: 37px;
+            height: 37px;
+            border-radius: 15px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 16px;
+            position: relative;
+            bottom: 2px;
         }
-/* ======================= Cards ====================== */
-.cardBox {
-  position: relative;
-  width: 100%;
-  padding: 20px;
-  display: grid;
-  grid-template-columns: repeat(3, 0.7fr);
-  grid-gap: 30px;
-}
 
-.cardBox .card {
-  position: relative;
-  background: #147472;
-  padding: 30px;
-  border-radius: 20px;
-  display: flex;
-  justify-content: space-between;
-  cursor: pointer;
-  box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
-}
+        .result-btn.completed {
+            background-color: #4285f4;
+            color: white;
+        }
 
+        .result-btn.in-progress {
+            background-color: #ccc;
+            color: #666;
+            cursor: default;
+            pointer-events: none;
+        }
 
+        .result-btn.accept {
+            background-color: #28a745;
+            color: white;
+        }
 
-.cardBox .card .cardName {
-  color: white;
-  font-size: 1.8rem;
-}
+        .result-btn.reject {
+            background-color: #d33;
+            color: white;
+        }
 
-.cardBox .card .numbertext {
-  font-size: 3.5rem;
-  color: white;
-}
+        .result-btn.download {
+            background-color: #777;
+            color: white;
+        }
 
-.cardBox .card:hover {
-  background: var(--green3);
-}
+        .Approval .row span.actions, .pengujian .row span.actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
 
-.cardBox .card:hover .cardName,
-.cardBox .card:hover .numbertext {
-  color:var(--black1);
-}
+        @media (max-width: 991px) {
+            .navigation {
+                left: -226px;
+            }
+            .navigation.active {
+                width: 226px;
+                left: 0;
+            }
+            .main {
+                width: 100%;
+                left: 0;
+            }
+            .main.active {
+                left: 226px;
+            }
+            .cardBox {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .details {
+                grid-template-columns: 1fr;
+            }
+        }
 
-/* ================== Order Details List ============== */
-.details {
-  position: relative;
-  width: 100%;
-  padding: 20px;
-  display: grid;
-  grid-template-columns: 2fr 0fr;
-  grid-gap: 30px;
-  /* margin-top: 10px; */
-}
+        @media (max-width: 768px) {
+            .cardBox {
+                grid-template-columns: 1fr;
+            }
+            .Approval, .pengujian {
+                overflow-x: auto;
+            }
+            .Approval .column-titles, .Approval .row {
+                min-width: 750px;
+            }
+            .pengujian .column-titles, .pengujian .row {
+                min-width: 750px;
+            }
+            .Approval .column-titles span, .Approval .row span,
+            .pengujian .column-titles span, .pengujian .row span {
+                font-size: 12px;
+            }
+        }
 
-.details .Approval {
-  position: relative;
-  display: grid;
-  background: var(--white);
-  padding: 20px;
-  box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
-  border-radius: 20px;
- 
-}
-
-.details .cardHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-.cardHeader h2 {
-  font-weight: 600;
-  color: var(--green);
-}
-.cardHeader .btn {
-  position: relative;
-  padding: 5px 10px;
-  background: var(--green);
-  text-decoration: none;
-  color: var(--white);
-  border-radius: 6px;
-}
-
-.details table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-  
-}
-.details table thead td {
-  font-weight: 600;
-}
-
-.details .Approval table tr {
-  color: var(--black1);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.details .Approval table tr:last-child {
-  border-bottom: none;
-}
-.details .Approval table tbody tr:hover {
-  background: var(--green3);
-  color: var(--black1);
-}
-.details .Approval table tr td {
-  padding: 10px;
-  vertical-align: top;
-}
-
-
-.details .Approval table tr td:last-child {
-  text-align: end;
-}
-.details .Approval table tr td:nth-child(2) {
-  text-align: end;
-}
-.details .Approval table tr td:nth-child(3) {
-  text-align: center;
-}
-.status.delivered {
-  padding: 2px 4px;
-  background: #8de02c;
-  color: var(--white);
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 500;
-}
-.status.pending {
-  padding: 2px 4px;
-  background: #e9b10a;
-  color: var(--white);
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 500;
-}
-.status.return {
-  padding: 2px 4px;
-  background: #f00;
-  color: var(--white);
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 500;
-}
-.status.inProgress {
-  padding: 2px 4px;
-  background: #1795ce;
-  color: var(--white);
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.recentCustomers {
-  position: relative;
-  display: grid;
-  min-height: 500px;
-  padding: 20px;
-  background: var(--white);
-  box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
-  border-radius: 20px;
-}
-.recentCustomers .imgBx {
-  position: relative;
-  width: 40px;
-  height: 40px;
-  border-radius: 50px;
-  overflow: hidden;
-}
-.recentCustomers .imgBx img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.recentCustomers table tr td {
-  padding: 12px 10px;
-}
-.recentCustomers table tr td h4 {
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 1.2rem;
-}
-.recentCustomers table tr td h4 span {
-  font-size: 14px;
-  color: var(--black2);
-}
-.recentCustomers table tr:hover {
-  background: var(--green);
-  color: var(--white);
-}
-.recentCustomers table tr:hover td h4 span {
-  color: var(--white);
-}
-
-/* Tombol icon utama */
-.icon-btn {
-  background-color: #fff;
-  border: 1.5px solid #ccc;
-  border-radius: 6px;
-  padding: 4px 6px;
-  margin: 0 2px;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Hover effect */
-.icon-btn:hover {
-  background-color: #f5f5f5;
-  transform: scale(1.05);
-}
-
-/* Ikon */
-.icon-btn .material-icons {
-  font-size: 20px;
-}
-
-/* Warna khusus per aksi */
-.icon-btn.accept .material-icons {
-  color: #28a745; /* Hijau */
-}
-.icon-btn.reject .material-icons {
-  color: red; /* Biru */
-}
-.icon-btn.view .material-icons {
-  color: #444; /* Abu kehitaman */
-  text-decoration: none;
-}
-.icon-btn,
-.icon-btn span {
-  text-decoration: none;
-}
-.icon-btn.download .material-icons {
-  color: #777; /* Abu medium */
-}
-
-/* ====================== Responsive Design ========================== */
-@media (max-width: 991px) {
-  .navigation {
-    left: -300px;
-  }
-  .navigation.active {
-    width: 300px;
-    left: 0;
-  }
-  .main {
-    width: 100%;
-    left: 0;
-  }
-  .main.active {
-    left: 300px;
-  }
-  .cardBox {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
-  .details {
-    grid-template-columns: 1fr;
-  }
-  .Approval {
-    overflow-x: auto;
-  }
-  .status.inProgress {
-    white-space: nowrap;
-  }
-}
-
-@media (max-width: 480px) {
-  .cardBox {
-    grid-template-columns: repeat(1, 1fr);
-  }
-  .cardHeader h2 {
-    font-size: 20px;
-  }
-  .user {
-    min-width: 40px;
-  }
-  .navigation {
-    width: 100%;
-    left: -100%;
-    z-index: 1000;
-  }
-  .navigation.active {
-    width: 100%;
-    left: 0;
-  }
-  .toggle {
-    z-index: 10001;
-  }
-  .main.active .toggle {
-    color: #fff;
-    position: fixed;
-    right: 0;
-    left: initial;
-  }
-}
-.swal2-popup.swal-custom {
-  border-radius: 12px;
-  padding: 2rem;
-}
-.swal2-title {
-  font-size: 1.1rem;
-  color: #67C3C0;
-}
-.swal2-icon.swal2-success {
-  border-color: #67C3C0;
-  color: #67C3C0;
-}
-
+        @media (max-width: 480px) {
+            .cardHeader h2 {
+                font-size: 18px;
+            }
+            .user span {
+                display: none;
+            }
+            .navigation {
+                width: 100%;
+                left: -100%;
+                z-index: 1000;
+            }
+            .navigation.active {
+                width: 100%;
+                left: 0;
+            }
+            .toggle {
+                z-index: 10001;
+            }
+            .main.active .toggle {
+                color: #fff;
+                position: fixed;
+                right: 0;
+                left: initial;
+            }
+            .Approval .column-titles span, .Approval .row span,
+            .pengujian .column-titles span, .pengujian .row span {
+                font-size: 10px;
+            }
+        }
     </style>
 </head>
-<?php
-if (isset($_GET['success'])) {
-    echo "<script>document.addEventListener('DOMContentLoaded', function() { showSuccess(); });</script>";
-}
-
-if (isset($_GET['tolak'])) {
-    echo "<script>document.addEventListener('DOMContentLoaded', function() { showReject(); });</script>";
-}
-?>
-
-
 <body>
-    <!-- =============== Navigation ================ -->
+    <?php
+    if (isset($_GET['success'])) {
+        echo "<script>document.addEventListener('DOMContentLoaded', function() { showSuccess(); });</script>";
+    }
+    if (isset($_GET['tolak'])) {
+        echo "<script>document.addEventListener('DOMContentLoaded', function() { showReject(); });</script>";
+    }
+    ?>
     <div class="container">
         <div class="navigation">
             <ul>
                 <li>
                     <a href="#">
-                         <span class="icon">
+                        <span class="icon">
                             <img src="../assets/microscope.png" alt="logo">
                         </span>
                         <span class="title-logo">MedPath</span>
                     </a>
                 </li>
-
                 <li>
                     <a href="beranda.php">
                         <span class="icon">
@@ -795,317 +792,318 @@ if (isset($_GET['tolak'])) {
                         <span class="title">Beranda</span>
                     </a>
                 </li>
-
+                <li class="hovered">
+                    <a href="penerimaan.php">
+                        <span class="icon">
+                            <img src="../assets/penerimaan.png" alt="penerimaan">
+                        </span>
+                        <span class="title">Penerimaan</span>
+                    </a>
+                </li>
                 <li>
                     <a href="pengujian.php">
                         <span class="icon">
-                            <img src="../assets/sample.png" alt="sample">
+                            <img src="../assets/prosesuji.png" alt="proses_uji">
                         </span>
-                        <span class="title">Pengujian</span>
+                        <span class="title">Proses Uji</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="riwayat_uji.php">
+                        <span class="icon">
+                            <img src="../assets/riwayat.png" alt="riwayat_uji">
+                        </span>
+                        <span class="title">Riwayat Uji</span>
                     </a>
                 </li>
                 <li>
                     <a href="pengaturan.php">
                         <span class="icon">
-                            <img src="../assets/setting.png" alt="setting">
+                            <img src="../assets/setting.png" alt="pengaturan">
                         </span>
                         <span class="title">Pengaturan</span>
                     </a>
                 </li>
-
-                <li class = "signout">
-                    <a href="#">
+                <li class="signout">
+                    <a href="../signout.php">
                         <span class="icon">
-                            <ion-icon name="log-out-outline" style = "color: black"></ion-icon>
+                            <ion-icon name="log-out-outline" style="color: black"></ion-icon>
                         </span>
-                        <span class="title">Sign Out</span>
+                        <span class="title">Keluar</span>
                     </a>
                 </li>
             </ul>
         </div>
 
-        <!-- ========================= Main ==================== -->
         <div class="main">
             <div class="topbar">
                 <div class="toggle">
                     <ion-icon name="menu-outline"></ion-icon>
                 </div>
-
-                <div class="header-right">
-                   <span class="material-icons" role="img" aria-label="Notification">notifications</span>
-               <div class="profile" tabindex="0" aria-label="User Profile">
-                 <img src="https://placehold.co/36x36?text=SP&bg=69a3a3&fg=ffffff&font=roboto" alt="Profile picture of Suci Puji" />
-                  <span>Suci Puji</span>
-                  </div>
+                <div class="user">
+                    <ion-icon class="notification" name="notifications-outline"></ion-icon>
+                    <span><?php echo htmlspecialchars($nama_pengguna); ?></span>
+                    <img src="<?php echo htmlspecialchars($image_path); ?>" alt="User">
                 </div>
             </div>
 
-            <!-- ======================= Cards ================== -->
             <div class="cardBox">
                 <div class="card">
                     <div>
                         <div class="cardName">Pengajuan Jaringan</div>
                     </div>
-                    <div class="numbertext">
-                        <?php echo $jaringan; ?>
-                    </div>
+                    <div class="numbertext"><?php echo $jaringan; ?></div>
                 </div>
-
                 <div class="card">
                     <div>
                         <div class="cardName">Pengajuan Sitologi Ginekologi</div>
                     </div>
-
-                    <div class="numbertext">
-                        <?php echo $ginekologi; ?>
-                    </div>
+                    <div class="numbertext"><?php echo $ginekologi; ?></div>
                 </div>
                 <div class="card">
                     <div>
                         <div class="cardName">Pengajuan Sitologi Non Ginekologi</div>
                     </div>
-                    <div class="numbertext">
-                         <?php echo $non_ginekologi; ?>
-                    </div>
+                    <div class="numbertext"><?php echo $non_ginekologi; ?></div>
                 </div>
             </div>
 
-            <!-- ================ Order Details List ================= -->
-              <?php include 'koneksi.php'; ?>
             <div class="details">
                 <div class="Approval">
                     <div class="cardHeader">
-                        <h2>Persetujuan Penerimaan Sampel</h2> 
+                        <h2>Persetujuan Penerimaan Sampel</h2>
                     </div>
+                    <div class="column-titles">
+                        <span>Sampel Atas Nama</span>
+                        <span>Tanggal Pengajuan</span>
+                        <span>Jenis Pengajuan</span>
+                        <span>Status Pengajuan</span>
+                        <span>Pengajuan</span>
+                        <span>Verifikasi</span>
+                    </div>
+                    <?php
+                    $query = "SELECT id_pengajuan, nama_pasien, tanggal_pengajuan, status_pengajuan FROM pengajuan WHERE status_pengajuan = 'Menunggu Verifikasi'";
+                    $stmt = $connect->prepare($query);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
 
-                    <table class="approval request">
-                        <thead>
-                            <tr>
-                                <td>Sampel Atas Nama</td>
-                                <td>Tanggal Pengajuan</td>
-                                <td>Jenis Pengajuan Sampel</td>
-                                <td>Pengajuan</td>
-                                <td>Verifikasi</td>
-                            </tr>
-                        </thead>
+                    if ($result && $result->num_rows > 0) {
+                        while ($row = $result->fetch_assoc()) {
+                            $jenis_pengajuan = '';
+                            $link_detail = '#';
+                            $id = $row['id_pengajuan'];
 
-                        <tbody>
-                          <?php
-              $query = "SELECT id_pengajuan, nama_pasien, tanggal_pengajuan FROM pengajuan WHERE status_pengajuan='menunggu verifikasi'";
-              $result = $connect->query($query);
-
-              if ($result && $result->num_rows > 0) {
-                  while ($row = $result->fetch_assoc()) {
-                      $jenis_pengajuan = '';
-                      $link_detail = '#';
-                      $id = $row['id_pengajuan'];
-
-                      if (strpos($id, 'JRM-') === 0) {
-                          $jenis_pengajuan = 'Jaringan';
-                          $link_detail = 'PengajuanJRM.php?id=' . $id;
-                      } elseif (strpos($id, 'SRM-') === 0) {
-                          $jenis_pengajuan = 'Sitologi Ginekologi';
-                          $link_detail = 'PengajuanSRM.php?id=' . $id;
-                      } elseif (strpos($id, 'SNRM-') === 0) {
-                          $jenis_pengajuan = 'Sitologi Non Ginekologi';
-                          $link_detail = 'PengajuanSNRM.php?id=' . $id;
-                      }
-
-                      echo "<tr>";
-                      echo "<td>" . htmlspecialchars($row['nama_pasien']) . "</td>";
-                      echo "<td>" . htmlspecialchars($row['tanggal_pengajuan']) . "</td>";
-                      echo "<td>" . $jenis_pengajuan . "</td>";
-                      echo "<td>
-                            <a href='$link_detail' class='icon-btn view'>
-                              <span class='material-icons'>visibility</span>
-                            </a>
-                            <a href='download_pengajuan.php?id=" . $row['id_pengajuan'] . "' class='icon-btn download'>
-                              <span class='material-icons'>download</span>
-                            </a>
-                          </td>";
-
-                      echo "<td>
-                              <button class='icon-btn reject' onclick='konfirmasiTolak(\"" . $row['id_pengajuan'] . "\")'>
-                                <span class='material-icons'>close</span>
-                              </button>
-                              <form id='formTolak_" . $row['id_pengajuan'] . "' method='POST' style='display:none;'>
-                                <input type='hidden' name='tolak_id' value='" . htmlspecialchars($row['id_pengajuan']) . "'>
-                              </form>
-                              <form method='POST' style='display:inline;'>
-                                <input type='hidden' name='setujui_id' value='" . htmlspecialchars($row['id_pengajuan']) . "'>
-                                <button type='submit' class='icon-btn accept'><span class='material-icons'>check</span></button>
-                              </form>
-                            </td>";
-                      echo "</tr>";
-                  }
-              }
-
-                ?>      
-                        </tbody>
-                    </table>
-                </div>
-                </div>
-
-                <!-- ================= New Customers ================ -->
-                <div class="details">
-                  <div class="pengujian">
-                      <div class="cardHeader">
-                          <h2>Pengujian Sampel</h2>
-                      </div>
-                      <div class="column-titles">
-                          <span>Id Pengambilan</span>
-                          <span>No Laboratorium</span>
-                          <span>Tanggal Terima</span>
-                          <span>Tanggal Jadi</span>
-                          <span>Sampel atas nama</span>
-                          <span>Umur</span>
-                          <span>Tindakan</span>
-                      </div>
-
-                      <?php
-                      include 'koneksi.php';
-
-                      $currentYear = date('Y'); 
-                      $sql = "SELECT a.id_pengambilan, u.id_pengujian, u.nama_pasien, u.tanggal_terima, u.usia, u.tanggal_jadi
-                              FROM pengambilan a
-                              JOIN pengujian u ON a.id_pengambilan = u.id_pengambilan
-                              WHERE YEAR(u.tanggal_terima) = ?
-                              ORDER BY u.tanggal_terima DESC
-                              ";
-                      $stmt = $connect->prepare($sql);
-                      $stmt->bind_param("i", $currentYear);
-                      $stmt->execute();
-                      $result = $stmt->get_result();
-
-                      if ($result->num_rows > 0) {
-                          while ($row = $result->fetch_assoc()) {
-                              $tanggal_terima = date('Y/m/d', strtotime($row['tanggal_terima']));
-                              $tanggal_jadi = date('Y/m/d', strtotime($row['tanggal_jadi']));
-                              $id_pengambilan = $row['id_pengambilan'];
-                              $link_update = '#';
-                              if (strpos($id_pengajuan, 'JRM-') === 0) {
-                                $link_update = 'updateJRM.php?id=' . $id_pengajuan;
-                            } elseif (strpos($id_pengajuan, 'SRM-') === 0) {
-                                $link_update = 'updateSRM.php?id=' . $id_pengajuan;
-                            } elseif (strpos($id_pengajuan, 'SNRM-') === 0) {
-                                $link_update = 'updateSNRM.php?id=' . $id_pengajuan;
+                            if (strpos($id, 'JRM-') === 0) {
+                                $jenis_pengajuan = 'Jaringan';
+                                $link_detail = 'PengajuanJRM.php?id=' . $id;
+                            } elseif (strpos($id, 'SRM-') === 0) {
+                                $jenis_pengajuan = 'Sitologi Ginekologi';
+                                $link_detail = 'PengajuanSRM.php?id=' . $id;
+                            } elseif (strpos($id, 'SNRM-') === 0) {
+                                $jenis_pengajuan = 'Sitologi Non Ginekologi';
+                                $link_detail = 'PengajuanSNRM.php?id=' . $id;
                             }
 
-                
-                      ?>
-                              <div class="row" data-href="tampil.php?id=<?php echo urlencode($id_pengambilan); ?>">
-                                  <span><?php echo htmlspecialchars($row['id_pengambilan']); ?></span>
-                                  <span><?php echo htmlspecialchars($row['id_pengujian']); ?></span>
-                                  <span><?php echo $tanggal_terima; ?></span>
-                                  <span><?php echo $tanggal_jadi; ?></span>
-                                  <span><?php echo htmlspecialchars($row['nama_pasien']); ?></span>
-                                   <span><?php echo htmlspecialchars($row['usia']); ?></span>
-                                  
-                              
-                                  <span>
-                                      <a href="<?php echo htmlspecialchars($link_update); ?>" class="icon-btn edit" title="Update">
-                                          <button type="button">
-                                              <span class="material-icons">edit</span>
-                                          </button>
-                                      </a>
+                            $status_class = 'pending';
+                            ?>
+                            <div class="row">
+                                <span><?php echo htmlspecialchars($row['nama_pasien']); ?></span>
+                                <span><?php echo htmlspecialchars(date('Y/m/d', strtotime($row['tanggal_pengajuan']))); ?></span>
+                                <span><?php echo htmlspecialchars($jenis_pengajuan); ?></span>
+                                <span class="status_pengujian <?php echo $status_class; ?>">Menunggu Verifikasi</span>
+                                <span class="actions">
+                                    <a href="<?php echo $link_detail; ?>" class="result-btn completed" title="Lihat">
+                                        <ion-icon name="eye-outline"></ion-icon>
+                                    </a>
+                                    <a href="download_pengajuan.php?id=<?php echo urlencode($row['id_pengajuan']); ?>" class="result-btn download" title="Download">
+                                        <ion-icon name="download-outline"></ion-icon>
+                                    </a>
+                                    <button class="result-btn reject" onclick="konfirmasiTolak('<?php echo $row['id_pengajuan']; ?>')" title="Tolak">
+                                        <ion-icon name="close-outline"></ion-icon>
+                                    </button>
+                                    <form id="formTolak_<?php echo $row['id_pengajuan']; ?>" method="POST" style="display:none;">
+                                        <input type="hidden" name="tolak_id" value="<?php echo htmlspecialchars($row['id_pengajuan']); ?>">
+                                    </form>
+                                    <form method="POST" style="display:inline;">
+                                        <input type="hidden" name="setujui_id" value="<?php echo htmlspecialchars($row['id_pengajuan']); ?>">
+                                        <button type="submit" class="result-btn accept" title="Setujui">
+                                            <ion-icon name="checkmark-outline"></ion-icon>
+                                        </button>
+                                    </form>
+                                </span>
+                            </div>
+                            <?php
+                        }
+                    } else {
+                        echo "<div class='row' style='text-align:center; color:var(--black2);'><span colspan='6'>Tidak ada pengajuan yang ditemukan.</span></div>";
+                    }
+                    $stmt->close();
+                    ?>
+                </div>
+            </div>
 
+            <div class="details">
+                <div class="pengujian">
+                    <div class="cardHeader">
+                        <h2>Pengujian Sampel</h2>
+                    </div>
+                    <div class="column-titles">
+                        <span>Id Pengambilan</span>
+                        <span>No Lab</span>
+                        <span>Tanggal Terima</span>
+                        <span>Tanggal Jadi</span>
+                        <span>Sampel Atas Nama</span>
+                        <span>Umur</span>
+                        <span>Tindakan</span>
+                    </div>
+                    <?php
+                    $currentYear = date('Y');
+                    $sql = "SELECT a.id_pengambilan, u.id_pengujian, u.nama_pasien, u.tanggal_terima, u.usia, u.tanggal_jadi
+                            FROM pengambilan a
+                            JOIN pengujian u ON a.id_pengambilan = u.id_pengambilan
+                            WHERE YEAR(u.tanggal_terima) = ?
+                            ORDER BY u.tanggal_terima DESC";
+                    $stmt = $connect->prepare($sql);
+                    $stmt->bind_param("i", $currentYear);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
 
-                                      <!-- Tombol Hapus -->
-                                      <button onclick="hapusData('<?php echo $id_pengujian; ?>')" title="Hapus">
-                                          <span class="material-icons">delete</span>
-                                      </button>
-                                  </span>
-                              </div>
-                      <?php
-                          }
-                      } else {
-                          echo "<div class='row' style='text-align:center; color:var(--black1);'><span colspan='7'>Tidak ada data yang ditemukan.</span></div>";
-                      }
-
-                      $connect->close();
-                      ?>
-                  </div> <!-- penutup div.pengujian -->
-              </div> <!-- penutup div.details -->
-
-          
+                    if ($result->num_rows > 0) {
+                        while ($row = $result->fetch_assoc()) {
+                            $tanggal_terima = date('Y/m/d', strtotime($row['tanggal_terima']));
+                            $tanggal_jadi = !empty($row['tanggal_jadi']) ? date('Y/m/d', strtotime($row['tanggal_jadi'])) : '-';
+                            $id_pengujian = $row['id_pengujian'];
+                            $link_update = '#';
+                            if (strpos($id_pengujian, 'JRM-') === 0) {
+                                $link_update = 'updateJRM.php?id=' . $id_pengujian;
+                            } elseif (strpos($id_pengujian, 'SRM-') === 0) {
+                                $link_update = 'updateSRM.php?id=' . $id_pengujian;
+                            } elseif (strpos($id_pengujian, 'SNRM-') === 0) {
+                                $link_update = 'updateSNRM.php?id=' . $id_pengujian;
+                            }
+                            ?>
+                            <div class="row" data-href="tampil.php?id=<?php echo urlencode($row['id_pengambilan']); ?>">
+                                <span><?php echo htmlspecialchars($row['id_pengambilan']); ?></span>
+                                <span><?php echo htmlspecialchars($row['id_pengujian']); ?></span>
+                                <span><?php echo $tanggal_terima; ?></span>
+                                <span><?php echo $tanggal_jadi; ?></span>
+                                <span><?php echo htmlspecialchars($row['nama_pasien']); ?></span>
+                                <span><?php echo htmlspecialchars($row['usia']); ?></span>
+                                <span class="actions">
+                                    <a href="<?php echo htmlspecialchars($link_update); ?>" class="result-btn completed" title="Update">
+                                        <ion-icon name="create-outline"></ion-icon>
+                                    </a>
+                                    <button class="result-btn reject" onclick="hapusData('<?php echo $id_pengujian; ?>')" title="Hapus">
+                                        <ion-icon name="trash-outline"></ion-icon>
+                                    </button>
+                                </span>
+                            </div>
+                            <?php
+                        }
+                    } else {
+                        echo "<div class='row' style='text-align:center; color:var(--black1);'><span colspan='7'>Tidak ada data yang ditemukan.</span></div>";
+                    }
+                    $stmt->close();
+                    $connect->close();
+                    ?>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- =========== Scripts =========  -->
     <script>
-        // add hovered class to selected list item
-let list = document.querySelectorAll(".navigation li");
+        let list = document.querySelectorAll(".navigation li");
 
-function activeLink() {
-  list.forEach((item) => {
-    item.classList.remove("hovered");
-  });
-  this.classList.add("hovered");
-}
+        function activeLink() {
+            list.forEach((item) => {
+                item.classList.remove("hovered");
+            });
+            this.classList.add("hovered");
+        }
 
-list.forEach((item) => item.addEventListener("mouseover", activeLink));
+        list.forEach((item) => item.addEventListener("mouseover", activeLink));
 
-// Menu Toggle
-let toggle = document.querySelector(".toggle");
-let navigation = document.querySelector(".navigation");
-let main = document.querySelector(".main");
+        let toggle = document.querySelector(".toggle");
+        let navigation = document.querySelector(".navigation");
+        let main = document.querySelector(".main");
 
-toggle.onclick = function () {
-  navigation.classList.toggle("active");
-  main.classList.toggle("active");
-};
+        toggle.onclick = function () {
+            navigation.classList.toggle("active");
+            main.classList.toggle("active");
+        };
 
-function showSuccess() {
-    Swal.fire({
-      icon: 'success',
-      title: 'Berhasil menyetujui pengajuan',
-      showConfirmButton: false,
-      timer: 1500,
-      customClass: {
-        popup: 'swal-custom'
-      }
-    });
-  }
+        function showSuccess() {
+            let title = '<?php echo isset($_GET['success']) && $_GET['success'] == 'delete' ? 'Pengujian berhasil dihapus' : 'Berhasil menyetujui pengajuan'; ?>';
+            Swal.fire({
+                icon: 'success',
+                title: title,
+                showConfirmButton: false,
+                timer: 1500,
+                customClass: {
+                    popup: 'swal-custom'
+                }
+            });
+        }
 
-  function konfirmasiTolak(id) {
-  Swal.fire({
-    title: 'Tolak Pengajuan?',
-    text: "Anda yakin ingin menolak pengajuan ini?",
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#d33',
-    cancelButtonColor: '#3085d6',
-    confirmButtonText: 'Ya',
-    cancelButtonText: 'Batal',
-    customClass: {
-      popup: 'swal-custom'
-    }
-  }).then((result) => {
-    if (result.isConfirmed) {
-      document.getElementById('formTolak_' + id).submit();
-    }
-  });
-}
+        function konfirmasiTolak(id) {
+            Swal.fire({
+                title: 'Tolak Pengajuan?',
+                text: "Anda yakin ingin menolak pengajuan ini?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya',
+                cancelButtonText: 'Batal',
+                customClass: {
+                    popup: 'swal-custom'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('formTolak_' + id).submit();
+                }
+            });
+        }
 
-function showReject() {
-    Swal.fire({
-      icon: 'success',
-      title: 'Pengajuan berhasil ditolak',
-      showConfirmButton: false,
-      timer: 1500,
-      customClass: {
-        popup: 'swal-custom'
-      }
-    });
-}
+        function showReject() {
+            Swal.fire({
+                icon: 'success',
+                title: 'Pengajuan berhasil ditolak',
+                showConfirmButton: false,
+                timer: 1500,
+                customClass: {
+                    popup: 'swal-custom'
+                }
+            });
+        }
 
+        function hapusData(id) {
+            Swal.fire({
+                title: 'Hapus Pengujian?',
+                text: "Anda yakin ingin menghapus pengujian ini?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya',
+                cancelButtonText: 'Batal',
+                customClass: {
+                    popup: 'swal-custom'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = 'hapus_pengujian.php?id=' + id;
+                }
+            });
+        }
 
+        document.querySelectorAll('.pengujian .row').forEach(row => {
+            row.addEventListener('click', function(e) {
+                if (!e.target.closest('.result-btn')) {
+                    window.location.href = this.getAttribute('data-href');
+                }
+            });
+        });
     </script>
-
-    <!-- ====== ionicons ======= -->
-    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 </body>
-
 </html>

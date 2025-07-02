@@ -1,5 +1,5 @@
 <?php
-include 'koneksi.php';
+include '../koneksi.php';
 session_start();
 
 $id_pengujian        = $_POST['id_pengujian'];

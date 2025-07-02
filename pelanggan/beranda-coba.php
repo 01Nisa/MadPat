@@ -5,12 +5,12 @@ error_log("pengaturan.php - Session user ID: " . ($_SESSION['user'] ?? 'Not set'
 
 if (!isset($_SESSION['user'])) {
     error_log("pengaturan.php - Redirecting to login: Session user not set");
-    header("location:../../../login.php?pesan=belum_login");
+    header("location:../login.php?pesan=belum_login");
     exit();
 }
 
 $user_id = $_SESSION['user'];
-include '../../../koneksi.php';
+include '../koneksi.php';
 
 if (!$connect) {
     error_log("pengaturan.php - Database connection failed: " . mysqli_connect_error());
@@ -48,9 +48,9 @@ if (!$user) {
     $foto_pengguna = $user['foto'] ?? "profil.jpg";
 }
 
-$image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../../$foto_pengguna"))
-    ? "../../../$foto_pengguna"
-    : "../../../assets/imgs/profil.jpg";
+$image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../$foto_pengguna"))
+    ? "../$foto_pengguna"
+    : "../assets/imgs/profil.jpg";
 
 error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_exists($image_path) ? 'Yes' : 'No'));
 ?>
@@ -134,7 +134,7 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
         }
 
         .navigation ul li:nth-child(1) {
-            margin-bottom: -20px;
+            margin-bottom: -110px;
             pointer-events: none;
         }
 
@@ -161,7 +161,7 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
 
         .navigation ul li.signout {
             position: absolute;
-            bottom: -280px;
+            bottom: -190px;
             width: 100%;
         }
 
@@ -447,29 +447,53 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
                 <li>
                     <a href="">
                         <span class="icon">
-                            <img src="../../../assets/microscope.png" alt="logo">
+                            <img src="../assets/microscope.png" alt="logo">
                         </span>
                         <span class="title-logo">MedPath</span>
                     </a>
                 </li>
                 <li>
-                    <a href="../../pembayaran/pages/pembayaran.php">
+                    <a href="beranda.php">
                         <span class="icon">
-                            <img src="../../../assets/money.png" alt="money">
+                            <img src="../assets/dashboard.png" alt="dashboard">
                         </span>
-                        <span class="title">Pembayaran</span>
+                        <span class="title">Beranda</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../pembayaran/pages/pembayaran.php">
+                        <span class="icon">
+                            <img src="../assets/penerimaan.png" alt="penerimaan">
+                        </span>
+                        <span class="title">Penerimaan</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../pembayaran/pages/pembayaran.php">
+                        <span class="icon">
+                            <img src="../assets/.png" alt="prosesuji">
+                        </span>
+                        <span class="title">Proses Uji</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../pembayaran/pages/pembayaran.php">
+                        <span class="icon">
+                            <img src="../assets/riwayat.png" alt="riwayat">
+                        </span>
+                        <span class="title">Riwayat Uji</span>
                     </a>
                 </li>
                 <li>
                     <a href="../../pengaturan/pages/pengaturan.php">
                         <span class="icon">
-                            <img src="../../../assets/setting.png" alt="setting">
+                            <img src="../assets/setting.png" alt="setting">
                         </span>
                         <span class="title">Pengaturan</span>
                     </a>
                 </li>
                 <li class="signout">
-                    <a href="../../../signout.php">
+                    <a href="../signout.php">
                         <span class="icon">
                             <ion-icon name="log-out-outline" style="color: black"></ion-icon>
                         </span>
