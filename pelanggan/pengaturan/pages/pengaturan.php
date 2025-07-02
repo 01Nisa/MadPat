@@ -106,7 +106,7 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
             border-left: 10px solid var(--green2);
             transition: 0.5s;
             overflow: hidden;
-            z-index: 1000;
+            z-index: 999;
         }
 
         .navigation.active {
@@ -452,24 +452,63 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
             background: var(--green1);
         }
 
-        .alert {
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-            display: none;
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
         }
 
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+        .message-box {
+            position: fixed;
+            background-color: #ffffff;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            text-align: center;
+            height: 200px;
+            width: 400px;
+            max-width: 400px;
+            left: 50%;
+            top: 30%;
+            transform: translate(-50%, -50%);
         }
 
-        .alert-error {
-            background-color: #f8d7da;
+        .message-box img {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 1rem;
+        }
+
+        .message-box p {
+            margin-bottom: 1rem;
+            font-size: 18px;
+            color: #147472;
+        }
+
+        .message-box.error p {
             color: #721c24;
-            border: 1px solid #f5c6cb;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #147472;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            color: #000000;
         }
 
         @media (max-width: 991px) {
@@ -518,6 +557,10 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
             .settings .photo-actions label {
                 width: 100%;
             }
+            .message-box {
+                width: 90%;
+                max-width: 350px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -530,7 +573,7 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
             .navigation {
                 width: 100%;
                 left: -100%;
-                z-index: 1000;
+                z-index: 1001;
             }
             .navigation.active {
                 width: 100%;
@@ -557,6 +600,10 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
             }
             .settings .form-group button {
                 width: 100%;
+            }
+            .message-box {
+                width: 90%;
+                max-width: 300px;
             }
         }
     </style>
@@ -653,9 +700,15 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
                 </div>
             </div>
 
-            <div class="settings">
-                <div id="alert-message" class="alert" style="display: none;"></div>
+            <div class="overlay" id="messageOverlay" style="display: none;">
+                <div class="message-box">
+                    <span class="close-btn" onclick="hideAlert()">×</span>
+                    <img src="../../../assets/peringatan.png" alt="peringatan">
+                    <p id="messageText"></p>
+                </div>
+            </div>
 
+            <div class="settings">
                 <?php if (!$user): ?>
                     <p style="color: var(--black1);">Pengguna tidak ditemukan. Silakan periksa data pengguna di database.</p>
                 <?php else: ?>
@@ -790,8 +843,6 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
             e.preventDefault();
             const formData = new FormData(this);
             const saveBtn = document.getElementById('save-profile-btn');
-            const alertBox = document.getElementById('alert-message');
-
             saveBtn.disabled = true;
             saveBtn.textContent = 'Menyimpan...';
 
@@ -812,6 +863,7 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
                         profilePhotoPreview.src = newPhotoPath;
                     }
                     document.querySelector('.user span').textContent = document.getElementById('nama_lengkap').value;
+                    // Fallback: Refresh page to ensure navbar updates
                     setTimeout(() => {
                         window.location.reload();
                     }, 1000);
@@ -880,14 +932,23 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
         });
 
         function showAlert(message, type) {
-            const alertBox = document.getElementById('alert-message');
-            alertBox.textContent = message;
-            alertBox.className = 'alert alert-' + type;
-            alertBox.style.display = 'block';
+            console.log('Showing alert:', { message, type });
+            const overlay = document.getElementById('messageOverlay');
+            const messageText = document.getElementById('messageText');
+            const messageBox = overlay.querySelector('.message-box');
+            
+            messageText.textContent = message;
+            messageBox.className = 'message-box' + (type === 'error' ? ' error' : '');
+            overlay.style.display = 'flex';
 
             setTimeout(() => {
-                alertBox.style.display = 'none';
+                hideAlert();
             }, 5000);
+        }
+
+        function hideAlert() {
+            const overlay = document.getElementById('messageOverlay');
+            overlay.style.display = 'none';
         }
     </script>
 

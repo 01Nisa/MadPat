@@ -355,7 +355,7 @@ $currentStep = $halaman - 1;
 
   <div class="form-container">
     <h2>Formulir Pengujian Sitologi Non Ginekologi <span id="currentStepDisplay"></span></h2>
-    <form id="formPengajuan" action="../process/proSitologiNonGenekologi.php" method="post">
+    <form id="formPengajuan" action="../process/proSitologiNonGinekologi.php" method="post">
       <input type="hidden" name="jumlah" value="<?= $jumlah ?>">
       <input type="hidden" name="halaman" id="halaman" value="<?= $halaman ?>">
       <div id="formPagesContainer"></div>

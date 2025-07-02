@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// Debug: Log session user ID
 error_log("pengaturan.php - Session user ID: " . ($_SESSION['user'] ?? 'Not set'));
 
 if (!isset($_SESSION['user'])) {
@@ -13,7 +12,6 @@ if (!isset($_SESSION['user'])) {
 $user_id = $_SESSION['user'];
 include '../../../koneksi.php';
 
-// Check database connection
 if (!$connect) {
     error_log("pengaturan.php - Database connection failed: " . mysqli_connect_error());
     die("Connection failed: " . mysqli_connect_error());
@@ -30,7 +28,6 @@ $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
-// Debug: Log user data
 error_log("pengaturan.php - User data: " . print_r($user, true));
 
 $stmt->close();
@@ -55,7 +52,6 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
     ? "../../../$foto_pengguna"
     : "../../../assets/imgs/profil.jpg";
 
-// Debug: Log the photo path
 error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_exists($image_path) ? 'Yes' : 'No'));
 ?>
 
@@ -110,7 +106,7 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
             border-left: 10px solid var(--green2);
             transition: 0.5s;
             overflow: hidden;
-            z-index: 1000;
+            z-index: 999;
         }
 
         .navigation.active {
@@ -138,7 +134,7 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
         }
 
         .navigation ul li:nth-child(1) {
-            margin-bottom: -30px;
+            margin-bottom: 80px;
             pointer-events: none;
         }
 
@@ -165,7 +161,7 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
 
         .navigation ul li.signout {
             position: absolute;
-            bottom: -150px;
+            top: 770px;
             width: 100%;
         }
 
@@ -577,7 +573,7 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
             .navigation {
                 width: 100%;
                 left: -100%;
-                z-index: 1000;
+                z-index: 1001;
             }
             .navigation.active {
                 width: 100%;
@@ -634,38 +630,6 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
                     </a>
                 </li>
                 <li>
-                    <a href="../../pengajuan/pages/pengajuan.php">
-                        <span class="icon">
-                            <img src="../../../assets/pengajuan.png" alt="pengajuan">
-                        </span>
-                        <span class="title">Pengajuan</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="../../pengambilan/pages/pengambilan.php">
-                        <span class="icon">
-                            <img src="../../../assets/pengambilan.png" alt="pengambilansem">
-                        </span>
-                        <span class="title">Pengambilan</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="../../prosesUji/pages/pengujian.php">
-                        <span class="icon">
-                            <img src="../../../assets/prosesuji.png" alt="prosesuji">
-                        </span>
-                        <span class="title">Proses Uji</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="../../prosesUji/pages/riwayat.php">
-                        <span class="icon">
-                            <img src="../../../assets/riwayat.png" alt="riwayat">
-                        </span>
-                        <span class="title">Riwayat Uji</span>
-                    </a>
-                </li>
-                <li>
                     <a href="../../pembayaran/pages/pembayaran.php">
                         <span class="icon">
                             <img src="../../../assets/money.png" alt="money">
@@ -686,7 +650,7 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
                         <span class="icon">
                             <ion-icon name="log-out-outline" style="color: black"></ion-icon>
                         </span>
-                        <span class="title">Sign Out</span>
+                        <span class="title">Keluar</span>
                     </a>
                 </li>
             </ul>

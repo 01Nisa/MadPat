@@ -16,7 +16,24 @@ $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 $stmt->close();
-$connect->close();
+
+// Get payment status counts
+$sql_payment = "SELECT 
+    SUM(CASE WHEN status_pembayaran = 'Sudah Bayar' THEN 1 ELSE 0 END) as sudah_bayar,
+    SUM(CASE WHEN status_pembayaran = 'Belum Bayar' THEN 1 ELSE 0 END) as belum_bayar,
+    SUM(CASE WHEN status_pembayaran = 'Menunggu Verifikasi' THEN 1 ELSE 0 END) as menunggu_verifikasi
+    FROM pembayaran";
+$result_payment = $connect->query($sql_payment);
+$payment_counts = $result_payment->fetch_assoc();
+
+// Get pending verification payments
+$sql_pending = "SELECT p.id_pembayaran, pg.nama_pasien, p.tanggal_pembayaran, dp.biaya 
+                FROM pembayaran p
+                JOIN detail_pembayaran dp ON p.id_pembayaran = dp.id_pembayaran
+                JOIN pengujian pg ON dp.id_pengujian = pg.id_pengujian
+                WHERE p.status_pembayaran = 'Menunggu Verifikasi'
+                ORDER BY p.tanggal_pembayaran DESC";
+$result_pending = $connect->query($sql_pending);
 
 if (!$user) {
     $nama_pengguna = "Pengguna Tidak Ditemukan";
@@ -298,17 +315,33 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             margin-right: 10px;
         }
 
-        .cardBox {
-            position: relative;
-            width: 100%;
+        /* Columns Layout */
+        .columns-container {
+            display: flex;
+            gap: 30px;
+            width: 80%;
             padding: 20px;
             margin-top: 90px;
-            display: grid;
-            grid-template-columns: repeat(3, 0.7fr);
-            grid-gap: 30px;
         }
 
-        .cardBox .card {
+        .coloum1 {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .coloum2 {
+            flex: 1;
+        }
+
+        .cardBox {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        .card {
             position: relative;
             background: var(--green1);
             padding: 30px;
@@ -319,48 +352,137 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
         }
 
-        .cardBox .card .jenisPengujian {
+        .card .jenisPengujian {
             position: relative;
             font-weight: 500;
             font-size: 30px;
             color: var(--white);
         }
 
-        .cardBox .card .cardName {
-            color: var(--black2);
-            font-size: 1.1rem;
-            margin-top: 5px;
-        }
-
-        .cardBox .card .jumlah {
+        .card .jumlah {
             font-size: 3.5rem;
             padding-left: 20px;
             color: var(--white);
         }
 
-        .cardBox .card:hover {
+        .card:hover {
             background: var(--white);
         }
-        .cardBox .card:hover .jenisPengujian,
-        .cardBox .card:hover .cardName,
-        .cardBox .card:hover .jumlah {
+        .card:hover .jenisPengujian,
+        .card:hover .jumlah {
             color: var(--green1);
         }
 
+        /* Approval Card */
+        .approval-card {
+            position: relative;
+            background: var(--green1);
+            padding: 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .approval-card .jenisPengujian {
+            margin-bottom: 15px;
+            color: var(--white);
+            font-size: 30px;
+            font-weight: 500;
+        }
+
+        .approval-list {
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .approval-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: var(--green7);
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .approval-info {
+            flex: 1;
+        }
+
+        .approval-info .nama {
+            font-weight: 500;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .approval-info .tanggal {
+            color: var(--black2);
+            font-size: 12px;
+        }
+
+        .approval-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .approve-btn, .reject-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .approve-btn {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .reject-btn {
+            background: #f44336;
+            color: white;
+        }
+
+        .no-pending {
+            text-align: center;
+            padding: 10px;
+            color: var(--black2);
+            font-size: 14px;
+        }
+
+        /* Scrollbar styling */
+        .approval-list::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .approval-list::-webkit-scrollbar-track {
+            background: var(--green7);
+        }
+
+        .approval-list::-webkit-scrollbar-thumb {
+            background: var(--green1);
+            border-radius: 10px;
+        }
+
+        /* Search Bar */
         .search-bar {
             display: flex;
             align-items: center;
             gap: 10px;
-            margin: 20px;
-            justify-content: flex-start;
             position: relative;
-            z-index: 1001;
         }
 
         .search-bar input {
-            width: 853px;
+            width: 100%;
             height: 66px;
-            margin-top: 20px;
             flex-shrink: 0;
             border-radius: 10px;
             padding: 5px 50px 5px 20px; 
@@ -372,28 +494,23 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
 
         .search-bar .search-icon {
             position: absolute;
-            left: 790px; 
-            top: 30%;
-            transform: translateY(-50%);
+            right: 20px;
             width: 27px;
             height: 27px;
             flex-shrink: 0;
             aspect-ratio: 1/1;
-            margin-top: 30px;
         }
 
         .filter-card {
-          width: 90px;
-          height: 66px;
-          flex-shrink: 0;
-          margin-top: 20px;
-          background: var(--green7);
-          border-radius: 20px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          z-index: 1001;
+            width: 90px;
+            height: 66px;
+            flex-shrink: 0;
+            background: var(--green7);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
         }
 
         .filter-card ion-icon {
@@ -401,37 +518,9 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             color: var(--black1);
         }
 
-        .unduh-card {
-            width: 397px;
-            height: 66px;
-            flex-shrink: 0;
-            background: var(--green1);
-            color: var(--white);
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 18px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: auto;
-            margin-top: 20px;
-            z-index: 1001;
-        }
-
-        .unduh-card:hover {
-            background: var(--green6);
-        }
-
-        .unduh-card img {
-            margin-left: -80px;
-            margin-right: 20px;
-            width: 30px;
-            height: 30px;
-        }
-
+        /* Table Section */
         .details {
+            width: 80%;
             padding: 20px;
             z-index: 1001;
         }
@@ -443,7 +532,6 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             margin-bottom: 100px;
             max-height: 60vh;
             overflow-y: auto;
-            z-index: 1001;
         }
 
         .cardHeader {
@@ -496,7 +584,6 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             border-radius: 15px;
             cursor: pointer;
             transition: background 0.3s;
-            z-index: 1001;
         }
 
         .pengajuan .row:hover {
@@ -559,117 +646,54 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             pointer-events: none;
         }
 
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--black3);
-            background-blend-mode: overlay;
-            z-index: 1002; 
-        }
-        .overlay.active {
-            display: block;
-        }
-
-        .menu-card {
-            position: fixed;
-            top: 55%;
-            right: 330px; 
-            transform: translateY(-50%);
-            width: 100px;
-            height: 130px;
-            background: var(--white);
-            padding: 20px;
-            border-radius: 10px;
-            z-index: 1003;
-            flex-direction: column;
-            justify-content: space-around;
-            display: none;
-        }
-
-        .menu-card.active {
-            display: flex;
-        }
-
-        .menu-option {
-            cursor: pointer;
-            font-size: 16px;
-            color: var(--black1);
-            text-align: left;
-            padding: 10px 0;
-            margin-top: 2px;
-            margin-bottom: 2px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .menu-option:hover {
-            color: var(--green1);
-        }
-
-        .menu-option.selected {
-            background: var(--green8);
-            color: var(--black1);
-        }
-
-        .menu-separator {
-            width: 100%;
-            height: 1px;
-            background: var(--black2);
-            margin: 5px 0;
-        }
-
-        .close-button {
-            position: absolute;
-            top: 4px;
-            right: 10px;
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--green1);
-            cursor: pointer;
-            transition: color 0.3s;
-        }
-
-        .close-button:hover {
-            color: var(--green5);
-        }
-
-        @media (max-width: 991px) {
-            .navigation {
-                left: -300px;
+        /* Responsive Styles */
+        @media (max-width: 1200px) {
+            .columns-container {
+                flex-direction: column;
             }
-            .navigation.active {
-                width: 300px;
-                left: 0;
-            }
-            .main {
+            
+            .coloum1, .coloum2 {
                 width: 100%;
-                left: 0;
-            }
-            .main.active {
-                left: 300px;
             }
         }
 
         @media (max-width: 768px) {
-            .details {
-                grid-template-columns: 1fr;
+            .main {
+                width: 100%;
+                left: 0;
             }
+            
+            .navigation {
+                left: -300px;
+            }
+            
+            .navigation.active {
+                width: 300px;
+                left: 0;
+            }
+            
+            .main.active {
+                left: 300px;
+            }
+            
+            .columns-container, .details {
+                width: 90%;
+            }
+            
             .column-titles span {
                 font-size: 12px;
             }
+            
             .pengajuan {
                 overflow-x: auto;
             }
+            
             .search-bar {
                 flex-direction: column;
                 gap: 10px;
             }
-            .search-bar input, .filter-card, .unduh-card {
+            
+            .search-bar input, .filter-card {
                 width: 100%;
             }
         }
@@ -678,38 +702,48 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             .cardHeader h2 {
                 font-size: 20px;
             }
-            .user {
-                min-width: 40px;
+            
+            .user span {
+                display: none;
             }
+            
             .navigation {
                 width: 100%;
                 left: -100%;
                 z-index: 1000;
             }
+            
             .navigation.active {
                 width: 100%;
                 left: 0;
             }
+            
             .toggle {
                 z-index: 10001;
             }
+            
             .main.active .toggle {
                 color: #fff;
                 position: fixed;
                 right: 0;
                 left: initial;
             }
+            
             .topbar {
                 padding: 0 10px;
             }
-            .user span {
-                display: none;
-            }
-            .search-bar {
-                margin: 10px;
-            }
+            
             .column-titles span {
                 font-size: 10px;
+            }
+            
+            .card .jenisPengujian, 
+            .approval-card .jenisPengujian {
+                font-size: 24px;
+            }
+            
+            .card .jumlah {
+                font-size: 2.5rem;
             }
         }
     </style>
@@ -777,77 +811,84 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
                     <img src="<?php echo htmlspecialchars($image_path); ?>" alt="User">
                 </div>
             </div>
-            <div class="cardBox">
-                <?php
-                    include '../../../koneksi.php';
+            
+            <!-- Columns Container -->
+            <div class="columns-container">
+                <!-- Left Column (Cards and Search) -->
+                <div class="coloum1">
+                    <div class="cardBox">
+                        <div class="card">
+                            <div>
+                                <div class="jenisPengujian">Sudah Bayar</div>
+                            </div>
+                            <div class="jumlah">
+                                <?php echo $payment_counts['sudah_bayar']; ?>
+                            </div>
+                        </div>
 
-                    $currentYear = date('Y');
-                    $sqlCount = "SELECT 
-                        SUM(CASE WHEN id_pengujian LIKE 'JRM-%' THEN 1 ELSE 0 END) as jaringan_count,
-                        SUM(CASE WHEN id_pengujian LIKE 'SRM-%' THEN 1 ELSE 0 END) as sitologi_ginekologi_count,
-                        SUM(CASE WHEN id_pengujian LIKE 'SNRM-%' THEN 1 ELSE 0 END) as sitologi_non_ginekologi_count
-                        FROM pengujian
-                        WHERE YEAR(tanggal_terima) = ?";
-                    $stmtCount = $connect->prepare($sqlCount);
-                    $stmtCount->bind_param("i", $currentYear);
-                    $stmtCount->execute();
-                    $resultCount = $stmtCount->get_result();
-                    $counts = $resultCount->fetch_assoc();
-
-                    $jaringanCount = $counts['jaringan_count'];
-                    $sitologiGinekologiCount = $counts['sitologi_ginekologi_count'];
-                    $sitologiNonGinekologiCount = $counts['sitologi_non_ginekologi_count'];
-
-                    $stmtCount->close();
-                ?>
-                <div class="card">
-                    <div>
-                        <div class="jenisPengujian">Pengujian Jaringan</div>
+                        <div class="card">
+                            <div>
+                                <div class="jenisPengujian">Belum Bayar</div>
+                            </div>
+                            <div class="jumlah">
+                                <?php echo $payment_counts['belum_bayar']; ?>
+                            </div>
+                        </div>
                     </div>
-                    <div class="jumlah">
-                        <?php echo $jaringanCount; ?>
+                    
+                    <div class="search-bar">
+                        <input type="text" id="searchInput" placeholder="Search pengajuan">
+                        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="27" height="27" viewBox="0 0 27 27" fill="none">
+                            <g clip-path="url(#clip0_306_10765)">
+                                <path d="M17.1809 0C11.7598 0 7.36172 4.39805 7.36172 9.81914C7.36172 11.5857 7.83633 13.2363 8.64844 14.6707L0 23.3191L1.22871 25.7713L3.68086 27L12.3293 18.3516C13.7584 19.1689 15.4143 19.6383 17.1809 19.6383C22.602 19.6383 27 15.2402 27 9.81914C27 4.39805 22.602 0 17.1809 0ZM17.1809 16.5691C13.4525 16.5691 10.4309 13.5475 10.4309 9.81914C10.4309 6.09082 13.4525 3.06914 17.1809 3.06914C20.9092 3.06914 23.9309 6.09082 23.9309 9.81914C23.9309 13.5475 20.9092 16.5691 17.1809 16.5691Z" fill="black"/>
+                            </g>
+                            <defs>
+                                <clipPath id="clip0_306_10765">
+                                    <rect width="27" height="27" fill="white"/>
+                                </clipPath>
+                            </defs>
+                        </svg>
+                        <div class="filter-card">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34" fill="none">
+                            <path d="M31.3438 11.1562H2.65625C2.23356 11.1562 1.82818 10.9883 1.5293 10.6895C1.23041 10.3906 1.0625 9.98519 1.0625 9.5625C1.0625 9.13981 1.23041 8.73443 1.5293 8.43555C1.82818 8.13666 2.23356 7.96875 2.65625 7.96875H31.3438C31.7664 7.96875 32.1718 8.13666 32.4707 8.43555C32.7696 8.73443 32.9375 9.13981 32.9375 9.5625C32.9375 9.98519 32.7696 10.3906 32.4707 10.6895C32.1718 10.9883 31.7664 11.1562 31.3438 11.1562ZM26.0312 18.5938H7.96875C7.54606 18.5938 7.14068 18.4258 6.8418 18.127C6.54291 17.8281 6.375 17.4227 6.375 17C6.375 16.5773 6.54291 16.1719 6.8418 15.873C7.14068 15.5742 7.54606 15.4062 7.96875 15.4062H26.0312C26.4539 15.4062 26.8593 15.5742 27.1582 15.873C27.4571 16.1719 27.625 16.5773 27.625 17C27.625 17.4227 27.4571 17.8281 27.1582 18.127C26.8593 18.4258 26.4539 18.5938 26.0312 18.5938ZM19.6562 26.0312H14.3438C13.9211 26.0312 13.5157 25.8633 13.2168 25.5645C12.9179 25.2656 12.75 24.8602 12.75 24.4375C12.75 24.0148 12.9179 23.6094 13.2168 23.3105C13.5157 23.0117 13.9211 22.8438 14.3438 22.8438H19.6562C20.0789 22.8438 20.4843 23.0117 20.7832 23.3105C21.0821 23.6094 21.25 24.0148 21.25 24.4375C21.25 24.8602 21.0821 25.2656 20.7832 25.5645C20.4843 25.8633 20.0789 26.0312 19.6562 26.0312Z" fill="black"/>
+                            </svg>
+                        </div>
                     </div>
                 </div>
-
-                <div class="card">
-                    <div>
-                        <div class="jenisPengujian">Pengujian Sitologi Ginekologi</div>
-                    </div>
-                    <div class="jumlah">
-                        <?php echo $sitologiGinekologiCount; ?>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div>
-                        <div class="jenisPengujian">Pengujian Sitologi Non Ginekologi</div>
-                    </div>
-                    <div class="jumlah">
-                        <?php echo $sitologiNonGinekologiCount; ?>
-                    </div>
-                </div>
-            </div>
                 
-            <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="Search pengajuan">
-                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="27" height="27" viewBox="0 0 27 27" fill="none">
-                    <g clip-path="url(#clip0_306_10765)">
-                        <path d="M17.1809 0C11.7598 0 7.36172 4.39805 7.36172 9.81914C7.36172 11.5857 7.83633 13.2363 8.64844 14.6707L0 23.3191L1.22871 25.7713L3.68086 27L12.3293 18.3516C13.7584 19.1689 15.4143 19.6383 17.1809 19.6383C22.602 19.6383 27 15.2402 27 9.81914C27 4.39805 22.602 0 17.1809 0ZM17.1809 16.5691C13.4525 16.5691 10.4309 13.5475 10.4309 9.81914C10.4309 6.09082 13.4525 3.06914 17.1809 3.06914C20.9092 3.06914 23.9309 6.09082 23.9309 9.81914C23.9309 13.5475 20.9092 16.5691 17.1809 16.5691Z" fill="black"/>
-                    </g>
-                    <defs>
-                        <clipPath id="clip0_306_10765">
-                            <rect width="27" height="27" fill="white"/>
-                        </clipPath>
-                    </defs>
-                </svg>
-                <div class="filter-card">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34" fill="none">
-                      <path d="M31.3438 11.1562H2.65625C2.23356 11.1562 1.82818 10.9883 1.5293 10.6895C1.23041 10.3906 1.0625 9.98519 1.0625 9.5625C1.0625 9.13981 1.23041 8.73443 1.5293 8.43555C1.82818 8.13666 2.23356 7.96875 2.65625 7.96875H31.3438C31.7664 7.96875 32.1718 8.13666 32.4707 8.43555C32.7696 8.73443 32.9375 9.13981 32.9375 9.5625C32.9375 9.98519 32.7696 10.3906 32.4707 10.6895C32.1718 10.9883 31.7664 11.1562 31.3438 11.1562ZM26.0312 18.5938H7.96875C7.54606 18.5938 7.14068 18.4258 6.8418 18.127C6.54291 17.8281 6.375 17.4227 6.375 17C6.375 16.5773 6.54291 16.1719 6.8418 15.873C7.14068 15.5742 7.54606 15.4062 7.96875 15.4062H26.0312C26.4539 15.4062 26.8593 15.5742 27.1582 15.873C27.4571 16.1719 27.625 16.5773 27.625 17C27.625 17.4227 27.4571 17.8281 27.1582 18.127C26.8593 18.4258 26.4539 18.5938 26.0312 18.5938ZM19.6562 26.0312H14.3438C13.9211 26.0312 13.5157 25.8633 13.2168 25.5645C12.9179 25.2656 12.75 24.8602 12.75 24.4375C12.75 24.0148 12.9179 23.6094 13.2168 23.3105C13.5157 23.0117 13.9211 22.8438 14.3438 22.8438H19.6562C20.0789 22.8438 20.4843 23.0117 20.7832 23.3105C21.0821 23.6094 21.25 24.0148 21.25 24.4375C21.25 24.8602 21.0821 25.2656 20.7832 25.5645C20.4843 25.8633 20.0789 26.0312 19.6562 26.0312Z" fill="black"/>
-                    </svg>
+                <!-- Right Column (Approval) -->
+                <div class="coloum2">
+                    <div class="card approval-card">
+                        <div>
+                            <div class="jenisPengujian">Persetujuan Pembayaran</div>
+                            <div class="approval-list">
+                                <?php if ($result_pending->num_rows > 0): ?>
+                                    <?php while ($row = $result_pending->fetch_assoc()): ?>
+                                        <div class="approval-item" data-id="<?php echo $row['id_pembayaran']; ?>">
+                                            <div class="approval-info">
+                                                <div class="nama"><?php echo htmlspecialchars($row['nama_pasien']); ?></div>
+                                                <div class="tanggal"><?php echo date('Y/m/d', strtotime($row['tanggal_pembayaran'])); ?></div>
+                                            </div>
+                                            <div class="approval-actions">
+                                                <button class="approve-btn" onclick="approvePayment(<?php echo $row['id_pembayaran']; ?>)">
+                                                    <ion-icon name="checkmark-outline"></ion-icon>
+                                                </button>
+                                                <button class="reject-btn" onclick="rejectPayment(<?php echo $row['id_pembayaran']; ?>)">
+                                                    <ion-icon name="close-outline"></ion-icon>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    <?php endwhile; ?>
+                                <?php else: ?>
+                                    <div class="no-pending">Tidak ada permintaan</div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="unduh-card"><img src="../../../assets/install.png" alt="Install Icon">Unduh Hasil Pengujian</div>
             </div>
 
+            <!-- Table Section Below Columns -->
             <div class="details">
                 <div class="pengajuan">
                     <div class="cardHeader">
@@ -913,16 +954,6 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
                     ?>
                 </div>
             </div>
-        
-            <div class="overlay"></div>
-
-            <div class="menu-card">
-               <div class="close-button" onclick="window.location='pengujian.php'">×</div>
-                <div class="menu-option" data-type="pdf">pdf</div>
-                <div class="menu-separator"></div>
-                <div class="menu-option" data-type="word">word</div>
-            </div>
-
         </div>
     </div>
 
@@ -964,6 +995,41 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
                 window.location.href = `lihatHasil.php?id=${id}`;
             });
         });
+
+        function approvePayment(paymentId) {
+            if (confirm('Apakah Anda yakin ingin menyetujui pembayaran ini?')) {
+                updatePaymentStatus(paymentId, 'Sudah Bayar');
+            }
+        }
+
+        function rejectPayment(paymentId) {
+            if (confirm('Apakah Anda yakin ingin menolak pembayaran ini?')) {
+                updatePaymentStatus(paymentId, 'Belum Bayar');
+            }
+        }
+
+        function updatePaymentStatus(paymentId, status) {
+            fetch('update_payment.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `id=${paymentId}&status=${status}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Status pembayaran berhasil diperbarui');
+                    location.reload();
+                } else {
+                    alert('Gagal memperbarui status pembayaran');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat memperbarui status pembayaran');
+            });
+        }
     </script>
 
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>

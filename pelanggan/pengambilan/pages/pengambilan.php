@@ -1,7 +1,10 @@
 <?php
 session_start();
 
+error_log("pengambilan.php - Session user ID: " . ($_SESSION['user'] ?? 'Not set'));
+
 if (!isset($_SESSION['user'])) {
+    error_log("pengambilan.php - Redirecting to login: Session user not set");
     header("location:../../../login.php?pesan=belum_login");
     exit();
 }
@@ -9,16 +12,27 @@ if (!isset($_SESSION['user'])) {
 $user_id = $_SESSION['user'];
 include '../../../koneksi.php';
 
+if (!$connect) {
+    error_log("pengambilan.php - Database connection failed: " . mysqli_connect_error());
+    header("Location: ../pengajuan/pages/pengajuan.php?error=" . urlencode("Database connection failed"));
+    exit();
+}
+
 $sql = "SELECT nama, foto FROM pengguna WHERE id_pengguna = ?";
 $stmt = $connect->prepare($sql);
+if (!$stmt) {
+    error_log("pengambilan.php - Prepare failed for user profile: " . $connect->error);
+    header("Location: ../pengajuan/pages/pengajuan.php?error=" . urlencode("Failed to fetch user profile"));
+    exit();
+}
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 $stmt->close();
-$connect->close();
 
 if (!$user) {
+    error_log("pengambilan.php - User not found for id_pengguna: $user_id");
     $nama_pengguna = "Pengguna Tidak Ditemukan";
     $foto_pengguna = "profil.jpg";
 } else {
@@ -29,6 +43,7 @@ if (!$user) {
 $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../../$foto_pengguna"))
     ? "../../../$foto_pengguna"
     : "../../../assets/imgs/profil.jpg";
+
 ?>
 
 <!DOCTYPE html>
@@ -38,7 +53,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beranda</title>
+    <title>Pengambilan</title>
     <style>
         @import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=poppins");
 
@@ -302,17 +317,17 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
         }
 
         .filter-card {
-          width: 90px;
-          height: 66px;
-          flex-shrink: 0;
-          margin-top: 100px;
-          background: var(--green7);
-          border-radius: 20px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          z-index: 1001;
+            width: 90px;
+            height: 66px;
+            flex-shrink: 0;
+            margin-top: 100px;
+            background: var(--green7);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1001;
         }
 
         .filter-card ion-icon {
@@ -628,7 +643,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
         <div class="navigation">
             <ul>
                 <li>
-                    <a href="../../../beranda.php">
+                    <a href="../../beranda.php">
                         <span class="icon">
                             <img src="../../../assets/microscope.png" alt="logo">
                         </span>
@@ -637,7 +652,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
                 </li>
 
                 <li>
-                    <a href="../../../beranda.php">
+                    <a href="../../beranda.php">
                         <span class="icon">
                             <img src="../../../assets/dashboard.png" alt="dashboard">
                         </span>
@@ -655,7 +670,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
                 </li>
 
                 <li>
-                    <a href="../../pengambilan/pages/pengambilan.php">
+                    <a href="./pengambilan.php">
                         <span class="icon">
                             <img src="../../../assets/pengambilan.png" alt="pengambilan">
                         </span>
@@ -673,7 +688,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
                 </li>
 
                 <li>
-                    <a href="riwayat.php">
+                    <a href="../../prosesUji/pages/riwayat.php">
                         <span class="icon">
                             <img src="../../../assets/riwayat.png" alt="riwayat">
                         </span>
@@ -720,9 +735,9 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
                     <img src="<?php echo htmlspecialchars($image_path); ?>" alt="User">
                 </div>
             </div>
-           
+
             <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="Search pengajuan">
+                <input type="text" id="searchInput" placeholder="Search pengambilan">
                 <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="27" height="27" viewBox="0 0 27 27" fill="none">
                     <g clip-path="url(#clip0_306_10765)">
                         <path d="M17.1809 0C11.7598 0 7.36172 4.39805 7.36172 9.81914C7.36172 11.5857 7.83633 13.2363 8.64844 14.6707L0 23.3191L1.22871 25.7713L3.68086 27L12.3293 18.3516C13.7584 19.1689 15.4143 19.6383 17.1809 19.6383C22.602 19.6383 27 15.2402 27 9.81914C27 4.39805 22.602 0 17.1809 0ZM17.1809 16.5691C13.4525 16.5691 10.4309 13.5475 10.4309 9.81914C10.4309 6.09082 13.4525 3.06914 17.1809 3.06914C20.9092 3.06914 23.9309 6.09082 23.9309 9.81914C23.9309 13.5475 20.9092 16.5691 17.1809 16.5691Z" fill="black"/>
@@ -735,13 +750,10 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
                 </svg>
                 <div class="filter-card">
                     <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34" fill="none">
-                      <path d="M31.3438 11.1562H2.65625C2.23356 11.1562 1.82818 10.9883 1.5293 10.6895C1.23041 10.3906 1.0625 9.98519 1.0625 9.5625C1.0625 9.13981 1.23041 8.73443 1.5293 8.43555C1.82818 8.13666 2.23356 7.96875 2.65625 7.96875H31.3438C31.7664 7.96875 32.1718 8.13666 32.4707 8.43555C32.7696 8.73443 32.9375 9.13981 32.9375 9.5625C32.9375 9.98519 32.7696 10.3906 32.4707 10.6895C32.1718 10.9883 31.7664 11.1562 31.3438 11.1562ZM26.0312 18.5938H7.96875C7.54606 18.5938 7.14068 18.4258 6.8418 18.127C6.54291 17.8281 6.375 17.4227 6.375 17C6.375 16.5773 6.54291 16.1719 6.8418 15.873C7.14068 15.5742 7.54606 15.4062 7.96875 15.4062H26.0312C26.4539 15.4062 26.8593 15.5742 27.1582 15.873C27.4571 16.1719 27.625 16.5773 27.625 17C27.625 17.4227 27.4571 17.8281 27.1582 18.127C26.8593 18.4258 26.4539 18.5938 26.0312 18.5938ZM19.6562 26.0312H14.3438C13.9211 26.0312 13.5157 25.8633 13.2168 25.5645C12.9179 25.2656 12.75 24.8602 12.75 24.4375C12.75 24.0148 12.9179 23.6094 13.2168 23.3105C13.5157 23.0117 13.9211 22.8438 14.3438 22.8438H19.6562C20.0789 22.8438 20.4843 23.0117 20.7832 23.3105C21.0821 23.6094 21.25 24.0148 21.25 24.4375C21.25 24.8602 21.0821 25.2656 20.7832 25.5645C20.4843 25.8633 20.0789 26.0312 19.6562 26.0312Z" fill="black"/>
+                        <path d="M31.3438 11.1562H2.65625C2.23356 11.1562 1.82818 10.9883 1.5293 10.6895C1.23041 10.3906 1.0625 9.98519 1.0625 9.5625C1.0625 9.13981 1.23041 8.73443 1.5293 8.43555C1.82818 8.13666 2.23356 7.96875 2.65625 7.96875H31.3438C31.7664 7.96875 32.1718 8.13666 32.4707 8.43555C32.7696 8.73443 32.9375 9.13981 32.9375 9.5625C32.9375 9.98519 32.7696 10.3906 32.4707 10.6895C32.1718 10.9883 31.7664 11.1562 31.3438 11.1562ZM26.0312 18.5938H7.96875C7.54606 18.5938 7.14068 18.4258 6.8418 18.127C6.54291 17.8281 6.375 17.4227 6.375 17C6.375 16.5773 6.54291 16.1719 6.8418 15.873C7.14068 15.5742 7.54606 15.4062 7.96875 15.4062H26.0312C26.4539 15.4062 26.8593 15.5742 27.1582 15.873C27.4571 16.1719 27.625 16.5773 27.625 17C27.625 17.4227 27.4571 17.8281 27.1582 18.127C26.8593 18.4258 26.4539 18.5938 26.0312 18.5938ZM19.6562 26.0312H14.3438C13.9211 26.0312 13.5157 25.8633 13.2168 25.5645C12.9179 25.2656 12.75 24.8602 12.75 24.4375C12.75 24.0148 12.9179 23.6094 13.2168 23.3105C13.5157 23.0117 13.9211 22.8438 14.3438 22.8438H19.6562C20.0789 22.8438 20.4843 23.0117 20.7832 23.3105C21.0821 23.6094 21.25 24.0148 21.25 24.4375C21.25 24.8602 21.0821 25.2656 20.7832 25.5645C20.4843 25.8633 20.0789 26.0312 19.6562 26.0312Z" fill="black"/>
                     </svg>
                 </div>
             </div>
-            
-
-
 
             <div class="details">
                 <div class="pengambilan">
@@ -758,22 +770,31 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
                     <?php
                     include '../../../koneksi.php';
 
-                    $sql = "SELECT pg.nama_pasien, pg.tanggal_pengajuan, png.tanggal_pengambilan, png.status_pengambilan, png.tanggal_pengambilan_ulang 
+                    $sql = "SELECT pg.id_pengajuan, pg.nama_pasien, pg.tanggal_pengajuan, png.tanggal_pengambilan, png.status_pengambilan, png.tanggal_pengambilan_ulang 
                             FROM pengajuan pg 
-                            JOIN pengambilan png ON pg.id_pengajuan = png.id_pengajuan
+                            JOIN pengambilan png ON pg.id_pengajuan = png.id_pengajuan 
+                            WHERE pg.id_pengguna = ? 
                             ORDER BY pg.tanggal_pengajuan DESC LIMIT 8";
-                    $result = $connect->query($sql);
+                    $stmt = $connect->prepare($sql);
+                    if (!$stmt) {
+                        error_log("pengambilan.php - Prepare failed for pengambilan query: " . $connect->error);
+                        echo "<div class='row' style='text-align:center; color:var(--black1);'><span colspan='5'>Error fetching data.</span></div>";
+                    } else {
+                        $stmt->bind_param("i", $user_id);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+                        error_log("pengambilan.php - Fetching pengambilan for id_pengguna: $user_id, rows found: " . $result->num_rows);
 
-                    if ($result->num_rows > 0) {
-                        while ($row = $result->fetch_assoc()) {
-                            $tanggal_pengajuan = date('Y/m/d', strtotime($row['tanggal_pengajuan']));
-                            $tanggal_pengambilan = !empty($row['tanggal_pengambilan']) ? date('Y/m/d', strtotime($row['tanggal_pengambilan'])) : '-';
-                            $status_pengambilan_class = ($row['status_pengambilan'] == 'Berhasil') ? 'verified' :
-                            (($row['status_pengambilan'] == 'Tertunda') ? 'pending' :
-                            (($row['status_pengambilan'] == 'Menunggu Pengambilan') ? 'waiting' : ''));
-                            $tanggal_pengambilan_ulang = !empty($row['tanggal_pengambilan_ulang']) ? date('Y/m/d', strtotime($row['tanggal_pengambilan_ulang'])) : '-';
+                        if ($result->num_rows > 0) {
+                            while ($row = $result->fetch_assoc()) {
+                                $tanggal_pengajuan = date('Y/m/d', strtotime($row['tanggal_pengajuan']));
+                                $tanggal_pengambilan = !empty($row['tanggal_pengambilan']) ? date('Y/m/d', strtotime($row['tanggal_pengambilan'])) : '-';
+                                $status_pengambilan_class = ($row['status_pengambilan'] == 'Berhasil') ? 'verified' :
+                                    (($row['status_pengambilan'] == 'Tertunda') ? 'pending' :
+                                    (($row['status_pengambilan'] == 'Menunggu Pengambilan') ? 'waiting' : ''));
+                                $tanggal_pengambilan_ulang = !empty($row['tanggal_pengambilan_ulang']) ? date('Y/m/d', strtotime($row['tanggal_pengambilan_ulang'])) : '-';
                     ?>
-                            <div class="row" data-href="tampil.php">
+                            <div class="row" data-href="tampil.php?id=<?php echo urlencode($row['id_pengajuan']); ?>">
                                 <span><?php echo htmlspecialchars($row['nama_pasien']); ?></span>
                                 <span><?php echo $tanggal_pengajuan; ?></span>
                                 <span><?php echo $tanggal_pengambilan; ?></span>
@@ -781,15 +802,18 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
                                 <span><?php echo $tanggal_pengambilan_ulang; ?></span>
                             </div>
                     <?php
+                            }
+                        } else {
+                            error_log("pengambilan.php - No pengambilan data found for id_pengguna: $user_id");
+                            echo "<div class='row' style='text-align:center; color:var(--black1);'><span colspan='5'>Tidak ada data yang ditemukan.</span></div>";
                         }
-                    } else {
-                        echo "<div class='row' style='text-align:center; color:var(--black1);'><span colspan='5'>Tidak ada data yang ditemukan.</span></div>";
+                        $stmt->close();
                     }
                     $connect->close();
                     ?>
                 </div>
             </div>
-        
+
             <div class="overlay"></div>
 
             <div class="menu-card">
@@ -798,7 +822,6 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
                 <div class="menu-separator"></div>
                 <div class="menu-option" data-type="word">word</div>
             </div>
-
         </div>
     </div>
 
@@ -830,6 +853,14 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             rows.forEach(row => {
                 const text = row.textContent.toLowerCase();
                 row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+
+        const rows = document.querySelectorAll('.row');
+        rows.forEach(row => {
+            row.addEventListener('click', function() {
+                const id = this.getAttribute('data-href').split('id=')[1];
+                window.location.href = `tampil.php?id=${id}`;
             });
         });
     </script>

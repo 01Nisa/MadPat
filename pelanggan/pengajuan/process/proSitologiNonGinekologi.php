@@ -1,16 +1,42 @@
 <?php
 session_start();
 
+error_log("proSitologiNonGinekologi.php - Session user ID: " . ($_SESSION['user'] ?? 'Not set'));
+
 if (!isset($_SESSION['user'])) {
+    error_log("proSitologiNonGinekologi.php - Redirecting to login: Session user not set");
     header("location:../../../login.php?pesan=belum_login");
     exit();
 }
 
-$user = $_SESSION['user'];
+
+$user_id = $_SESSION['user'];
 
 include '../../../koneksi.php';
 
-error_log(print_r($_POST, true));
+if (!$connect) {
+    error_log("proSitologiNonGinekologi.php - Database connection failed: " . mysqli_connect_error());
+    header("Location: ../pages/pengajuan.php?error=" . urlencode("Database connection failed"));
+    exit();
+}
+
+$stmt_check_user = $connect->prepare("SELECT id_pengguna FROM pengguna WHERE id_pengguna = ?");
+if (!$stmt_check_user) {
+    error_log("proSitologiNonGinekologi.php - Prepare failed for user check: " . $connect->error);
+    header("Location: ../pages/pengajuan.php?error=" . urlencode("Failed to validate user"));
+    exit();
+}
+
+$stmt_check_user->bind_param("i", $user_id);
+$stmt_check_user->execute();
+if ($stmt_check_user->get_result()->num_rows === 0) {
+    error_log("proSitologiNonGinekologi.php - Invalid id_pengguna: $user_id");
+    header("Location: ../pages/pengajuan.php?error=" . urlencode("Invalid user ID"));
+    exit();
+}
+$stmt_check_user->close();
+
+error_log("proSitologiNonGinekologi.php - POST data: " . print_r($_POST, true));
 
 $jumlah = isset($_POST['jumlah']) ? intval($_POST['jumlah']) : 1;
 if ($jumlah < 1) {
@@ -70,12 +96,14 @@ try {
         }
 
         $stmt_count = $connect->prepare("SELECT COUNT(*) FROM pengajuan WHERE id_pengajuan LIKE ?");
+        if (!$stmt_count) {
+            throw new Exception("Prepare failed for count query: " . $connect->error);
+        }
         $stmt_count->bind_param("s", $prefix);
         $stmt_count->execute();
         $stmt_count->bind_result($count);
         $stmt_count->fetch();
         $stmt_count->close();
-
         $urutan = str_pad($count + 1, 3, '0', STR_PAD_LEFT);
         $id_pengajuan = "$jenis-$tahun-$urutan";
 
@@ -92,7 +120,7 @@ try {
         $status_pengajuan = 'Menunggu Verifikasi';
         $stmt_sitologiNon->bind_param(
             "sisssisssssissssissssssssssss",
-            $id_pengajuan, $id_pelanggan, $nama_dokter, $alamat_rs,$nama_pasien, $usia, $jenis_kelamin, $negara, $alamat, $tanggal_pengajuan, $bahan_tersedia, $jumlah_sampel,
+            $id_pengajuan, $user_id, $nama_dokter, $alamat_rs,$nama_pasien, $usia, $jenis_kelamin, $negara, $alamat, $tanggal_pengajuan, $bahan_tersedia, $jumlah_sampel,
             $jenis_preparat, $fiksasi, $pemeriksaan_sitologi, $nomor_pemeriksaan, $jumlah_rokok,
             $lain, $tumor, $kelenjar_regional, $jenis_lesi, $asal_lesi, $metastasis, $ro_foto,
             $tindakan_pemeriksaan, $status_tindakan, $diagnosis_klinik, $keterangan_penyakit, $status_pengajuan
@@ -101,14 +129,16 @@ try {
             throw new Exception("Error inserting into pengajuan: " . $stmt_sitologiNon->error);
         }
         $stmt_sitologiNon->close();
+        error_log("proSitologiNonGinekologi.php - Successfully inserted pengajuan: $id_pengajuan for id_pengguna: $user_id");
     }
 
     $connect->commit();
-    header("Location: ../pages/pengajuan.php?success=Data successfully submitted");
+    error_log("proSitologiNonGinekologi.php - Transaction committed for $jumlah submissions");
+    header("Location: ../pages/pengajuan.php?success=" . urlencode("Data successfully submitted"));
     exit();
 } catch (Exception $e) {
     $connect->rollback();
-    error_log($e->getMessage());
+    error_log("proSitologiNonGinekologi.php - Transaction rolled back: " . $e->getMessage());
     header("Location: ../pages/pengajuan.php?error=" . urlencode($e->getMessage()));
     exit();
 }

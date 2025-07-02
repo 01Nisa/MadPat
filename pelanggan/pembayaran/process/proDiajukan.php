@@ -87,7 +87,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 jenis_pembayaran = ?, 
                 total_bayar = ?, 
                 bukti_pembayaran = ?, 
-                status_pembayaran = 'Sudah Bayar'
+                status_pembayaran = 'Menunggu Verifikasi'
                 WHERE id_pembayaran = ?";
         $stmt = $connect->prepare($sql);
         

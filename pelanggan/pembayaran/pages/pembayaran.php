@@ -528,8 +528,13 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
         }
 
         .status_pembayaran.pending {
-            background: rgba(255, 226, 110, 1);
+            background: rgba(255, 133, 128, 1);
             color: var(--black1);
+        }
+
+        .status_pembayaran.waiting {
+            background: rgba(255, 226, 110, 1);
+            color: var (--black1);
         }
 
         .pengajuan .row .btn {
@@ -850,22 +855,35 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
 
                     $result = $connect->query($sql);
 
-                    if (!$result) {
-                        error_log("SQL Error: " . $connect->error);
-                        echo "<div class='row'><span colspan='6'>Error executing query: " . htmlspecialchars($connect->error) . "</span></div>";
-                    } elseif ($result->num_rows > 0) {
-                        while ($row = $result->fetch_assoc()) {
-                            $nama_pasien = htmlspecialchars($row['nama_pasien']);
-                            $jumlah_tagihan = number_format($row['jumlah_tagihan'], 0, ',', '.');
-                            $status_pembayaran = htmlspecialchars($row['status_pembayaran']);
-                            $tanggal_pembayaran = $status_pembayaran === 'Belum Bayar' 
-                                ? '-' 
-                                : ($row['tanggal_pembayaran'] ? date('Y/m/d', strtotime($row['tanggal_pembayaran'])) : '-');
-                            $batas_pembayaran = $row['tanggal_jadi'] 
-                                ? date('Y/m/d', strtotime(date('Y-m', strtotime($row['tanggal_jadi'])) . "-02 +1 month"))
-                                : '-';
-                            $status_class = $status_pembayaran === 'Sudah Bayar' ? 'verified' : 'pending';
-                            $id_pembayaran = htmlspecialchars($row['id_pembayaran']);
+                        if (!$result) {
+                            error_log("SQL Error: " . $connect->error);
+                            echo "<div class='row'><span colspan='6'>Error executing query: " . htmlspecialchars($connect->error) . "</span></div>";
+                        } elseif ($result->num_rows > 0) {
+                            while ($row = $result->fetch_assoc()) {
+                                $nama_pasien = htmlspecialchars($row['nama_pasien']);
+                                $jumlah_tagihan = number_format($row['jumlah_tagihan'], 0, ',', '.');
+                                $status_pembayaran = htmlspecialchars($row['status_pembayaran']);
+                                
+                                $tanggal_pembayaran = ($status_pembayaran === 'Belum Bayar') 
+                                    ? '-' 
+                                    : ($row['tanggal_pembayaran'] ? date('Y/m/d', strtotime($row['tanggal_pembayaran'])) : '-');
+
+                                $batas_pembayaran = $row['tanggal_jadi'] 
+                                    ? date('Y/m/d', strtotime(date('Y-m', strtotime($row['tanggal_jadi'])) . "-02 +1 month"))
+                                    : '-';
+
+                                switch ($status_pembayaran) {
+                                    case 'Sudah Bayar':
+                                        $status_class = 'verified';
+                                        break;
+                                    case 'Menunggu Verifikasi':
+                                        $status_class = 'waiting';
+                                        break;
+                                    case 'Belum Bayar':
+                                    default:
+                                        $status_class = 'pending';
+                                        break;
+                                }
                     ?>
                             <div class="row">
                                 <span><?php echo $nama_pasien; ?></span>

@@ -1,7 +1,10 @@
 <?php
 session_start();
 
+error_log("beranda.php - Session user ID: " . ($_SESSION['user'] ?? 'Not set'));
+
 if (!isset($_SESSION['user'])) {
+    error_log("beranda.php - Redirecting to login: Session user not set");
     header("location:../../../login.php?pesan=belum_login");
     exit();
 }
@@ -9,16 +12,27 @@ if (!isset($_SESSION['user'])) {
 $user_id = $_SESSION['user'];
 include '../../../koneksi.php';
 
+if (!$connect) {
+    error_log("beranda.php - Database connection failed: " . mysqli_connect_error());
+    header("Location: ../pages/pengajuan.php?error=" . urlencode("Database connection failed"));
+    exit();
+}
+
 $sql = "SELECT nama, foto FROM pengguna WHERE id_pengguna = ?";
 $stmt = $connect->prepare($sql);
+if (!$stmt) {
+    error_log("beranda.php - Prepare failed for user profile: " . $connect->error);
+    header("Location: ../pages/pengajuan.php?error=" . urlencode("Failed to fetch user profile"));
+    exit();
+}
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 $stmt->close();
-$connect->close();
 
 if (!$user) {
+    error_log("beranda.php - User not found for id_pengguna: $user_id");
     $nama_pengguna = "Pengguna Tidak Ditemukan";
     $foto_pengguna = "profil.jpg";
 } else {
@@ -29,6 +43,7 @@ if (!$user) {
 $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../../$foto_pengguna"))
     ? "../../../$foto_pengguna"
     : "../../../assets/imgs/profil.jpg";
+
 ?>
 
 <!DOCTYPE html>
@@ -843,26 +858,31 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
                     $currentYear = date('Y');
                     $sql = "SELECT id_pengajuan, nama_pasien, tanggal_pengajuan, status_pengajuan 
                             FROM pengajuan 
-                            WHERE YEAR(tanggal_pengajuan) = ? 
+                            WHERE id_pengguna = ? AND YEAR(tanggal_pengajuan) = ? 
                             ORDER BY tanggal_pengajuan DESC";
                     $stmt = $connect->prepare($sql);
-                    $stmt->bind_param("i", $currentYear);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
+                    if (!$stmt) {
+                        error_log("beranda.php - Prepare failed for pengajuan query: " . $connect->error);
+                        echo "<div class='row'><span colspan='4'>Error fetching data.</span></div>";
+                    } else {
+                        $stmt->bind_param("ii", $user_id, $currentYear);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+                        error_log("beranda.php - Fetching pengajuan for id_pengguna: $user_id, year: $currentYear, rows found: " . $result->num_rows);
 
-                    if ($result->num_rows > 0) {
-                        while ($row = $result->fetch_assoc()) {
-                            $tanggal = date('Y/m/d', strtotime($row['tanggal_pengajuan']));
-                            $status_pengajuan_class = ($row['status_pengajuan'] == 'Verifikasi' || $row['status_pengajuan'] == 'Diverifikasi') ? 'verified' : ($row['status_pengajuan'] == 'Menunggu Verifikasi' ? 'pending' : '');
-                            $id_pengajuan = $row['id_pengajuan'];
-                            $jenis_pengujian = '';
-                            if (strpos($id_pengajuan, 'JRM-') === 0) {
-                                $jenis_pengujian = 'Jaringan';
-                            } elseif (strpos($id_pengajuan, 'SRM-') === 0) {
-                                $jenis_pengujian = 'Sitologi Ginekologi';
-                            } elseif (strpos($id_pengajuan, 'SNRM-') === 0) {
-                                $jenis_pengujian = 'Sitologi Non Ginekologi';
-                            }
+                        if ($result->num_rows > 0) {
+                            while ($row = $result->fetch_assoc()) {
+                                $tanggal = date('Y/m/d', strtotime($row['tanggal_pengajuan']));
+                                $status_pengajuan_class = ($row['status_pengajuan'] == 'Verifikasi' || $row['status_pengajuan'] == 'Diverifikasi') ? 'verified' : ($row['status_pengajuan'] == 'Menunggu Verifikasi' ? 'pending' : '');
+                                $id_pengajuan = $row['id_pengajuan'];
+                                $jenis_pengujian = '';
+                                if (strpos($id_pengajuan, 'JRM-') === 0) {
+                                    $jenis_pengujian = 'Jaringan';
+                                } elseif (strpos($id_pengajuan, 'SRM-') === 0) {
+                                    $jenis_pengujian = 'Sitologi Ginekologi';
+                                } elseif (strpos($id_pengajuan, 'SNRM-') === 0) {
+                                    $jenis_pengujian = 'Sitologi Non Ginekologi';
+                                }
                     ?>
                             <div class="row" data-href="tampil.php?id=<?php echo urlencode($id_pengajuan); ?>">
                                 <span><?php echo htmlspecialchars($row['nama_pasien']); ?></span>
@@ -871,11 +891,13 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
                                 <span class="status_pengajuan <?php echo $status_pengajuan_class; ?>"><?php echo htmlspecialchars($row['status_pengajuan']); ?></span>
                             </div>
                     <?php
+                            }
+                        } else {
+                            error_log("beranda.php - No pengajuan data found for id_pengguna: $user_id, year: $currentYear");
+                            echo "<div class='row'><span colspan='4'>Tidak ada data yang ditemukan.</span></div>";
                         }
-                    } else {
-                        echo "<div class='row'><span colspan='4'>Tidak ada data yang ditemukan.</span></div>";
+                        $stmt->close();
                     }
-                    $stmt->close();
                     $connect->close();
                     ?>
                 </div>
