@@ -17,7 +17,7 @@ $result3 = $connect->query($sql3);
 $jumlahSelesai = ($result3 && $row3 = $result3->fetch_assoc()) ? $row3['total'] : 0;
 
 //total pembayaran
-$sql4 = "SELECT SUM(total_bayar) AS total FROM pembayaran";
+$sql4 = "SELECT SUM(total_bayar) AS total FROM pembayaran where status_pembayaran = 'Selesai'";
 $result4 = $connect->query($sql4);
 $totalPembayaran = 0;
 
