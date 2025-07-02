@@ -246,7 +246,6 @@
             </form>
         </section>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/ionicons@5.5.2/dist/ionicons.js"></script>
     <script>
     const togglePasswordIcon = document.getElementById("togglePasswordIcon");
     const passwordInput = document.getElementById("password");
