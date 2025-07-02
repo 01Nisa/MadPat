@@ -56,8 +56,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['setujui_id'])) {
         $id_pengambilan_baru = 'PA-' . str_pad($nomor_baru, 3, '0', STR_PAD_LEFT);
 
         // INSERT ke tabel pengambilan (optional: sesuaikan kolom dengan struktur database Anda)
-        $sql_pengambilan = "INSERT INTO pengambilan (id_pengambilan, tanggal_pengambilan, status_pengambilan)
-                            VALUES ('$id_pengambilan_baru', '$tanggal_terima', 'Selesai')";
+        $sql_pengambilan = "INSERT INTO pengambilan (id_pengambilan, id_pengajuan, tanggal_pengambilan, status_pengambilan)
+                    VALUES ('$id_pengambilan_baru', '$id_pengujian', '$tanggal_terima', 'Selesai')";
+
         $connect->query($sql_pengambilan); // dieksekusi tapi tidak dicek errornya (boleh ditambahkan)
 
         // INSERT ke tabel pengujian
@@ -78,10 +79,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['setujui_id'])) {
         }
     }
 }
+
+
+$jaringan = 0;
+$ginekologi = 0;
+$non_ginekologi = 0;
+
+$sql = "SELECT id_pengajuan FROM pengajuan";
+$result = $connect->query($sql);
+
+while ($row = $result->fetch_assoc()) {
+    $id_pengajuan = $row['id_pengajuan'];
+
+    if (strpos($id_pengajuan, 'JRM-') === 0) {
+        $jaringan++;
+    } elseif (strpos($id_pengajuan, 'SRM-') === 0) {
+        $ginekologi++;
+    } elseif (strpos($id_pengajuan, 'SNRM-') === 0) {
+        $non_ginekologi++;
+    }
+}
 ?>
 
 
-?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -482,11 +502,11 @@ body {
 .details .Approval {
   position: relative;
   display: grid;
-  min-height: 500px;
   background: var(--white);
   padding: 20px;
   box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
   border-radius: 20px;
+ 
 }
 
 .details .cardHeader {
@@ -511,10 +531,12 @@ body {
   width: 100%;
   border-collapse: collapse;
   margin-top: 10px;
+  
 }
 .details table thead td {
   font-weight: 600;
 }
+
 .details .Approval table tr {
   color: var(--black1);
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
@@ -783,7 +805,7 @@ if (isset($_GET['tolak'])) {
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="pengaturan.php">
                         <span class="icon">
                             <img src="../assets/setting.png" alt="setting">
                         </span>
@@ -822,28 +844,28 @@ if (isset($_GET['tolak'])) {
             <div class="cardBox">
                 <div class="card">
                     <div>
-                        <div class="cardName">Pengujian Jaringan</div>
+                        <div class="cardName">Pengajuan Jaringan</div>
                     </div>
                     <div class="numbertext">
-                        12
+                        <?php echo $jaringan; ?>
                     </div>
                 </div>
 
                 <div class="card">
                     <div>
-                        <div class="cardName">Pengujian Sitologi Ginekologi</div>
+                        <div class="cardName">Pengajuan Sitologi Ginekologi</div>
                     </div>
 
                     <div class="numbertext">
-                        11
+                        <?php echo $ginekologi; ?>
                     </div>
                 </div>
                 <div class="card">
                     <div>
-                        <div class="cardName">Pengujian Sitologi Non Ginekologi</div>
+                        <div class="cardName">Pengajuan Sitologi Non Ginekologi</div>
                     </div>
                     <div class="numbertext">
-                        2
+                         <?php echo $non_ginekologi; ?>
                     </div>
                 </div>
             </div>
@@ -934,16 +956,17 @@ if (isset($_GET['tolak'])) {
                           <span>Id Pengambilan</span>
                           <span>No Laboratorium</span>
                           <span>Tanggal Terima</span>
+                          <span>Tanggal Jadi</span>
                           <span>Sampel atas nama</span>
                           <span>Umur</span>
                           <span>Tindakan</span>
                       </div>
 
                       <?php
-                      include '../koneksi.php';
+                      include 'koneksi.php';
 
                       $currentYear = date('Y'); 
-                      $sql = "SELECT a.id_pengambilan, u.id_pengujian, u.nama_pasien, u.tanggal_terima, u.usia
+                      $sql = "SELECT a.id_pengambilan, u.id_pengujian, u.nama_pasien, u.tanggal_terima, u.usia, u.tanggal_jadi
                               FROM pengambilan a
                               JOIN pengujian u ON a.id_pengambilan = u.id_pengambilan
                               WHERE YEAR(u.tanggal_terima) = ?
@@ -956,25 +979,36 @@ if (isset($_GET['tolak'])) {
 
                       if ($result->num_rows > 0) {
                           while ($row = $result->fetch_assoc()) {
-                              $tanggal = date('Y/m/d', strtotime($row['tanggal_terima']));
+                              $tanggal_terima = date('Y/m/d', strtotime($row['tanggal_terima']));
+                              $tanggal_jadi = date('Y/m/d', strtotime($row['tanggal_jadi']));
                               $id_pengambilan = $row['id_pengambilan'];
+                              $link_update = '#';
+                              if (strpos($id_pengajuan, 'JRM-') === 0) {
+                                $link_update = 'updateJRM.php?id=' . $id_pengajuan;
+                            } elseif (strpos($id_pengajuan, 'SRM-') === 0) {
+                                $link_update = 'updateSRM.php?id=' . $id_pengajuan;
+                            } elseif (strpos($id_pengajuan, 'SNRM-') === 0) {
+                                $link_update = 'updateSNRM.php?id=' . $id_pengajuan;
+                            }
 
                 
                       ?>
                               <div class="row" data-href="tampil.php?id=<?php echo urlencode($id_pengambilan); ?>">
                                   <span><?php echo htmlspecialchars($row['id_pengambilan']); ?></span>
                                   <span><?php echo htmlspecialchars($row['id_pengujian']); ?></span>
+                                  <span><?php echo $tanggal_terima; ?></span>
+                                  <span><?php echo $tanggal_jadi; ?></span>
                                   <span><?php echo htmlspecialchars($row['nama_pasien']); ?></span>
-                                  <span><?php echo $tanggal; ?></span>
                                    <span><?php echo htmlspecialchars($row['usia']); ?></span>
-                                  <span><?php echo $tanggal; ?></span>
                                   
                               
                                   <span>
-                                      <!-- Tombol Update -->
-                                      <button onclick="updateData('<?php echo $id_pengujian; ?>')" title="Update">
-                                          <span class="material-icons">edit</span>
-                                      </button>
+                                      <a href="<?php echo htmlspecialchars($link_update); ?>" class="icon-btn edit" title="Update">
+                                          <button type="button">
+                                              <span class="material-icons">edit</span>
+                                          </button>
+                                      </a>
+
 
                                       <!-- Tombol Hapus -->
                                       <button onclick="hapusData('<?php echo $id_pengujian; ?>')" title="Hapus">
