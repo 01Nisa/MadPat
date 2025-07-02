@@ -99,7 +99,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
 
         .navigation {
             position: fixed;
-            width: 230px;
+            width: 226px;
             height: 100%;
             background: var(--green2);
             border-left: 10px solid var(--green2);
@@ -133,7 +133,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
         }
 
         .navigation ul li:nth-child(1) {
-            margin-bottom: -30px;
+            margin-bottom: -130px;
             pointer-events: none;
         }
 
@@ -162,7 +162,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
 
         .navigation ul li.signout {
             position: absolute;
-            bottom: -150px;
+            bottom: -110px;
             width: 100%;
         }
 
@@ -262,7 +262,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
 
         .main {
             position: absolute;
-            width: calc(100% - 300px);
+            width: calc(100% - 280px);
             left: 250px;
             min-height: 100vh;
             background: var(--white);
@@ -384,7 +384,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
         }
 
         .search-bar input {
-            width: 853px;
+            width: 753px;
             height: 66px;
             margin-top: 20px;
             flex-shrink: 0;
@@ -398,7 +398,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
 
         .search-bar .search-icon {
             position: absolute;
-            left: 790px;
+            left: 690px;
             top: 30%;
             transform: translateY(-50%);
             width: 27px;
@@ -428,7 +428,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
         }
 
         .unduh-card {
-            width: 397px;
+            width: 297px;
             height: 66px;
             flex-shrink: 0;
             background: var(--green1);
@@ -436,13 +436,14 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             border: none;
             border-radius: 20px;
             cursor: pointer;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 500;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: right;
             margin-left: auto;
             margin-top: 20px;
+            padding: 30px;
             z-index: 1001;
         }
 
@@ -452,7 +453,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
 
         .unduh-card img {
             margin-left: -80px;
-            margin-right: 20px;
+            margin-right: 30px;
             width: 30px;
             height: 30px;
         }
@@ -498,10 +499,11 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             align-items: center;
             font-weight: 600;
             color: var(--black1);
-            margin-bottom: 10px;
-            padding: 0 30px;
+            margin: 15px 5px;
+            padding: 10px 1px;
             height: 40px;
             border-radius: 10px;
+            gap: 20px;
         }
 
         .column-titles span {
@@ -509,6 +511,8 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             text-align: center;
             font-size: 16px;
             line-height: 40px;
+            margin-right: 20px;
+            margin-left: 10px;
         }
 
         .pengajuan .row {
@@ -517,8 +521,8 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 30px;
-            gap: 20px;
+            padding: 5px 10px;
+            gap: 10px;
             background: var(--white);
             margin-bottom: 15px;
             border-radius: 15px;
@@ -535,7 +539,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             flex: 1;
             text-align: center;
             padding: 0;
-            margin: 0 60px;
+            margin: 0 10px;
             line-height: 30px;
         }
 
@@ -848,7 +852,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
                 include '../../../koneksi.php';
 
                 $currentYear = date('Y');
-                // Check if pengiriman and pengajuan tables exist
+               
                 $table_check = $connect->query("SHOW TABLES LIKE 'pengiriman'");
                 $has_pengiriman = $table_check->num_rows > 0;
                 $table_check = $connect->query("SHOW TABLES LIKE 'pengajuan'");
@@ -881,7 +885,6 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
                         $stmtCount->close();
                     }
                 } else {
-                    // Fallback to original count query
                     $sqlCount = "SELECT 
                         SUM(CASE WHEN id_pengujian LIKE 'JRM-%' THEN 1 ELSE 0 END) as jaringan_count,
                         SUM(CASE WHEN id_pengujian LIKE 'SRM-%' THEN 1 ELSE 0 END) as sitologi_ginekologi_count,
@@ -956,12 +959,12 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             <div class="details">
                 <div class="pengajuan">
                     <div class="cardHeader">
-                        <h2>Pengajuan Sampel</h2>
+                        <h2>Pengujian Sampel</h2>
                     </div>
                     <div class="column-titles">
                         <span>Sampel Atas Nama</span>
                         <span>Tanggal Terima</span>
-                        <span>Jenis Pengujian Sampel</span>
+                        <span>Jenis Pengujian</span>
                         <span>Status Pengujian</span>
                         <span>Tanggal Jadi</span>
                         <span>Hasil Pengujian</span>
@@ -988,7 +991,6 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
                             error_log("pengujian.php - Fetching pengujian for id_pengguna: $user_id, Year: $currentYear, rows found: " . $result->num_rows);
                         }
                     } else {
-                        // Fallback to original query
                         $sql = "SELECT id_pengujian, nama_pasien, tanggal_terima, status_pengujian, tanggal_jadi
                                 FROM pengujian
                                 WHERE YEAR(tanggal_terima) = ?

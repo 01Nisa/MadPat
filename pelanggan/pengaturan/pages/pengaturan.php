@@ -100,7 +100,7 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
 
         .navigation {
             position: fixed;
-            width: 230px;
+            width: 226px;
             height: 100%;
             background: var(--green2);
             border-left: 10px solid var(--green2);
@@ -134,7 +134,7 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
         }
 
         .navigation ul li:nth-child(1) {
-            margin-bottom: -30px;
+            margin-bottom: -130px;
             pointer-events: none;
         }
 
@@ -161,7 +161,7 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
 
         .navigation ul li.signout {
             position: absolute;
-            bottom: -150px;
+            bottom: -110px;
             width: 100%;
         }
 
@@ -256,7 +256,7 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
 
         .main {
             position: absolute;
-            width: calc(100% - 300px);
+            width: calc(100% - 280px);
             left: 250px;
             min-height: 100vh;
             background: var(--white);
@@ -319,9 +319,9 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
 
         .settings {
             padding: 20px;
-            margin: 70px 20px 20px;
+            margin: 30px 10px 10px;
             display: flex;
-            gap: 20px;
+            gap: 10px;
             max-height: 80vh;
             overflow-y: auto;
             z-index: 1001;
@@ -354,12 +354,12 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
 
         .settings .profile-photo-container {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
         .settings .profile-photo {
-            width: 150px;
-            height: 150px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
             object-fit: cover;
             border: 3px solid var(--green2);
@@ -403,13 +403,13 @@ error_log("pengaturan.php - Profile photo path: $image_path, Exists: " . (file_e
         }
 
         .settings .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 5px;
         }
 
         .settings .form-group label {
             display: block;
             color: var(--black2);
-            margin-bottom: 5px;
+            margin-bottom: 3px;
             font-size: 0.9rem;
             font-weight: 500;
         }

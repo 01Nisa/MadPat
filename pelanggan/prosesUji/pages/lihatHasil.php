@@ -207,7 +207,6 @@ $user = $_SESSION['user'];
         include '../../../koneksi.php';
         $test_id = $_GET['id'];
         
-        // Determine examination type
         $jenis_pengujian = '';
         if (strpos($test_id, 'JRM-') === 0) {
             $jenis_pengujian = 'Jaringan';
@@ -304,7 +303,6 @@ $user = $_SESSION['user'];
         function generatePDF() {
             const element = document.getElementById('contentToPrint');
             
-            // Get examination type for filename
             const examType = "<?php echo $jenis_pengujian; ?>";
             const filename = 'Hasil_Pemeriksaan_' + examType + '_<?php echo $test_id; ?>.pdf';
         

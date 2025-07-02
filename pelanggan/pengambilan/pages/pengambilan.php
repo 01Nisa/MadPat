@@ -92,7 +92,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
 
         .navigation {
             position: fixed;
-            width: 230px;
+            width: 226px;
             height: 100%;
             background: var(--green2);
             border-left: 10px solid var(--green2);
@@ -126,7 +126,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
         }
 
         .navigation ul li:nth-child(1) {
-            margin-bottom: -30px;
+            margin-bottom: -130px;
             pointer-events: none;
         }
 
@@ -155,7 +155,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
 
         .navigation ul li.signout {
             position: absolute;
-            bottom: -150px;
+            bottom: -110px;
             width: 100%;
         }
 
@@ -255,7 +255,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
 
         .main {
             position: absolute;
-            width: calc(100% - 300px);
+            width: calc(100% - 280px);
             left: 250px;
             min-height: 100vh;
             background: var(--white);

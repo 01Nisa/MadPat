@@ -48,8 +48,8 @@ $currentStep = $halaman - 1;
       display: flex;
       flex-direction: row;
       gap: 2px;
-      width: 1200px;
-      height: 780px;
+      width: 1100px;
+      height: 680px;
       background-color: var(--green6);
       border-radius: 15px;
       padding: 20px;
@@ -58,7 +58,7 @@ $currentStep = $halaman - 1;
 
     .close-button {
       position: absolute;
-      top: 15px;
+      top: 3px;
       right: 20px;
       font-size: 24px;
       font-weight: bold;
@@ -73,7 +73,7 @@ $currentStep = $halaman - 1;
 
     .progress-section {
       width: 222px;
-      height: 710px;
+      height: 610px;
       overflow-y: auto;
       padding-right: 20px;
       margin-top: 15px;
@@ -159,7 +159,7 @@ $currentStep = $halaman - 1;
 
     .form-container {
       width: 900px;
-      height: 710px;
+      height: 610px;
       overflow-y: auto;
       background-color: #fff;
       margin-top: 15px;

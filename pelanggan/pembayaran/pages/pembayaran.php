@@ -78,7 +78,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
 
         .navigation {
             position: fixed;
-            width: 230px;
+            width: 226px;
             height: 100%;
             background: var(--green2);
             border-left: 10px solid var(--green2);
@@ -112,7 +112,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
         }
 
         .navigation ul li:nth-child(1) {
-            margin-bottom: -30px;
+            margin-bottom: -130px;
             pointer-events: none;
         }
 
@@ -141,7 +141,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
 
         .navigation ul li.signout {
             position: absolute;
-            bottom: -150px;
+            bottom: -110px;
             width: 100%;
         }
 
@@ -241,7 +241,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
 
         .main {
             position: absolute;
-            width: calc(100% - 300px);
+            width: calc(100% - 280px);
             left: 250px;
             min-height: 100vh;
             background: var(--white);
@@ -304,7 +304,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
 
         .cardBox {
             position: relative;
-            padding-left: 1000px;
+            padding-left: 650px;
             margin-top: 90px;
             height: 150px;
             overflow: hidden;
@@ -333,7 +333,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
         .cardBox .step-container {
             display: flex;
             align-items: center;
-            margin-right: 900px;
+            margin-right: 800px;
             gap: 10px;
             margin-top: 20px;
         }
@@ -488,8 +488,8 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 30px;
-            gap: 20px;
+            padding: 10px 20px;
+            gap: 5px;
             background: var(--white);
             margin-bottom: 15px;
             border-radius: 15px;
@@ -506,7 +506,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             flex: 1;
             text-align: center;
             padding: 0;
-            margin: 0 60px;
+            margin: 0 40px;
             line-height: 30px;
         }
 
@@ -516,8 +516,8 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             padding: 2px 10px;
             border-radius: 15px;
             font-size: 14px;
-            margin-right: 50px;
-            margin-left: 50px;
+            margin-right: 30px;
+            margin-left: 30px;
             position: relative;
             bottom: 2px;
         }

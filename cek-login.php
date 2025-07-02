@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header("Location: petugas/beranda.php");
         } elseif ($email == 'pemilikmadpat123@gmail.com') {
             $_SESSION['user_data']['role'] = 'pemilik';
-            header("Location: pemilik/beranda.php");
+            header("Location: pemilik/pembayaran/pages/pembayaran.php");
         } else {
             $_SESSION['user_data']['role'] = 'pelanggan';
             header("Location: pelanggan/beranda.php");

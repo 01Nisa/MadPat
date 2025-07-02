@@ -240,7 +240,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
 
         .main {
             position: absolute;
-            width: calc(100% - 300px);
+            width: calc(100% - 280px);
             left: 250px;
             min-height: 100vh;
             background: var(--white);

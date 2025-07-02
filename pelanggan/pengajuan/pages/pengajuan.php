@@ -93,7 +93,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
 
         .navigation {
             position: fixed;
-            width: 230px;
+            width: 226px;
             height: 100%;
             background: var(--green2);
             border-left: 10px solid var(--green2);
@@ -127,7 +127,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
         }
 
         .navigation ul li:nth-child(1) {
-            margin-bottom: -30px;
+            margin-bottom: -130px;
             pointer-events: none;
         }
 
@@ -156,7 +156,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
 
         .navigation ul li.signout {
             position: absolute;
-            bottom: -150px;
+            bottom: -110px;
             width: 100%;
         }
 
@@ -256,7 +256,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
 
         .main {
             position: absolute;
-            width: calc(100% - 300px);
+            width: calc(100% - 280px);
             left: 250px;
             min-height: 100vh;
             background: var(--white);
@@ -328,7 +328,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
         }
 
         .search-bar input {
-            width: 853px;
+            width: 753px;
             height: 66px;
             margin-top: 100px;
             flex-shrink: 0;
@@ -342,7 +342,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
 
         .search-bar .search-icon {
             position: absolute;
-            left: 790px;
+            left: 690px;
             top: 30%;
             transform: translateY(-50%);
             width: 27px;
@@ -449,8 +449,9 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
 
         .table th {
             color: var(--black);
-            padding: 10px;
-            text-align: center;
+            margin: 0 20px;
+            padding: 10px 50px;
+            text-align: left;
         }
 
         .pengajuan .row {
@@ -459,7 +460,7 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 30px;
+            padding: 20px;
             background: var(--white);
             margin-bottom: 10px;
             border-radius: 15px;
@@ -474,8 +475,8 @@ $image_path = (strpos($foto_pengguna, 'Uploads/') === 0 && file_exists("../../..
 
         .pengajuan .row span {
             flex: 1;
-            margin-left: 90px;
-            margin-right: 100px;
+            margin-left: 50px;
+            margin-right: 50px;
             text-align: center;
         }
 
